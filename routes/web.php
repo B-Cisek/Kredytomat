@@ -13,8 +13,9 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users',UserController::class);
+    Route::resource('credits', CreditController::class);
 });
 
 

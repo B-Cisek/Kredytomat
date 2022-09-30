@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Models\User;
+use App\Http\Requests\Bank\StoreBankRequest;
+use App\Http\Requests\Bank\UpdateBankRequest;
+use App\Models\Bank;
 
-class UserController extends Controller
+class BankController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        return 1;
+        //
     }
 
     /**
@@ -31,10 +31,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\User\StoreUserRequest  $request
+     * @param  \App\Http\Requests\Bank\StoreBankRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreBankRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bank  $bank
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Bank $bank)
     {
         //
     }
@@ -53,10 +53,10 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bank  $bank
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Bank $bank)
     {
         //
     }
@@ -64,11 +64,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\User\UpdateUserRequest  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Http\Requests\Bank\UpdateBankRequest  $request
+     * @param  \App\Models\Bank  $bank
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateBankRequest $request, Bank $bank)
     {
         //
     }
@@ -76,10 +76,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bank  $bank
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Bank $bank)
     {
         //
     }
