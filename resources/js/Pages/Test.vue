@@ -1,9 +1,21 @@
 <script setup>
+import Layout from "@/Layouts/Layout.vue";
 
-import Headerv2 from "@/Components/Headerv2.vue";
-
+defineProps({
+    loggedIn: Boolean
+})
 </script>
 
 <template>
-    <Headerv2 />
+    <Layout :loggedIn="loggedIn">
+        <template #header>
+            TEST DASHBOARD
+        </template>
+        <template #default>
+            Test Page
+        </template>
+    </Layout>
 </template>
+
+
+

@@ -1,17 +1,28 @@
-<template>
-    <Header />
-</template>
+<script setup>
+import { Head } from '@inertiajs/inertia-vue3';
+import Cta from "@/Components/Cta.vue";
+import Layout from "@/Layouts/Layout.vue";
+import CreditCard from "@/Components/CreditCard.vue";
 
-<script>
-
-
-import Header from "@/Components/Header.vue";
-export default {
-    name: "Home",
-    components: {Header},
-}
+defineProps({
+    loggedIn: Boolean
+})
 </script>
 
-<style scoped>
 
-</style>
+<template>
+    <Head title="Home" />
+    <Layout :logged-in="loggedIn">
+        <template #header>
+            <Cta/>
+        </template>
+        <template #default>
+            <CreditCard />
+            <CreditCard />
+            <CreditCard />
+            <CreditCard />
+            <CreditCard />
+        </template>
+    </Layout>
+</template>
+

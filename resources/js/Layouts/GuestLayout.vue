@@ -1,10 +1,11 @@
 <script setup>
 import Header from "@/Components/Header.vue";
+import Footer from "@/Components/Footer.vue";
 </script>
 
 <template>
     <Header />
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div class="h-[calc(100vh-80px-68px)] flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>
             <h1 class="text-3xl font-bold">
                 <slot name="heading"></slot>
@@ -15,4 +16,5 @@ import Header from "@/Components/Header.vue";
             <slot />
         </div>
     </div>
+    <Footer />
 </template>

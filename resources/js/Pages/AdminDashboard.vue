@@ -1,26 +1,24 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AdminDashboardLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
+import Table from "@/Components/Table.vue";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import {defineProps} from "vue";
+
+defineProps({
+    loggedIn: Boolean
+})
 </script>
 
 <template>
     <Head title="Dashboard" />
-
-    <AuthenticatedLayout>
+    <AdminLayout :logged-in="loggedIn">
         <template #header>
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">
                 Dashboard
             </h1>
         </template>
-
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        You're logged in!
-                    </div>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
+        <template #default>
+            <Table />
+        </template>
+    </AdminLayout>
 </template>
