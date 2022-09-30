@@ -1,5 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
+import InputCounter from "@/Components/InputCounter.vue";
 
 defineProps({
     loggedIn: Boolean
@@ -12,7 +13,9 @@ defineProps({
             TEST DASHBOARD
         </template>
         <template #default>
-            Test Page
+            <div class="p-5">
+                <InputCounter />
+            </div>
         </template>
     </Layout>
 </template>
