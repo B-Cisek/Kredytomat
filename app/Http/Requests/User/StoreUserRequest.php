@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\User;
 
+
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,22 @@ class StoreUserRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => [
+                'required',
+                'min:5',
+                'max:255',
+                Rule::unique('users', 'name')
+            ],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')
+            ],
+            'password' => [
+                'required',
+                'min:6',
+                'max:255'
+            ]
         ];
     }
 }

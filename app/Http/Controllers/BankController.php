@@ -5,17 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Bank\StoreBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Models\Bank;
+use Inertia\Inertia;
 
 class BankController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        return Inertia::render('AdminBanks',[
+            'loggedIn' => \Illuminate\Support\Facades\Auth::check()
+        ]);
     }
 
     /**

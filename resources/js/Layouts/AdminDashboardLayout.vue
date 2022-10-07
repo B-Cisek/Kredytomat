@@ -1,33 +1,19 @@
 <script setup>
-import HeaderLogged from "@/Components/HeaderLogged.vue";
+
+import Header from "@/Components/Header.vue";
+import AdminHeader from "@/Components/AdminHeader.vue";
+
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <!-- This example requires Tailwind CSS v2.0+ -->
-            <!--
-              This example requires updating your template:
+    <Header/>
 
-              ```
-              <html class="h-full bg-gray-100">
-              <body class="h-full">
-              ```
-            -->
-            <div class="min-h-full">
-                <HeaderLogged />
+    <AdminHeader>
+        <slot name="header"/>
+    </AdminHeader>
 
-                <header class="bg-white shadow">
-                    <div class="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-                        <slot name="header"/>
-                    </div>
-                </header>
-                <main>
-                    <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                        <slot />
-                    </div>
-                </main>
-            </div>
-        </div>
-    </div>
+    <main class="lg:px-8 max-w-7xl mx-auto px-2 py-3 sm:px-6">
+        <slot />
+    </main>
 </template>
+

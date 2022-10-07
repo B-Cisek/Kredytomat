@@ -1,8 +1,8 @@
 <script setup>
-import { Head } from '@inertiajs/inertia-vue3';
-import Table from "@/Components/Table.vue";
-import AdminLayout from "@/Layouts/AdminLayout.vue";
+import {Head} from '@inertiajs/inertia-vue3';
 import {defineProps} from "vue";
+import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import Tile from "@/Components/Tile.vue";
 
 defineProps({
     loggedIn: Boolean
@@ -10,15 +10,22 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Dashboard" />
-    <AdminLayout :logged-in="loggedIn">
+    <Head title="Dashboard"/>
+
+    <AdminDashboardLayout>
         <template #header>
-            <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                Dashboard
-            </h1>
+            Dashboard
         </template>
         <template #default>
-            <Table />
+            <Tile :href="route('admin.users.index')">
+                Użytkownicy
+            </Tile>
+            <Tile :href="route('admin.credits.index')">
+                Kredyty
+            </Tile>
+            <Tile :href="route('admin.banks.index')">
+                Banki
+            </Tile>
         </template>
-    </AdminLayout>
+    </AdminDashboardLayout>
 </template>

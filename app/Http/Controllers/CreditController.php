@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Credit\StoreCreditRequest;
 use App\Http\Requests\Credit\UpdateCreditRequest;
 use App\Models\Credit;
+use Inertia\Inertia;
 
 class CreditController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        return Inertia::render('AdminCredits',[
+            'loggedIn' => \Illuminate\Support\Facades\Auth::check()
+        ]);
     }
 
     /**

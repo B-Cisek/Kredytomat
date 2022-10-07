@@ -1,11 +1,11 @@
 <script setup>
-import {Link} from "@inertiajs/inertia-vue3"
-import {ref} from "vue";
+import {Link, usePage} from "@inertiajs/inertia-vue3"
+import {computed, ref} from "vue";
 import {onClickOutside} from '@vueuse/core'
+import NavLink from "@/Components/NavLink.vue";
 
-defineProps({
-    loggedIn: Boolean
-})
+const auth = computed(() => usePage().props.value.auth)
+const loggedIn = auth.value.loggedIn
 
 // nav dropdown
 const toggleOnNavLinks = ref(false)
@@ -28,7 +28,7 @@ const handleToggleMobileMenu = () => {
 
 // profile dropdown
 const toggleOnProfile = ref(false)
-const targetProfile= ref(null)
+const targetProfile = ref(null)
 
 onClickOutside(targetProfile, () => {
     toggleOnProfile.value = false
@@ -86,15 +86,17 @@ const handleToggleProfile = () => {
                     <div class="hidden sm:ml-10 sm:block">
                         <div class="flex space-x-4">
                             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                            <Link :href="route('home')" class="bg-gray-900 text-white px-3 py-2 rounded-md font-medium"
-                                  aria-current="page">Home
-                            </Link>
+                            <NavLink :href="route('home')" :active="$page.component === 'Home'">
+                                Home
+                            </NavLink>
 
-                            <a href="#"
-                               class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md font-medium">Team</a>
+                            <NavLink :href="route('offer')" :active="$page.component === 'Offer'">
+                                Oferta
+                            </NavLink>
 
-                            <a href="#"
-                               class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md font-medium">FAQ</a>
+                            <NavLink :href="route('faq')" :active="$page.component === 'Faq'">
+                                FAQ
+                            </NavLink>
 
                             <div class="relative" ref="targetNavLinks">
                                 <!-- Item active: "text-gray-900", Item inactive: "text-gray-500" -->
@@ -128,7 +130,7 @@ const handleToggleProfile = () => {
                                     To: "opacity-0 translate-y-1"
                                 -->
                                 <div v-show="toggleOnNavLinks"
-                                    class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0">
+                                     class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0">
                                     <div class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                                         <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
                                             <a href="#" class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50">
@@ -196,7 +198,7 @@ const handleToggleProfile = () => {
                                             </a>
                                         </div>
                                     </div>
-                                </div >
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -260,9 +262,13 @@ const handleToggleProfile = () => {
                                        tabindex="-1"
                                        id="user-menu-item-0">Your Profile</a>
 
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700">Settings</a>
+                                    <Link :href="route('admin.dashboard')"
+                                          class="block px-4 py-2 text-sm text-gray-700">Dashboard
+                                    </Link>
 
-                                    <Link :href="route('logout')" method="POST" class="block px-4 py-2 text-sm text-gray-700">Wyloguj się</Link>
+                                    <Link :href="route('logout')" method="POST"
+                                          class="block px-4 py-2 text-sm text-gray-700">Wyloguj się
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -276,17 +282,18 @@ const handleToggleProfile = () => {
              class="sm:hidden">
             <div class="space-y-1 px-2 pt-2 pb-3">
                 <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                <a href="#" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
-                   aria-current="page">Dashboard</a>
 
-                <a href="#"
-                   class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Team</a>
+                <NavLink class="block" :href="route('home')" :active="$page.component === 'Home'">
+                    Home
+                </NavLink>
 
-                <a href="#"
-                   class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">FAQ</a>
+                <NavLink class="block" :href="route('offer')" :active="$page.component === 'Offer'">
+                    Oferta
+                </NavLink>
 
-                <a href="#"
-                   class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Calendar</a>
+                <NavLink class="block" :href="route('faq')" :active="$page.component === 'Faq'">
+                    FAQ
+                </NavLink>
             </div>
             <div v-if="!loggedIn" class="space-y-6 py-6 px-5 border-t border-gray-700">
                 <div>
@@ -332,8 +339,9 @@ const handleToggleProfile = () => {
                         Settings</a>
 
                     <Link :href="route('logout')" method="POST"
-                       class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
-                        Wyloguj się</Link>
+                          class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
+                        Wyloguj się
+                    </Link>
                 </div>
             </div>
         </div>
