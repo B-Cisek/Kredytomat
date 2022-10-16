@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $users = User::paginate(10);
 
-        return Inertia::render('Users/Index',[
+        return Inertia::render('Admin/Users/Index', [
             'users' => $users
         ]);
     }
@@ -32,13 +32,13 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Admin/Users/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreUserRequest  $request
+     * @param StoreUserRequest $request
      * @return RedirectResponse
      */
     public function store(StoreUserRequest $request)
@@ -53,25 +53,14 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  User  $user
-     * @return \Inertia\Response
-     */
-    public function show(User $user)
-    {
-        return 1;
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
-     * @param  User  $user
+     * @param User $user
      * @return \Inertia\Response
      */
     public function edit(User $user)
     {
-        return Inertia::render('Users/Edit',[
+        return Inertia::render('Admin/Users/Edit', [
             'user' => $user
         ]);
     }
@@ -79,14 +68,19 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\User\UpdateUserRequest  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @param \App\Http\Requests\User\UpdateUserRequest $request
+     * @param \App\Models\User $user
+     * @return RedirectResponse
      */
     public function update(UpdateUserRequest $request, User $user)
     {
         $attributes = $request->validated();
 
+        $user->update($attributes);
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('message', 'Użytkownik zaktualizowany!');
     }
 
     /**
@@ -99,6 +93,6 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with('message', 'Użytkownik usunięty');
+            ->with('message', 'Użytkownik usunięty!');
     }
 }

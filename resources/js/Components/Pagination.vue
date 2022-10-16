@@ -4,8 +4,10 @@ import {Link} from "@inertiajs/inertia-vue3";
 
 
 defineProps({
-    users: Object
+    items: Object
 })
+
+
 
 
 </script>
@@ -22,11 +24,11 @@ defineProps({
             <div>
                 <p class="text-sm text-gray-700">
                     Strony od
-                    <span class="font-medium">{{ users.from }}</span>
+                    <span class="font-medium">{{ items.from ? items.from : 1 }}</span>
                     do
-                    <span class="font-medium">{{ users.to }}</span>
+                    <span class="font-medium">{{ items.to ? items.to : 1 }}</span>
                     z
-                    <span class="font-medium">{{ users.total }}</span>
+                    <span class="font-medium">{{ items.total ? items.total : 1 }}</span>
                 </p>
             </div>
             <div>
@@ -45,7 +47,7 @@ defineProps({
 <!--                    </Link>-->
                     <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
                     <Link
-                        v-for="link in users.links"
+                        v-for="link in items.links"
                         :href="link.url"
                         v-html="link.label"
                         aria-current="page"

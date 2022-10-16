@@ -1,29 +1,33 @@
 <script setup>
 import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue"
+import {computed, defineProps} from "vue"
+import {Link} from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue"
 import TextInput from "@/Components/TextInput.vue"
 import InputError from "@/Components/InputError.vue"
-import {useForm} from "@inertiajs/inertia-vue3";
+import {useForm, usePage} from "@inertiajs/inertia-vue3"
+import PrimaryButton from "@/Components/PrimaryButton.vue"
 
-const props = defineProps({
-    user: Object
-})
-
-console.log(props.user.created_at)
+const auth = computed(() => usePage().props.value.auth)
 
 const form = useForm({
-    name: props.user.name,
-    email: props.user.email,
+    name: '',
+    email: '',
     password: ''
 });
+
+const store = () => {
+    form.post(route('admin.users.store'))
+}
+
 </script>
+
 <template>
     <AdminDashboardLayout>
         <template #header>
-            Użytkownicy / <span class="font-light">{{ user.name }}</span>
+            <Link :href="route('admin.users.index')" class="hover:text-indigo-700">Użytkownicy / </Link><span class="font-light">nowy użytkownik</span>
         </template>
-
-        <template #default>
+        <div class="w-full flex justify-center">
             <form @submit.prevent="store">
                 <div>
                     <InputLabel
@@ -72,6 +76,7 @@ const form = useForm({
                 </div>
                 <PrimaryButton class="mt-3" type="submit ">Dodaj</PrimaryButton>
             </form>
-        </template>
+        </div>
     </AdminDashboardLayout>
 </template>
+

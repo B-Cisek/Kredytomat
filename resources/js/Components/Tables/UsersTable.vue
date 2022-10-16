@@ -1,18 +1,11 @@
 <script setup>
 import {defineProps} from "vue"
-import {Inertia} from "@inertiajs/inertia"
 import RowLink from "@/Components/RowLink.vue"
 
 
 defineProps({
     users: Object
 })
-
-const destroy = (id) => {
-    if (confirm('ok?')) {
-        Inertia.delete(route('admin.users.destroy', id))
-    }
-}
 
 </script>
 
@@ -28,16 +21,16 @@ const destroy = (id) => {
                         <label for="checkbox-all-search" class="sr-only">checkbox</label>
                     </div>
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Nazwa użytkownika
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Email
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Konto utworzone
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Ostatnia zmiana
                 </th>
                 <th scope="col" class="py-3 px-6">
@@ -57,24 +50,16 @@ const destroy = (id) => {
                     </div>
                 </td>
                 <td class="font-medium text-gray-900 whitespace-nowrap">
-                    <RowLink :href="route('admin.users.edit', user.id)">
-                        {{ user.name }}
-                    </RowLink>
+                    {{ user.name }}
                 </td>
                 <td>
-                    <RowLink :href="route('admin.users.edit', user.id)">
-                        {{ user.email }}
-                    </RowLink>
+                    {{ user.email }}
                 </td>
                 <td>
-                    <RowLink :href="route('admin.users.edit', user.id)">
-                        {{ user.created_at }}
-                    </RowLink>
+                    {{ user.created_at }}
                 </td>
                 <td>
-                    <RowLink :href="route('admin.users.edit', user.id)">
-                        {{ user.updated_at }}
-                    </RowLink>
+                    {{ user.updated_at }}
                 </td>
                 <td class="flex items-center space-x-3">
                     <RowLink :href="route('admin.users.edit', user.id)">

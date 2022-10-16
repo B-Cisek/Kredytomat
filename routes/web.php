@@ -27,12 +27,12 @@ Route::get('/faq', function () {
 
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except(['show']);
     Route::resource('credits', CreditController::class);
-    Route::resource('banks', BankController::class);
+    Route::resource('banks', BankController::class)->except(['show']);
 
     Route::get('dashboard', function () {
-        return Inertia::render('AdminDashboard');
+        return Inertia::render('Admin/AdminDashboard');
     })->name('dashboard');
 });
 

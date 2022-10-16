@@ -4,7 +4,8 @@ import {defineProps} from "vue"
 import Pagination from "@/Components/Pagination.vue"
 import UsersTable from "@/Components/Tables/UsersTable.vue"
 import NavLink from "@/Components/NavLink.vue"
-import Alert from "@/Components/Alert.vue";
+import Alert from "@/Components/Alert.vue"
+import {Head} from "@inertiajs/inertia-vue3"
 
 defineProps({
     users: Object
@@ -13,6 +14,8 @@ defineProps({
 </script>
 
 <template>
+    <Head title="Użytkownicy"/>
+
     <AdminDashboardLayout>
 
         <template #header>
@@ -21,18 +24,17 @@ defineProps({
 
         <template #default>
             <section class="flex justify-end flex-wrap items-center mb-3">
-                    <Alert message="success" v-if="$page.props.flash.message">
-                        {{ $page.props.flash.message }}
-                    </Alert>
-                    <!--     FILTERS      -->
-                    <NavLink :href="route('admin.users.create')" class="bg-green-600 text-white">
-                        Dodaj użytkownika
-                    </NavLink>
+                <Alert type="info" v-if="$page.props.flash.message">
+                    {{ $page.props.flash.message }}
+                </Alert>
+                <!--     FILTERS      -->
+                <NavLink :href="route('admin.users.create')" class="bg-green-600 text-white">
+                    Dodaj użytkownika
+                </NavLink>
             </section>
-            <!--        <Message v-if="$page.props">{{ $page.props }}</Message>-->
             <section>
                 <UsersTable :users="users"/>
-                <Pagination :users="users" class="mt-3 rounded-lg"/>
+                <Pagination :items="users" class="mt-3 rounded-lg"/>
             </section>
         </template>
 

@@ -13,7 +13,7 @@ class StoreBankRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class StoreBankRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'bankName' => ['required'],
+            'logo' => ['required','image','mimes:jpeg,jpg,png,gif,svg','max:2048']
         ];
     }
 }

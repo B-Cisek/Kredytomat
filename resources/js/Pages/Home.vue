@@ -4,15 +4,12 @@ import Cta from "@/Components/Cta.vue";
 import Layout from "@/Layouts/Layout.vue";
 import CreditCard from "@/Components/CreditCard.vue";
 
-defineProps({
-    loggedIn: Boolean
-})
 </script>
 
 
 <template>
     <Head title="Home" />
-    <Layout :logged-in="loggedIn">
+    <Layout>
         <template #header>
             <Cta/>
         </template>

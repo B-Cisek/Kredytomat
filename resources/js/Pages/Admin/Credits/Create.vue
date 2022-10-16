@@ -1,0 +1,174 @@
+<script setup>
+import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import {Link, useForm} from "@inertiajs/inertia-vue3";
+import InputLabel from "@/Components/InputLabel.vue"
+import TextInput from "@/Components/TextInput.vue"
+import InputError from "@/Components/InputError.vue"
+import PrimaryButton from "@/Components/PrimaryButton.vue"
+
+const form = useForm({
+    credit_name: '',
+    amount_from: '',
+    amount_to: '',
+    period_from: '',
+    period_to: '',
+    margin: '',
+    commission: '',
+    wibor: '',
+    bank_id: ''
+})
+
+defineProps({
+    banks: Object
+})
+
+
+
+const store = () => {
+    form.post(route('admin.credits.store'))
+}
+</script>
+
+<template>
+    <AdminDashboardLayout>
+        <template #header>
+            <Link :href="route('admin.credits.index')" class="hover:text-indigo-700">Kredyty /</Link>
+            <span class="font-light"> nowy kredyt</span>
+        </template>
+        <template #default>
+            <div class="w-full flex justify-center">
+                <form @submit.prevent="store">
+                    <div>
+                        <InputLabel
+                            for="credit_name"
+                            value="Nazwa kredytu"/>
+                        <TextInput
+                            id="credit_name"
+                            type="text"
+                            class="mt-1 block w-full"
+                            v-model="form.credit_name"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.credit_name"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="amount_from"
+                            value="Kwota od"/>
+                        <TextInput
+                            id="amount_from"
+                            type="number"
+                            class="mt-1 block w-full"
+                            v-model="form.amount_from"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.amount_from"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="amount_to"
+                            value="Kwota do"/>
+                        <TextInput
+                            id="amount_to"
+                            type="number"
+                            class="mt-1 block w-full"
+                            v-model="form.amount_to"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.amount_to"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="period_from"
+                            value="Okres od"/>
+                        <TextInput
+                            id="period_from"
+                            type="number"
+                            class="mt-1 block w-full"
+                            v-model="form.period_from"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.period_from"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="period_to"
+                            value="Okres do"/>
+                        <TextInput
+                            id="period_to"
+                            type="number"
+                            class="mt-1 block w-full"
+                            v-model="form.period_to"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.period_to"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="margin"
+                            value="Marża"/>
+                        <TextInput
+                            id="margin"
+                            type="number"
+                            step="0.01"
+                            class="mt-1 block w-full"
+                            v-model="form.margin"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.margin"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="commission"
+                            value="Prowizja"/>
+                        <TextInput
+                            id="commission"
+                            type="number"
+                            step="0.01"
+                            class="mt-1 block w-full"
+                            v-model="form.commission"
+                            required/>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.commission"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="wibor"
+                            value="WIBOR"/>
+                        <select v-model="form.wibor" name="wibor" id="wibor">
+                            <option selected disabled value="">Wybierz WIBOR</option>
+                            <option value="1M">1M</option>
+                            <option value="3M">3M</option>
+                            <option value="6M">6M</option>
+                        </select>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.wibor"/>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="bank"
+                            value="Bank"/>
+                        <select v-model="form.bank_id">
+                            <option selected disabled value="">Wybierz bank</option>
+                            <option v-for="bank in banks" :value="bank.id">
+                                {{ bank.bank_name }}
+                            </option>
+                        </select>
+                        <InputError
+                            class="mt-2"
+                            :message="form.errors.bank_id"/>
+                    </div>
+                    <PrimaryButton class="mt-3" type="submit ">Dodaj</PrimaryButton>
+                </form>
+            </div>
+        </template>
+    </AdminDashboardLayout>
+</template>

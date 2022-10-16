@@ -1,6 +1,12 @@
 <script setup>
+import {Link} from "@inertiajs/inertia-vue3";
+
+defineProps({
+    credits: Object
+})
 
 </script>
+
 <template>
     <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500 ">
@@ -13,29 +19,29 @@
                         <label for="checkbox-all-search" class="sr-only">checkbox</label>
                     </div>
                 </th>
-                <th scope="col" class="py-3 px-6">
-                    Bank
-                </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Nazwa kredytu
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
+                    Bank
+                </th>
+                <th scope="col" class="py-3">
                     Kwota
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Okres
                 </th>
-                <th scope="col" class="py-3 px-6">
-                    Prowizja
-                </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     Marża
                 </th>
-                <th scope="col" class="py-3 px-6">
-                    Oprocentowanie
+                <th scope="col" class="py-3">
+                    Prowizja
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3">
                     WIBOR
+                </th>
+                <th scope="col" class="py-3">
+                    Ostatnia zmiana
                 </th>
                 <th scope="col" class="py-3 px-6">
                     Akcje
@@ -43,112 +49,47 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="bg-white border-b">
+            <tr v-for="credit in credits.data"
+                :key="credit.id"
+                class="bg-white border-b hover:bg-gray-50">
                 <td class="p-4 w-4">
                     <div class="flex items-center">
-                        <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500">
+                        <input id="checkbox-table-search-1" type="checkbox"
+                               class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500">
                         <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                     </div>
                 </td>
-                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
-                    mBank
-                </th>
-                <td class="py-4 px-6">
-                    Fajny kredyt na początek
+                <td class="font-medium text-gray-900 whitespace-nowrap">
+                    {{ credit.credit_name }}
                 </td>
-                <td class="py-4 px-6">
-                    50 000 - 1 000 000
+                <td>
+                    {{ credit.bank.bank_name }}
                 </td>
-                <td class="py-4 px-6">
-                    12 - 46
+                <td>
+                    {{ credit.amount_from }} - {{ credit.amount_to }}
                 </td>
-                <td class="py-4 px-6">
-                    0,00%
+                <td>
+                    {{ credit.period_from }} - {{ credit.period_to }}
                 </td>
-                <td class="py-4 px-6">
-                    0,00%
+                <td>
+                    {{ credit.margin }}
                 </td>
-                <td class="py-4 px-6">
-                    9,00%
+                <td>
+                    {{ credit.commission }}
                 </td>
-                <td class="py-4 px-6">
-                    7,77%
+                <td>
+                    {{ credit.wibor }}
                 </td>
-                <td class="flex items-center py-4 px-6 space-x-3">
-                    <a href="#" class="font-medium text-blue-600 hover:underline">Edytuj</a>
-                    <a href="#" class="font-medium text-red-600 hover:underline">Usuń</a>
+                <td>
+                    {{ credit.updated_at }}
                 </td>
-            </tr>
-            <tr class="bg-white border-b">
-                <td class="p-4 w-4">
-                    <div class="flex items-center">
-                        <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500">
-                        <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
-                    </div>
-                </td>
-                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
-                    mBank
-                </th>
-                <td class="py-4 px-6">
-                    Fajny kredyt na początek
-                </td>
-                <td class="py-4 px-6">
-                    50 000 - 1 000 000
-                </td>
-                <td class="py-4 px-6">
-                    12 - 46
-                </td>
-                <td class="py-4 px-6">
-                    0,00%
-                </td>
-                <td class="py-4 px-6">
-                    0,00%
-                </td>
-                <td class="py-4 px-6">
-                    9,00%
-                </td>
-                <td class="py-4 px-6">
-                    7,77%
-                </td>
-                <td class="flex items-center py-4 px-6 space-x-3">
-                    <a href="#" class="font-medium text-blue-600 hover:underline">Edytuj</a>
-                    <a href="#" class="font-medium text-red-600 hover:underline">Usuń</a>
-                </td>
-            </tr>
-            <tr class="bg-white border-b">
-                <td class="p-4 w-4">
-                    <div class="flex items-center">
-                        <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500">
-                        <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
-                    </div>
-                </td>
-                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap ">
-                    mBank
-                </th>
-                <td class="py-4 px-6">
-                    Fajny kredyt na początek
-                </td>
-                <td class="py-4 px-6">
-                    50 000 - 1 000 000
-                </td>
-                <td class="py-4 px-6">
-                    12 - 46
-                </td>
-                <td class="py-4 px-6">
-                    0,00%
-                </td>
-                <td class="py-4 px-6">
-                    0,00%
-                </td>
-                <td class="py-4 px-6">
-                    9,00%
-                </td>
-                <td class="py-4 px-6">
-                    7,77%
-                </td>
-                <td class="flex items-center py-4 px-6 space-x-3">
-                    <a href="#" class="font-medium text-blue-600 hover:underline">Edytuj</a>
-                    <a href="#" class="font-medium text-red-600 hover:underline">Usuń</a>
+                <td class="flex items-center space-x-3">
+                    <Link :href="route('admin.credits.edit', credit.id)">
+                        <svg class="block w-6 h-6 fill-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <polygon
+                                points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"/>
+                        </svg>
+                    </Link>
                 </td>
             </tr>
             </tbody>

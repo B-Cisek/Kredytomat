@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('credits', function (Blueprint $table) {
             $table->id();
             $table->string('credit_name');
-            $table->integer('amount_form');
+            $table->integer('amount_from');
             $table->integer('amount_to');
             $table->integer('period_from');
             $table->integer('period_to');

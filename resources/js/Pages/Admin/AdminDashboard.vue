@@ -1,12 +1,8 @@
 <script setup>
-import {Head} from '@inertiajs/inertia-vue3';
-import {defineProps} from "vue";
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import Tile from "@/Components/Tile.vue";
+import {Head} from '@inertiajs/inertia-vue3'
+import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue"
+import Tile from "@/Components/Tile.vue"
 
-defineProps({
-    loggedIn: Boolean
-})
 </script>
 
 <template>
