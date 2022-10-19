@@ -49,7 +49,10 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with('message', 'Użytkownik poprawnie dodany!');
+            ->with([
+                'alert_type' => 'success',
+                'alert_message' => 'Użytkownik poprawnie dodany!'
+            ]);
     }
 
     /**
@@ -80,7 +83,10 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with('message', 'Użytkownik zaktualizowany!');
+            ->with([
+                'alert_type' => 'info',
+                'alert_message' => 'Użytkownik zaktualizowany!'
+            ]);
     }
 
     /**
@@ -93,6 +99,9 @@ class UserController extends Controller
 
         return redirect()
             ->route('admin.users.index')
-            ->with('message', 'Użytkownik usunięty!');
+            ->with([
+                'alert_type' => 'danger',
+                'alert_message' => 'Użytkownik usunięty!'
+            ]);
     }
 }

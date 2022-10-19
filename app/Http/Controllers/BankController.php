@@ -19,8 +19,6 @@ class BankController extends Controller
             'banks' => $banks
         ]);
 
-
-
     }
 
     /**

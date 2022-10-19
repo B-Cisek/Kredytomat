@@ -40,7 +40,8 @@ class HandleInertiaRequests extends Middleware
                 'loggedIn' => \Illuminate\Support\Facades\Auth::check()
             ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message')
+                'alert_type' => fn () => $request->session()->get('alert_type'),
+                'alert_message' => fn () => $request->session()->get('alert_message'),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
