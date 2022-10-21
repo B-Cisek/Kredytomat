@@ -17,13 +17,13 @@ onMounted(() => {
 // Styles for different types of alert
 const types = {
   info:
-    "flex p-3 mr-3 text-sm text-blue-700 bg-blue-100 dark:bg-blue-200 dark:text-blue-800 rounded-lg",
+    "flex px-3 py-2 mr-3 text-blue-700 bg-blue-100 dark:bg-blue-200 dark:text-blue-800 rounded-lg",
   danger:
-    "flex p-3 mr-3 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800",
+    "flex px-3 py-2 mr-3 text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800",
   success:
-    "flex p-3 mr-3 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800",
+    "flex px-3 py-2 mr-3 text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800",
   warning:
-    "flex p-3 mr-3 text-sm text-yellow-700 bg-yellow-100 rounded-lg dark:bg-yellow-200 dark:text-yellow-800",
+    "flex px-3 py-2 mr-3 text-yellow-700 bg-yellow-100 rounded-lg dark:bg-yellow-200 dark:text-yellow-800",
 };
 </script>
 

@@ -6,24 +6,31 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const form = useForm({
-  credit_name: "",
-  amount_from: "",
-  amount_to: "",
-  period_from: "",
-  period_to: "",
-  margin: "",
-  commission: "",
-  wibor: "",
-  bank_id: "",
-});
-
-defineProps({
+const props = defineProps({
+  credit: Object,
   banks: Object,
 });
 
-const store = () => {
-  form.post(route("admin.credits.store"));
+const form = useForm({
+  credit_name: props.credit.credit_name,
+  amount_from: props.credit.amount_from,
+  amount_to: props.credit.amount_to,
+  period_from: props.credit.period_from,
+  period_to: props.credit.period_to,
+  margin: props.credit.margin,
+  commission: props.credit.commission,
+  wibor: props.credit.wibor,
+  bank_id: props.credit.bank_id,
+});
+
+const update = () => {
+  form.put(route("admin.credits.update", props.credit.id));
+};
+
+const destroy = (id) => {
+  if (confirm("Czy chcesz usunąć kredyt?")) {
+    form.delete(route("admin.credits.destroy", id));
+  }
 };
 </script>
 
@@ -36,17 +43,19 @@ const store = () => {
       <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
         >Kredyty /
       </Link>
-      <span class="font-light"> Nowy kredyt</span>
+      <span class="font-light">Edycja kredytu</span>
     </template>
     <template #default>
-      <div class="w-full flex justify-center bg-white p-5 shadow-md sm:rounded-lg">
-        <form @submit.prevent="store" class="w-full">
+      <div class="bg-white rounded-lg p-5 flex-col justify-between gap-3">
+        <h1 class="font-bold text-2xl mb-7">{{ credit.credit_name }}</h1>
+        <form @submit.prevent="update" class="w-full">
           <div>
             <InputLabel for="credit_name" value="Nazwa kredytu" />
             <TextInput
               id="credit_name"
               type="text"
               class="mt-1 block w-full"
+              model-value="form.credit_name"
               v-model="form.credit_name"
               required
             />
@@ -60,6 +69,7 @@ const store = () => {
                   id="amount_from"
                   type="number"
                   class="mt-1 block w-full"
+                  model-value="form.amount_from"
                   v-model="form.amount_from"
                   required
                 />
@@ -71,6 +81,7 @@ const store = () => {
                   id="amount_to"
                   type="number"
                   class="mt-1 block w-full"
+                  model-value="form.amount_to"
                   v-model="form.amount_to"
                   required
                 />
@@ -82,6 +93,7 @@ const store = () => {
                   id="period_from"
                   type="number"
                   class="mt-1 block w-full"
+                  model-value="form.period_from"
                   v-model="form.period_from"
                   required
                 />
@@ -93,6 +105,7 @@ const store = () => {
                   id="period_to"
                   type="number"
                   class="mt-1 block w-full"
+                  model-value="form.period_to"
                   v-model="form.period_to"
                   required
                 />
@@ -107,6 +120,7 @@ const store = () => {
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
+                  model-value="form.margin"
                   v-model="form.margin"
                   required
                 />
@@ -119,6 +133,7 @@ const store = () => {
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
+                  model-value="form.commission"
                   v-model="form.commission"
                   required
                 />
@@ -127,12 +142,12 @@ const store = () => {
               <div class="mt-3">
                 <InputLabel for="wibor" value="WIBOR" />
                 <select
+                  model-value="form.wibor"
                   v-model="form.wibor"
                   name="wibor"
                   id="wibor"
                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
                 >
-                  <option selected disabled value="">Wybierz WIBOR</option>
                   <option value="1M">1M</option>
                   <option value="3M">3M</option>
                   <option value="6M">6M</option>
@@ -142,10 +157,10 @@ const store = () => {
               <div class="mt-3">
                 <InputLabel for="bank" value="Bank" />
                 <select
+                  model-value="form.bank_id"
                   v-model="form.bank_id"
                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
                 >
-                  <option selected disabled value="">Wybierz bank</option>
                   <option v-for="bank in banks" :value="bank.id">
                     {{ bank.bank_name }}
                   </option>
@@ -154,7 +169,12 @@ const store = () => {
               </div>
             </div>
           </div>
-          <PrimaryButton class="mt-3 w-full" type="submit ">Dodaj</PrimaryButton>
+          <div class="flex mt-3 justify-between">
+            <PrimaryButton @click="destroy(credit.id)" type="button" class="bg-red-700"
+              >Usuń
+            </PrimaryButton>
+            <PrimaryButton type="submit ">Zmień</PrimaryButton>
+          </div>
         </form>
       </div>
     </template>

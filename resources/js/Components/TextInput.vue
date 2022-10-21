@@ -12,6 +12,11 @@ onMounted(() => {
     input.value.focus();
   }
 });
+
+const onError = () => {
+
+}
+
 </script>
 
 <template>

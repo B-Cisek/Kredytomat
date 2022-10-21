@@ -5,20 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Bank\StoreBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Models\Bank;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class BankController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Inertia\Response
+     */
     public function index()
     {
         $banks = Bank::paginate(10);
 
-         return Inertia::render('Admin/Banks/Index',[
+        return Inertia::render('Admin/Banks/Index', [
             'banks' => $banks
         ]);
-
     }
 
     /**
@@ -39,16 +42,19 @@ class BankController extends Controller
      */
     public function store(StoreBankRequest $request)
     {
-        $logo = $request->file('logo')?->store('logos','public');
+        $logo = $request->file('logo')?->store('logos', 'public');
 
         Bank::create([
-            'bank_name' => $request->bankName,
+            'bank_name' => $request->bank_name,
             'logo_path' => $logo
         ]);
 
         return redirect()
             ->route('admin.banks.index')
-            ->with('message', 'Bank poprawnie dodany!');
+            ->with([
+                'alert_type' => 'success',
+                'alert_message' => 'Bank dodany poprawnie!'
+            ]);
     }
 
 
@@ -60,7 +66,7 @@ class BankController extends Controller
      */
     public function edit(Bank $bank)
     {
-        return Inertia::render('Admin/Banks/Edit',[
+        return Inertia::render('Admin/Banks/Edit', [
             'bank' => $bank
         ]);
     }
@@ -74,17 +80,26 @@ class BankController extends Controller
      */
     public function update(UpdateBankRequest $request, Bank $bank)
     {
-        dd($request->toArray());
-
-        // todo update image
-
         $attributes = $request->validated();
+
+        if ($request->logo) {
+            // Delete old logo
+            $pathToLogo = str_replace('http://localhost/storage/', '', $bank->logo_path);
+            Storage::disk('public')->delete($pathToLogo);
+
+            // Save new logo
+            $attributes['logo_path'] = $request->file('logo')->store('logos', 'public');
+            $bank->update($attributes);
+        }
 
         $bank->update($attributes);
 
         return redirect()
             ->route('admin.banks.index')
-            ->with('message', 'Bank zaktualizowany!');
+            ->with([
+                'alert_type' => 'info',
+                'alert_message' => 'Bank zaktualizowany!'
+            ]);
     }
 
     /**
@@ -103,6 +118,9 @@ class BankController extends Controller
 
         return redirect()
             ->route('admin.banks.index')
-            ->with('message', 'Bank usunięty!');
+            ->with([
+                'alert_type' => 'danger',
+                'alert_message' => 'Bank usunięty!'
+            ]);
     }
 }

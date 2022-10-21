@@ -71,7 +71,10 @@ class CreditController extends Controller
      */
     public function edit(Credit $credit)
     {
-        //
+        return Inertia::render('Admin/Credits/Edit', [
+            'credit' => $credit,
+            'banks' => Bank::all()
+        ]);
     }
 
     /**
@@ -83,7 +86,16 @@ class CreditController extends Controller
      */
     public function update(UpdateCreditRequest $request, Credit $credit)
     {
-        //
+        $attributes = $request->validated();
+
+        $credit->update($attributes);
+
+        return redirect()
+            ->route('admin.credits.index')
+            ->with([
+                'alert_type' => 'info',
+                'alert_message' => 'Kredyt zaktualizowany!'
+            ]);
     }
 
     /**
@@ -94,6 +106,13 @@ class CreditController extends Controller
      */
     public function destroy(Credit $credit)
     {
-        //
+        $credit->delete();
+
+        return redirect()
+        ->route('admin.credits.index')
+        ->with([
+            'alert_type' => 'danger',
+            'alert_message' => 'Kredyt usunięty!'
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Bank;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBankRequest extends FormRequest
@@ -24,8 +25,17 @@ class StoreBankRequest extends FormRequest
     public function rules()
     {
         return [
-            'bankName' => ['required'],
-            'logo' => ['required','image','mimes:jpeg,jpg,png,gif,svg','max:2048']
+            'bank_name' => [
+                'required',
+                'min:3',
+                Rule::unique('banks', 'bank_name')
+            ],
+            'logo' => [
+                'required',
+                'image',
+                'mimes:jpeg,jpg,png,gif,svg',
+                'max:1024'
+            ]
         ];
     }
 }

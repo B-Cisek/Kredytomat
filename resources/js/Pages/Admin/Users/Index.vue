@@ -5,7 +5,7 @@ import Pagination from "@/Components/Pagination.vue";
 import UsersTable from "@/Components/Tables/UsersTable.vue";
 import NavLink from "@/Components/NavLink.vue";
 import Alert from "@/Components/Alert.vue";
-import { Head } from "@inertiajs/inertia-vue3";
+import { Head, Link } from "@inertiajs/inertia-vue3";
 
 defineProps({
   users: Object,
@@ -16,7 +16,12 @@ defineProps({
   <Head title="Użytkownicy" />
 
   <AdminDashboardLayout>
-    <template #header> Użytkownicy </template>
+    <template #header>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
+        >Dashboard /</Link
+      >
+      Użytkownicy
+    </template>
 
     <template #default>
       <section class="flex justify-end flex-wrap items-center mb-3">

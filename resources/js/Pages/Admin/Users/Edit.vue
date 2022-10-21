@@ -30,9 +30,13 @@ const update = () => {
 // TODO: Send link to reset password
 const resetPassword = () => {};
 </script>
+
 <template>
   <AdminDashboardLayout>
     <template #header>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
+        >Dashboard /
+      </Link>
       <Link :href="route('admin.users.index')" class="hover:text-indigo-700"
         >Użytkownicy /
       </Link>
@@ -40,39 +44,57 @@ const resetPassword = () => {};
     </template>
 
     <template #default>
-      <div class="bg-white rounded-lg p-5">
-        <h1 class="font-bold text-2xl text-center">{{ user.name }}</h1>
-        <div class="flex justify-between font-medium">
-          <div>
-            <p>Stworzony:</p>
-            <h1>{{ user.created_at }}</h1>
-          </div>
-          <div>
-            <p>Ostatnia zmiana:</p>
-            <h1>{{ user.updated_at }}</h1>
+      <div class="w-full bg-white p-5 shadow-md sm:rounded-lg">
+        <div>
+          <h1 class="font-bold text-2xl">{{ user.name }}</h1>
+          <div class="flex-col font-medium mt-5">
+            <div class="mb-3">
+              <p class="font-normal">Stworzony:</p>
+              <h1 class="font-semibold">{{ user.created_at }}</h1>
+            </div>
+            <div>
+              <p class="font-normal">Ostatnia zmiana:</p>
+              <h1 class="font-semibold">{{ user.updated_at }}</h1>
+            </div>
           </div>
         </div>
         <form @submit.prevent="update">
-          <div class="flex justify-center gap-5 mt-8">
-            <div>
-              <InputLabel for="name" value="Nazwa użytkownika" />
+          <div class="flex-col mt-8">
+            <div class="mb-4">
+              <InputLabel
+                for="name"
+                value="Nazwa użytkownika"
+                :class="form.errors.name ? 'text-red-700' : ''"
+              />
               <TextInput
                 id="name"
                 type="text"
                 model-value="form.name"
-                class="mt-1 block w-full"
                 v-model="form.name"
                 required
                 autocomplete="name"
+                :class="
+                  form.errors.name
+                    ? 'mt-1 block w-full border-red-700'
+                    : 'mt-1 block w-full'
+                "
               />
               <InputError class="mt-2" :message="form.errors.name" />
             </div>
             <div>
-              <InputLabel for="email" value="Email" />
+              <InputLabel
+                for="email"
+                value="Email"
+                :class="form.errors.email ? 'text-red-700' : ''"
+              />
               <TextInput
                 id="email"
                 type="email"
-                class="mt-1 block w-full"
+                :class="
+                  form.errors.email
+                    ? 'mt-1 block w-full border-red-700'
+                    : 'mt-1 block w-full'
+                "
                 v-model="form.email"
                 required
                 autocomplete="email"
@@ -81,20 +103,20 @@ const resetPassword = () => {};
             </div>
           </div>
           <div class="flex mt-4 justify-between">
+            <PrimaryButton type="submit ">Zmień</PrimaryButton>
             <div>
-              <PrimaryButton
-                @click="destroy(user.id)"
-                type="button"
-                class="bg-red-700 mr-2"
-                >Usuń
-              </PrimaryButton>
               <Link
-                class="inline-flex items-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150"
+                class="inline-flex items-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150"
               >
                 Resetuj hasło
               </Link>
+              <PrimaryButton
+                @click="destroy(user.id)"
+                type="button"
+                class="bg-red-700 ml-2"
+                >Usuń
+              </PrimaryButton>
             </div>
-            <PrimaryButton type="submit ">Zmień</PrimaryButton>
           </div>
         </form>
       </div>

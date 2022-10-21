@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Credit;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCreditRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateCreditRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,15 @@ class UpdateCreditRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'credit_name' => ['required'],
+            'amount_from' => ['required'],
+            'amount_to' => ['required'],
+            'period_from' => ['required'],
+            'period_to' => ['required'],
+            'margin' => ['required'],
+            'commission' => ['required'],
+            'wibor' => ['required'],
+            'bank_id' => ['required', Rule::exists('banks','id')]
         ];
     }
 }
