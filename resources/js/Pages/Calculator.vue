@@ -1,4 +1,5 @@
 <script setup>
+import InstallmentCalculator from "@/Components/InstallmentCalculator.vue";
 import Layout from "@/Layouts/Layout.vue";
 </script>
 
@@ -6,11 +7,7 @@ import Layout from "@/Layouts/Layout.vue";
   <Layout>
     <template #header> Kalkulator raty kredytu </template>
     <template #default>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, nam maxime
-        molestias omnis, in aliquam quasi repudiandae debitis natus deserunt, fuga dolorem
-        sequi aliquid eveniet. A cum consequatur reiciendis enim.
-      </p>
+      <InstallmentCalculator />
     </template>
   </Layout>
 </template>
