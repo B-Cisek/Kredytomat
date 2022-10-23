@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 
@@ -37,6 +38,12 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
+                'loggedIn' => \Illuminate\Support\Facades\Auth::check(),
+                'isAdmin' => (Auth::check() && Auth::user()->name === 'admin')
+            ],
+            'flash' => [
+                'alert_type' => fn () => $request->session()->get('alert_type'),
+                'alert_message' => fn () => $request->session()->get('alert_message'),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
