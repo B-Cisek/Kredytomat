@@ -18,7 +18,7 @@ class CreditController extends Controller
         $credits = Credit::with('bank')
             ->paginate(10);
 
-        return Inertia::render('Admin/Credits/Index',[
+        return Inertia::render('Admin/Credits/Index', [
             'credits' => $credits
         ]);
     }
@@ -52,16 +52,6 @@ class CreditController extends Controller
             ->with('message', 'Kredyt poprawnie dodany!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Credit $credit)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -109,10 +99,10 @@ class CreditController extends Controller
         $credit->delete();
 
         return redirect()
-        ->route('admin.credits.index')
-        ->with([
-            'alert_type' => 'danger',
-            'alert_message' => 'Kredyt usunięty!'
-        ]);
+            ->route('admin.credits.index')
+            ->with([
+                'alert_type' => 'danger',
+                'alert_message' => 'Kredyt usunięty!'
+            ]);
     }
 }
