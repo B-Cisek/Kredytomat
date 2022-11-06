@@ -31,6 +31,10 @@ Route::get('/kalkulator-raty', function () {
     return Inertia::render('Calculator');
 })->name('calculator.installment');
 
+Route::get('/kalkulator-rrso', function () {
+    return Inertia::render('CalculatorRrso');
+})->name('calculator.rrso');
+
 
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {

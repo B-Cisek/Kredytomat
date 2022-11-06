@@ -72,7 +72,7 @@ class CreditController extends Controller
      *
      * @param  \App\Http\Requests\Credit\UpdateCreditRequest  $request
      * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateCreditRequest $request, Credit $credit)
     {

@@ -91,7 +91,7 @@ const update = () => {
         </div>
         <div class="lg:w-2/4">
           <h2>Aktualne logo</h2>
-          <div class="border">
+          <div class="border w-[580px] h-[250px]">
             <img :src="props.bank.logo_path" alt="logo" class="max-w-full max-h-full" />
           </div>
         </div>
