@@ -7,6 +7,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -44,6 +45,8 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $attributes = $request->validated();
+
+        $attributes['password'] = Hash::make($attributes['password']);
 
         User::create($attributes);
 
