@@ -62,6 +62,7 @@ const handleToggleProfile = () => {
                           Menu open: "hidden", Menu closed: "block"
                         -->
             <svg
+              v-show="!toggleMobileMenuOn"
               class="block h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -84,7 +85,8 @@ const handleToggleProfile = () => {
                           Menu open: "block", Menu closed: "hidden"
                         -->
             <svg
-              class="hidden h-6 w-6"
+              v-show="toggleMobileMenuOn"
+              class="h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

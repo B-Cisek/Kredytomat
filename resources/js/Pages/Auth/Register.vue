@@ -25,7 +25,7 @@ const submit = () => {
   <GuestLayout>
     <Head title="Rejestracja" />
 
-    <h1 class="text-3xl font-bold text-center mb-10 tracking-wide">REJESTRACJA</h1>
+    <h1 class="text-3xl font-bold text-center mb-10 mt-3 tracking-wide">REJESTRACJA</h1>
 
     <form @submit.prevent="submit">
       <div>
@@ -81,21 +81,20 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
 
-      <div class="flex items-center justify-end mt-4">
-        <Link
-          :href="route('login')"
-          class="underline text-sm text-gray-600 hover:text-gray-900"
-        >
-          Masz już konto?
-        </Link>
-
+      <div class="mt-4 w-full">
         <PrimaryButton
-          class="ml-4"
+          class="w-full"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
         >
           Zarejestruj się
         </PrimaryButton>
+        <Link
+          :href="route('login')"
+          class="underline text-sm text-gray-600 hover:text-gray-900 block mt-4"
+        >
+          Masz już konto?
+        </Link>
       </div>
     </form>
   </GuestLayout>

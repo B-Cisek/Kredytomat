@@ -29,7 +29,7 @@ const submit = () => {
   <GuestLayout>
     <Head title="Logowanie" />
 
-    <h1 class="text-3xl font-bold text-center mb-10 tracking-wide">LOGOWANIE</h1>
+    <h1 class="text-3xl font-bold text-center mb-10 mt-3 tracking-wide">LOGOWANIE</h1>
 
     <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
       {{ status }}
@@ -70,22 +70,21 @@ const submit = () => {
         </label>
       </div>
 
-      <div class="flex items-center justify-end mt-4">
-        <Link
-          v-if="canResetPassword"
-          :href="route('password.request')"
-          class="underline text-sm text-gray-600 hover:text-gray-900"
-        >
-          Zapomniałeś hasła?
-        </Link>
-
+      <div class="mt-6 w-full">
         <PrimaryButton
-          class="ml-4"
+          class="w-full"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
         >
           Zaloguj się
         </PrimaryButton>
+        <Link
+          v-if="canResetPassword"
+          :href="route('password.request')"
+          class="underline text-sm text-gray-600 hover:text-gray-900 block mt-4"
+        >
+          Zapomniałeś hasła?
+        </Link>
       </div>
     </form>
   </GuestLayout>

@@ -27,6 +27,7 @@ const show = () => {
             type="number"
             class="text-center bg-white appearance-none border-2 border-indigo-700 rounded w-full py-2 px-4 text-black leading-tight focus:outline-none focus:bg-white font-semibold"
           />
+          <InputCalculator span-text="PLN" />
         </div>
       </div>
       <input

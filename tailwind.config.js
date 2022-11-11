@@ -23,7 +23,7 @@ module.exports = {
     ],
 
     daisyui: {
-        // styled: true,
+        styled: true,
         themes: [
             {
                 mytheme: {
