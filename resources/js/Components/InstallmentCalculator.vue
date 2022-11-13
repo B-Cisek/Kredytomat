@@ -1,9 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import { useInstallment } from "@/Composables/creditCalculation.js";
 import InputCalculator from "@/Components/InputCalculator.vue";
+import { useRataCalkowitaStala } from "@/Composables/useRataCalkowitaStala.js";
+import { useHarmonogram } from "@/Composables/useHarmonogram";
+import { useHelpers } from "@/Composables/useHelpers";
 
-const { interestRate } = useInstallment();
+const { rataStalaFormatted, rataStala } = useRataCalkowitaStala();
+const { harmonogram, kosztKredytu } = useHarmonogram();
+const { formatHarmonogram } = useHelpers();
 
 const amountOfCredit = ref(250000);
 const period = ref(25);
@@ -11,9 +15,12 @@ const rate = ref(7);
 const commission = ref(0);
 const installment = ref("");
 
+let test = harmonogram(300000, 25, 8.94);
+console.log(formatHarmonogram(test));
+
 const show = () => {
-  console.log(interestRate(amountOfCredit.value, period.value, rate.value));
-  installment.value = interestRate(amountOfCredit.value, period.value, rate.value);
+  console.log(rataStalaFormatted(amountOfCredit.value, period.value, rate.value));
+  installment.value = rataStalaFormatted(amountOfCredit.value, period.value, rate.value);
 };
 </script>
 <template>
@@ -27,7 +34,7 @@ const show = () => {
             type="number"
             class="text-center bg-white appearance-none border-2 border-indigo-700 rounded w-full py-2 px-4 text-black leading-tight focus:outline-none focus:bg-white font-semibold"
           />
-          <InputCalculator span-text="PLN" />
+          <!-- <InputCalculator span-text="PLN" /> -->
         </div>
       </div>
       <input
