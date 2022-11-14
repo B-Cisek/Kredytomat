@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('type');
             $table->decimal('value', 4,2);
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
     }
 

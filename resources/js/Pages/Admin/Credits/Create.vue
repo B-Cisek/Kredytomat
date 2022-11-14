@@ -1,6 +1,6 @@
 <script setup>
 import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import {Link, useForm} from "@inertiajs/inertia-vue3";
+import { Link, useForm } from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
@@ -14,12 +14,13 @@ const form = useForm({
   period_to: "",
   margin: "",
   commission: "",
-  wibor: "",
+  wibor_id: "",
   bank_id: "",
 });
 
 defineProps({
   banks: Object,
+  wibors: Object,
 });
 
 const store = () => {
@@ -31,10 +32,10 @@ const store = () => {
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-      >Dashboard /
+        >Dashboard /
       </Link>
       <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
-      >Kredyty /
+        >Kredyty /
       </Link>
       <span class="font-light"> Nowy kredyt</span>
     </template>
@@ -42,7 +43,7 @@ const store = () => {
       <div class="w-full flex justify-center bg-white p-5 shadow-md sm:rounded-lg">
         <form @submit.prevent="store" class="w-full">
           <div>
-            <InputLabel for="credit_name" value="Nazwa kredytu"/>
+            <InputLabel for="credit_name" value="Nazwa kredytu" />
             <TextInput
               id="credit_name"
               type="text"
@@ -50,12 +51,12 @@ const store = () => {
               v-model="form.credit_name"
               required
             />
-            <InputError class="mt-2" :message="form.errors.credit_name"/>
+            <InputError class="mt-2" :message="form.errors.credit_name" />
           </div>
           <div class="flex gap-5">
             <div class="w-2/4">
               <div class="mt-2">
-                <InputLabel for="amount_from" value="Kwota od"/>
+                <InputLabel for="amount_from" value="Kwota od" />
                 <TextInput
                   id="amount_from"
                   type="number"
@@ -63,10 +64,10 @@ const store = () => {
                   v-model="form.amount_from"
                   required
                 />
-                <InputError class="mt-2" :message="form.errors.amount_from"/>
+                <InputError class="mt-2" :message="form.errors.amount_from" />
               </div>
               <div class="mt-2">
-                <InputLabel for="amount_to" value="Kwota do"/>
+                <InputLabel for="amount_to" value="Kwota do" />
                 <TextInput
                   id="amount_to"
                   type="number"
@@ -74,16 +75,21 @@ const store = () => {
                   v-model="form.amount_to"
                   required
                 />
-                <InputError class="mt-2" :message="form.errors.amount_to"/>
+                <InputError class="mt-2" :message="form.errors.amount_to" />
               </div>
               <div class="mt-2">
-                <InputLabel for="period_from" value="Okres od"/>
-                <TextInput id="period_from" type="number" class="mt-1 block w-full" v-model="form.period_from" required
+                <InputLabel for="period_from" value="Okres od" />
+                <TextInput
+                  id="period_from"
+                  type="number"
+                  class="mt-1 block w-full"
+                  v-model="form.period_from"
+                  required
                 />
-                <InputError class="mt-2" :message="form.errors.period_from"/>
+                <InputError class="mt-2" :message="form.errors.period_from" />
               </div>
               <div class="mt-2">
-                <InputLabel for="period_to" value="Okres do"/>
+                <InputLabel for="period_to" value="Okres do" />
                 <TextInput
                   id="period_to"
                   type="number"
@@ -91,12 +97,12 @@ const store = () => {
                   v-model="form.period_to"
                   required
                 />
-                <InputError class="mt-2" :message="form.errors.period_to"/>
+                <InputError class="mt-2" :message="form.errors.period_to" />
               </div>
             </div>
             <div class="w-2/4">
               <div class="mt-2">
-                <InputLabel for="margin" value="Marża"/>
+                <InputLabel for="margin" value="Marża" />
                 <TextInput
                   id="margin"
                   type="number"
@@ -105,10 +111,10 @@ const store = () => {
                   v-model="form.margin"
                   required
                 />
-                <InputError class="mt-2" :message="form.errors.margin"/>
+                <InputError class="mt-2" :message="form.errors.margin" />
               </div>
               <div class="mt-2">
-                <InputLabel for="commission" value="Prowizja"/>
+                <InputLabel for="commission" value="Prowizja" />
                 <TextInput
                   id="commission"
                   type="number"
@@ -117,25 +123,23 @@ const store = () => {
                   v-model="form.commission"
                   required
                 />
-                <InputError class="mt-2" :message="form.errors.commission"/>
+                <InputError class="mt-2" :message="form.errors.commission" />
               </div>
               <div class="mt-3">
-                <InputLabel for="wibor" value="WIBOR"/>
+                <InputLabel for="wibor" value="WIBOR" />
                 <select
-                  v-model="form.wibor"
-                  name="wibor"
-                  id="wibor"
+                  v-model="form.wibor_id"
                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
                 >
                   <option selected disabled value="">Wybierz WIBOR</option>
-                  <option value="1M">1M</option>
-                  <option value="3M">3M</option>
-                  <option value="6M">6M</option>
+                  <option v-for="wibor in wibors" :value="wibor.id">
+                    {{ wibor.type }}
+                  </option>
                 </select>
-                <InputError class="mt-2" :message="form.errors.wibor"/>
+                <InputError class="mt-2" :message="form.errors.wibor_id" />
               </div>
               <div class="mt-3">
-                <InputLabel for="bank" value="Bank"/>
+                <InputLabel for="bank" value="Bank" />
                 <select
                   v-model="form.bank_id"
                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
@@ -145,7 +149,7 @@ const store = () => {
                     {{ bank.bank_name }}
                   </option>
                 </select>
-                <InputError class="mt-2" :message="form.errors.bank_id"/>
+                <InputError class="mt-2" :message="form.errors.bank_id" />
               </div>
             </div>
           </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WiborType;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\UserController;
@@ -51,8 +52,6 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    return Inertia::render('Index.vue', [
-        'loggedIn' => \Illuminate\Support\Facades\Auth::check()
-    ]);
+    return var_dump(WiborType::cases());
 });
 

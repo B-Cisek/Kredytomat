@@ -6,6 +6,7 @@ use App\Http\Requests\Credit\StoreCreditRequest;
 use App\Http\Requests\Credit\UpdateCreditRequest;
 use App\Models\Bank;
 use App\Models\Credit;
+use App\Models\Wibor;
 use Inertia\Inertia;
 
 class CreditController extends Controller
@@ -31,7 +32,8 @@ class CreditController extends Controller
     public function create()
     {
         return Inertia::render('Admin/Credits/Create', [
-            'banks' => Bank::all()
+            'banks' => Bank::all(),
+            'wibors' => Wibor::all()
         ]);
     }
 
@@ -44,6 +46,8 @@ class CreditController extends Controller
     public function store(StoreCreditRequest $request)
     {
         $attributes = $request->validated();
+
+        dd($attributes);
 
         Credit::create($attributes);
 
