@@ -22,8 +22,8 @@ return new class extends Migration
             $table->integer('period_to');
             $table->decimal('margin',4,2);
             $table->decimal('commission',4,2);
-            $table->enum('wibor',['1M','3M','6M']);
             $table->foreignId('bank_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('wibor_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
