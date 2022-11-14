@@ -52,6 +52,8 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    return var_dump(WiborType::cases());
+    $items = \RoachPHP\Roach::collectSpider(\App\Spiders\WiborSpider::class);
+
+    dd($items[0]);
 });
 

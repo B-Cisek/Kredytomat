@@ -2,6 +2,8 @@
 
 namespace App\Spiders;
 
+use App\Enums\WiborType;
+use App\Models\Wibor;
 use Generator;
 use RoachPHP\Downloader\Middleware\RequestDeduplicationMiddleware;
 use RoachPHP\Extensions\LoggerExtension;
@@ -13,7 +15,7 @@ use RoachPHP\Spider\ParseResult;
 class WiborSpider extends BasicSpider
 {
     public array $startUrls = [
-        //
+        'https://wibor.money.pl/'
     ];
 
     public array $downloaderMiddleware = [
@@ -25,7 +27,7 @@ class WiborSpider extends BasicSpider
     ];
 
     public array $itemProcessors = [
-        //
+        SaveWiborToDatabaseProcessor::class
     ];
 
     public array $extensions = [
@@ -42,6 +44,14 @@ class WiborSpider extends BasicSpider
      */
     public function parse(Response $response): Generator
     {
-        // todo...
+        $m1 = $response->filter('table > tbody > tr:nth-child(5) > td:nth-child(2)')->text();
+        $m3 = $response->filter('table > tbody > tr:nth-child(6) > td:nth-child(2)')->text();
+        $m6 = $response->filter('table > tbody > tr:nth-child(7) > td:nth-child(2)')->text();
+
+        yield $this->item([
+            'm1' => $m1,
+            'm3' => $m3,
+            'm6' => $m6,
+        ]);
     }
 }

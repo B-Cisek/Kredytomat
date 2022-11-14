@@ -17,7 +17,7 @@ class Wibor extends Model
         'type' => WiborType::class
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
 
     public function credits(): HasMany
