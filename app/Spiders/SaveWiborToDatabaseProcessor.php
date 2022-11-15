@@ -2,7 +2,6 @@
 
 namespace App\Spiders;
 
-use App\Enums\WiborType;
 use App\Models\Wibor;
 use RoachPHP\ItemPipeline\ItemInterface;
 use RoachPHP\ItemPipeline\Processors\ItemProcessorInterface;

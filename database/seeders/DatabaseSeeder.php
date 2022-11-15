@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
         \App\Models\User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@app.pl',
@@ -21,5 +22,6 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory(10)->create();
 
+        $this->call(WiborSeeder::class);
     }
 }
