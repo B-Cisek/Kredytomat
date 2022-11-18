@@ -24,9 +24,9 @@ Route::get('/oferta', function () {
 })->name('offer');
 
 
-Route::get('/faq', function () {
-    return Inertia::render('Faq');
-})->name('faq');
+Route::get('/o-kredycie', function () {
+    return Inertia::render('Okredycie');
+})->name('o-kredycie');
 
 Route::get('/kalkulator-raty', function () {
     return Inertia::render('Calculator');

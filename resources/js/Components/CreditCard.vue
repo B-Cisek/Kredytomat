@@ -7,6 +7,15 @@ const props = defineProps({
 
 const showed = ref([]);
 
+const add = (index) => {
+  if (showed.value.includes(index)) {
+    showed.value = showed.value.filter((v) => v !== index);
+  } else {
+    showed.value.push(index);
+  }
+  console.log(showed.value);
+};
+
 const formatToPLN = (amount) => {
   return new Intl.NumberFormat("pl-PL", {
     style: "currency",
@@ -22,7 +31,7 @@ const formatToPLN = (amount) => {
     :key="credit.id"
     class="bg-white rounded-lg p-2 mt-2 shadow-md"
   >
-    <div class="w-full border-b py-1">
+    <div class="w-full py-1">
       <span>{{ index + 1 }}.</span>
       <span class="ml-5">{{ credit.credit_name }}</span>
     </div>
@@ -64,7 +73,7 @@ const formatToPLN = (amount) => {
       </div>
     </div>
     <div class="w-full border-t py-1 flex justify-center">
-      <button class="flex justify-center items-center gap-1" @click="show(credit.id)">
+      <button class="flex justify-center items-center gap-1" @click="add(index)">
         <span>Szczegóły</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +89,7 @@ const formatToPLN = (amount) => {
         </svg>
       </button>
     </div>
-    <div class="bg-white" v-show="showMore == credit.id">
+    <div class="bg-white mt-7" v-show="showed.includes(index)">
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
         voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem

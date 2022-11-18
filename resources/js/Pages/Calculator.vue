@@ -1,4 +1,5 @@
 <script setup>
+import CreditSchedule from "@/Components/CreditSchedule.vue";
 import InstallmentCalculator from "@/Components/InstallmentCalculator.vue";
 import Layout from "@/Layouts/Layout.vue";
 </script>
@@ -7,7 +8,7 @@ import Layout from "@/Layouts/Layout.vue";
   <Layout>
     <template #header> Kalkulator raty kredytu </template>
     <template #default>
-      <InstallmentCalculator />
+      <InstallmentCalculator class="mb-10" />
     </template>
   </Layout>
 </template>

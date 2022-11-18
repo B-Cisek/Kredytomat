@@ -47,8 +47,6 @@ class CreditController extends Controller
     {
         $attributes = $request->validated();
 
-        dd($attributes);
-
         Credit::create($attributes);
 
         return redirect()

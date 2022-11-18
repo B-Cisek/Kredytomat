@@ -119,8 +119,11 @@ const handleToggleProfile = () => {
                 Oferta
               </NavLink>
 
-              <NavLink :href="route('faq')" :active="$page.component === 'Faq'">
-                FAQ
+              <NavLink
+                :href="route('o-kredycie')"
+                :active="$page.component === 'Okredycie'"
+              >
+                O Kredycie
               </NavLink>
 
               <div class="relative" ref="targetNavLinks">
@@ -427,8 +430,12 @@ const handleToggleProfile = () => {
           Oferta
         </NavLink>
 
-        <NavLink class="block" :href="route('faq')" :active="$page.component === 'Faq'">
-          FAQ
+        <NavLink
+          class="block"
+          :href="route('o-kredycie')"
+          :active="$page.component === 'Okredycie'"
+        >
+          O Kredycie
         </NavLink>
       </div>
       <div v-if="!loggedIn" class="space-y-6 py-6 px-5 border-t border-gray-700">
