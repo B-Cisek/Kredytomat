@@ -32,7 +32,7 @@ class UpdateCreditRequest extends FormRequest
             'period_to' => ['required'],
             'margin' => ['required'],
             'commission' => ['required'],
-            'wibor' => ['required'],
+            'wibor_id' => ['required'],
             'bank_id' => ['required', Rule::exists('banks','id')]
         ];
     }

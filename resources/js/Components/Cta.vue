@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <section class="bg-white rounded-lg shadow-xl border-gray-200 border">
+  <section class="rounded-lg shadow-2xl border border-gray-200 bg-white">
     <div
       class="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:flex lg:items-center lg:justify-between lg:py-16 lg:px-8"
     >

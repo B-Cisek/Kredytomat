@@ -36,6 +36,14 @@ Route::get('/kalkulator-rrso', function () {
     return Inertia::render('CalculatorRrso');
 })->name('calculator.rrso');
 
+Route::get('/kalkulator-rozszerzony', function () {
+    return Inertia::render('CalculatorExtended');
+})->name('calculator.extended');
+
+Route::get('/profil', function () {
+    return Inertia::render('MyProfil');
+})->name('profil');
+
 
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {

@@ -29,7 +29,7 @@ const formatToPLN = (amount) => {
   <section
     v-for="(credit, index) in credits"
     :key="credit.id"
-    class="bg-white rounded-lg p-2 mt-2 shadow-md"
+    class="rounded-lg p-2 mt-2 shadow-2xl border border-gray-200 bg-white"
   >
     <div class="w-full py-1">
       <span>{{ index + 1 }}.</span>

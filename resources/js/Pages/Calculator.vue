@@ -8,7 +8,7 @@ import Layout from "@/Layouts/Layout.vue";
   <Layout>
     <template #header> Kalkulator raty kredytu </template>
     <template #default>
-      <InstallmentCalculator class="mb-10" />
+      <InstallmentCalculator />
     </template>
   </Layout>
 </template>

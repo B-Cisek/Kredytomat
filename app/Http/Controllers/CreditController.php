@@ -65,7 +65,8 @@ class CreditController extends Controller
     {
         return Inertia::render('Admin/Credits/Edit', [
             'credit' => $credit,
-            'banks' => Bank::all()
+            'banks' => Bank::all(),
+            'wibors' => Wibor::all()
         ]);
     }
 
