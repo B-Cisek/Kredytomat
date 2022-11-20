@@ -9,10 +9,6 @@ const props = defineProps({
 <template>
   <Layout>
     <template #header> Oferta </template>
-    <template #default>
-      <h1 v-for="credit in credits" key="credit.id" class="font-semibold">
-        {{ credit.credit_name }}
-      </h1>
-    </template>
+    <template #default> dsad </template>
   </Layout>
 </template>

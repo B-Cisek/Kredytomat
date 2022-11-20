@@ -14,12 +14,13 @@ const form = useForm({
   period_to: "",
   margin: "",
   commission: "",
-  wibor: "",
+  wibor_id: "",
   bank_id: "",
 });
 
 defineProps({
   banks: Object,
+  wibors: Object,
 });
 
 const store = () => {
@@ -127,17 +128,15 @@ const store = () => {
               <div class="mt-3">
                 <InputLabel for="wibor" value="WIBOR" />
                 <select
-                  v-model="form.wibor"
-                  name="wibor"
-                  id="wibor"
+                  v-model="form.wibor_id"
                   class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
                 >
                   <option selected disabled value="">Wybierz WIBOR</option>
-                  <option value="1M">1M</option>
-                  <option value="3M">3M</option>
-                  <option value="6M">6M</option>
+                  <option v-for="wibor in wibors" :value="wibor.id">
+                    {{ wibor.type }}
+                  </option>
                 </select>
-                <InputError class="mt-2" :message="form.errors.wibor" />
+                <InputError class="mt-2" :message="form.errors.wibor_id" />
               </div>
               <div class="mt-3">
                 <InputLabel for="bank" value="Bank" />

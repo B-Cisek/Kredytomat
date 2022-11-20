@@ -21,6 +21,11 @@
     },
     "dependencies": {
         "@vueuse/core": "^9.3.0",
-        "daisyui": "^2.33.0"
+        "chart.js": "^3.9.1",
+        "daisyui": "^2.33.0",
+        "echarts": "^5.4.0",
+        "vue-chart-3": "^3.1.8",
+        "vue-chartjs": "^4.1.2",
+        "vue-echarts": "^6.2.3"
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\WiborType;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\UserController;
@@ -23,13 +24,25 @@ Route::get('/oferta', function () {
 })->name('offer');
 
 
-Route::get('/faq', function () {
-    return Inertia::render('Faq');
-})->name('faq');
+Route::get('/o-kredycie', function () {
+    return Inertia::render('Okredycie');
+})->name('o-kredycie');
 
 Route::get('/kalkulator-raty', function () {
     return Inertia::render('Calculator');
 })->name('calculator.installment');
+
+Route::get('/kalkulator-rrso', function () {
+    return Inertia::render('CalculatorRrso');
+})->name('calculator.rrso');
+
+Route::get('/kalkulator-rozszerzony', function () {
+    return Inertia::render('CalculatorExtended');
+})->name('calculator.extended');
+
+Route::get('/profil', function () {
+    return Inertia::render('MyProfil');
+})->name('profil');
 
 
 
@@ -47,8 +60,8 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    return Inertia::render('Index.vue', [
-        'loggedIn' => \Illuminate\Support\Facades\Auth::check()
-    ]);
+    $items = \RoachPHP\Roach::collectSpider(\App\Spiders\WiborSpider::class);
+
+    dd($items[0]);
 });
 

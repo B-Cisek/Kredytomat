@@ -23,8 +23,15 @@ module.exports = {
     ],
 
     daisyui: {
-        // styled: true,
-        // themes: true,
+        styled: true,
+        themes: [
+            {
+                mytheme: {
+                    "primary": "#4338CA",
+                    "secondary": "#D926A9",
+                }
+            }
+        ],
         base: false,
         // utils: true,
         // logs: true,

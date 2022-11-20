@@ -13,10 +13,7 @@ onMounted(() => {
   }
 });
 
-const onError = () => {
-
-}
-
+const onError = () => {};
 </script>
 
 <template>

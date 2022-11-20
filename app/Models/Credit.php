@@ -23,6 +23,14 @@ class Credit extends Model
     }
 
     /**
+     * @return BelongsTo
+     */
+    public function wibor(): BelongsTo
+    {
+        return $this->belongsTo(Wibor::class);
+    }
+
+    /**
      * @param DateTimeInterface $date
      * @return string
      */

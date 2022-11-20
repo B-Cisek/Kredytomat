@@ -6,6 +6,7 @@ use App\Http\Requests\Credit\StoreCreditRequest;
 use App\Http\Requests\Credit\UpdateCreditRequest;
 use App\Models\Bank;
 use App\Models\Credit;
+use App\Models\Wibor;
 use Inertia\Inertia;
 
 class CreditController extends Controller
@@ -31,7 +32,8 @@ class CreditController extends Controller
     public function create()
     {
         return Inertia::render('Admin/Credits/Create', [
-            'banks' => Bank::all()
+            'banks' => Bank::all(),
+            'wibors' => Wibor::all()
         ]);
     }
 
@@ -63,7 +65,8 @@ class CreditController extends Controller
     {
         return Inertia::render('Admin/Credits/Edit', [
             'credit' => $credit,
-            'banks' => Bank::all()
+            'banks' => Bank::all(),
+            'wibors' => Wibor::all()
         ]);
     }
 
@@ -72,7 +75,7 @@ class CreditController extends Controller
      *
      * @param  \App\Http\Requests\Credit\UpdateCreditRequest  $request
      * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(UpdateCreditRequest $request, Credit $credit)
     {

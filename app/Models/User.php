@@ -45,17 +45,18 @@ class User extends Authenticatable
     ];
 
 
-    /**
-     * Mutator for the password
-     *
-     * @return Attribute
-     */
-    protected function password(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => bcrypt($value),
-        );
-    }
+    // UWAGA PODWÓJNE HASZOWANIE
+    // /**
+    //  * Mutator for the password
+    //  *
+    //  * @return Attribute
+    //  */
+    // protected function password(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn ($value) => bcrypt($value),
+    //     );
+    // }
 
     /**
      *

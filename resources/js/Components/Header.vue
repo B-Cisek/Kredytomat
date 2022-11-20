@@ -62,6 +62,7 @@ const handleToggleProfile = () => {
                           Menu open: "hidden", Menu closed: "block"
                         -->
             <svg
+              v-show="!toggleMobileMenuOn"
               class="block h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -84,7 +85,8 @@ const handleToggleProfile = () => {
                           Menu open: "block", Menu closed: "hidden"
                         -->
             <svg
-              class="hidden h-6 w-6"
+              v-show="toggleMobileMenuOn"
+              class="h-6 w-6"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -104,11 +106,7 @@ const handleToggleProfile = () => {
           class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
         >
           <div class="flex flex-shrink-0 items-center">
-            <img
-              class="block h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-              alt="Your Company"
-            />
+            <img src="@/../images/loan-logo.png" alt="" width="45" height="45" />
           </div>
           <div class="hidden sm:ml-10 sm:block">
             <div class="flex space-x-4">
@@ -121,8 +119,11 @@ const handleToggleProfile = () => {
                 Oferta
               </NavLink>
 
-              <NavLink :href="route('faq')" :active="$page.component === 'Faq'">
-                FAQ
+              <NavLink
+                :href="route('o-kredycie')"
+                :active="$page.component === 'Okredycie'"
+              >
+                O Kredycie
               </NavLink>
 
               <div class="relative" ref="targetNavLinks">
@@ -172,9 +173,9 @@ const handleToggleProfile = () => {
                     class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
                   >
                     <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                      <NavLink
+                      <Link
                         :href="route('calculator.installment')"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
+                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                       >
                         <!-- Heroicon name: outline/lifebuoy -->
 
@@ -202,64 +203,72 @@ const handleToggleProfile = () => {
                             Oblicz miesięczną rate kredytu hipotecznego.
                           </p>
                         </div>
-                      </NavLink>
+                      </Link>
 
-                      <a
-                        href="#"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
+                      <Link
+                        :href="route('calculator.rrso')"
+                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                       >
-                        <!-- Heroicon name: outline/bookmark-square -->
+                        <!-- Heroicon name: outline/lifebuoy -->
+
                         <svg
                           class="h-6 w-6 flex-shrink-0 text-indigo-600"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke-width="1.5"
+                          strokeWidth="{1.5}"
                           stroke="currentColor"
-                          aria-hidden="true"
+                          className="w-6 h-6"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
                           />
                         </svg>
+
                         <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">Guides</p>
+                          <p class="text-base font-medium text-gray-900">
+                            Kalkulator RRSO
+                          </p>
                           <p class="mt-1 text-sm text-gray-500">
-                            Learn how to maximize our platform to get the most out of it.
+                            Oblicz rzeczywistą roczną stopę procentową.
                           </p>
                         </div>
-                      </a>
+                      </Link>
 
-                      <a
-                        href="#"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
+                      <Link
+                        :href="route('calculator.extended')"
+                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                       >
-                        <!-- Heroicon name: outline/calendar -->
+                        <!-- Heroicon name: outline/lifebuoy -->
+
                         <svg
                           class="h-6 w-6 flex-shrink-0 text-indigo-600"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke-width="1.5"
+                          strokeWidth="{1.5}"
                           stroke="currentColor"
-                          aria-hidden="true"
+                          className="w-6 h-6"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
                           />
                         </svg>
+
                         <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">Events</p>
+                          <p class="text-base font-medium text-gray-900">
+                            Kalkulator Rozszerzony
+                          </p>
                           <p class="mt-1 text-sm text-gray-500">
-                            See what meet-ups and other events we might be planning near
-                            you.
+                            Oblicz miesięczną rate kredytu hipotecznego oraz harmonogram
+                            spłaty.
                           </p>
                         </div>
-                      </a>
+                      </Link>
 
                       <a
                         href="#"
@@ -378,14 +387,12 @@ const handleToggleProfile = () => {
                   tabindex="-1"
                 >
                   <!-- Active: "bg-gray-100", Not Active: "" -->
-                  <a
-                    href="#"
+
+                  <Link
+                    :href="route('profil')"
                     class="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="user-menu-item-0"
-                    >Your Profile</a
-                  >
+                    >Your Profile
+                  </Link>
 
                   <Link
                     v-if="isAdmin"
@@ -425,8 +432,12 @@ const handleToggleProfile = () => {
           Oferta
         </NavLink>
 
-        <NavLink class="block" :href="route('faq')" :active="$page.component === 'Faq'">
-          FAQ
+        <NavLink
+          class="block"
+          :href="route('o-kredycie')"
+          :active="$page.component === 'Okredycie'"
+        >
+          O Kredycie
         </NavLink>
       </div>
       <div v-if="!loggedIn" class="space-y-6 py-6 px-5 border-t border-gray-700">
