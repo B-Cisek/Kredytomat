@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+
 const props = defineProps({
   credits: Object,
 });

@@ -1,13 +1,13 @@
 <script setup>
-import { ref, defineEmits, watch, onUpdated, watchEffect } from "vue";
-import { useRataCalkowitaStala } from "@/Composables/useRataCalkowitaStala.js";
-import { useHarmonogram } from "@/Composables/useHarmonogram";
-import { useHelpers } from "@/Composables/useHelpers";
+import {ref, defineEmits, watch, onUpdated, watchEffect} from "vue";
+import {useRataCalkowitaStala} from "@/Composables/useRataCalkowitaStala.js";
+import {useHarmonogram} from "@/Composables/useHarmonogram";
+import {useHelpers} from "@/Composables/useHelpers";
 import Chart from "@/Components/Chart.vue";
 
-const { rataStalaFormatted, rataStala, toDecimal } = useRataCalkowitaStala();
-const { harmonogram, kosztKredytu } = useHarmonogram();
-const { formatHarmonogram } = useHelpers();
+const {rataStalaFormatted, rataStala, toDecimal} = useRataCalkowitaStala();
+const {harmonogram, kosztKredytu} = useHarmonogram();
+const {formatHarmonogram} = useHelpers();
 
 const amountOfCredit = ref(250000);
 const period = ref(25);
@@ -16,9 +16,8 @@ const commission = ref(0);
 const installment = ref(null);
 const cost = ref(0);
 const toBePaid = ref(0);
-const results = ref(null);
-
 const commissionResult = ref(0);
+const results = ref(null);
 
 const formattedToPLN = new Intl.NumberFormat("pl-PL", {
   style: "currency",
@@ -26,15 +25,19 @@ const formattedToPLN = new Intl.NumberFormat("pl-PL", {
   maximumFractionDigits: 2,
 });
 
+const drop = () => {
+  results.value.scrollIntoView({behavior: "smooth"});
+}
+
 const show = () => {
   let harmon = harmonogram(amountOfCredit.value, period.value, rate.value);
   cost.value = kosztKredytu(harmon);
   installment.value = rataStalaFormatted(amountOfCredit.value, period.value, rate.value);
   commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
-  console.log(amountOfCredit.value, cost.value, commissionResult.value);
   toBePaid.value = Number(amountOfCredit.value) + cost.value + commissionResult.value;
-  results.value.scrollIntoView({ behavior: "smooth" });
+  drop();
 };
+
 
 const data = {
   labels: [`Kwota kredytu`, `Odsetki`, `Prowizja banku`],
@@ -62,7 +65,7 @@ const data = {
             />
             <span
               class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-              >PLN</span
+            >PLN</span
             >
           </div>
         </div>
@@ -90,7 +93,7 @@ const data = {
             />
             <span
               class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-              >LAT</span
+            >LAT</span
             >
           </div>
         </div>
@@ -120,7 +123,7 @@ const data = {
             />
             <span
               class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-              >%</span
+            >%</span
             >
           </div>
         </div>
@@ -148,7 +151,7 @@ const data = {
             />
             <span
               class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-              >%</span
+            >%</span
             >
           </div>
         </div>

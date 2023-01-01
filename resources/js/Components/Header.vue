@@ -1,7 +1,7 @@
 <script setup>
-import { Link, usePage } from "@inertiajs/inertia-vue3";
-import { computed, ref } from "vue";
-import { onClickOutside } from "@vueuse/core";
+import {Link, usePage} from "@inertiajs/inertia-vue3";
+import {computed, ref} from "vue";
+import {onClickOutside} from "@vueuse/core";
 import NavLink from "@/Components/NavLink.vue";
 
 const auth = computed(() => usePage().props.value.auth);
@@ -106,7 +106,7 @@ const handleToggleProfile = () => {
           class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
         >
           <div class="flex flex-shrink-0 items-center">
-            <img src="@/../images/loan-logo.png" alt="" width="45" height="45" />
+            <img src="@/../images/loan-logo.png" alt="" width="45" height="45"/>
           </div>
           <div class="hidden sm:ml-10 sm:block">
             <div class="flex space-x-4">
@@ -391,21 +391,21 @@ const handleToggleProfile = () => {
                   <Link
                     :href="route('profil')"
                     class="block px-4 py-2 text-sm text-gray-700"
-                    >Your Profile
+                  >Your Profile
                   </Link>
 
                   <Link
                     v-if="isAdmin"
                     :href="route('admin.dashboard')"
                     class="block px-4 py-2 text-sm text-gray-700"
-                    >Dashboard
+                  >Dashboard
                   </Link>
 
                   <Link
                     :href="route('logout')"
                     method="POST"
                     class="block px-4 py-2 text-sm text-gray-700"
-                    >Wyloguj się
+                  >Wyloguj się
                   </Link>
                 </div>
               </div>
@@ -451,7 +451,8 @@ const handleToggleProfile = () => {
           <p class="mt-6 text-center text-base font-medium text-gray-500">
             Masz już konto?
             <Link :href="route('login')" class="text-indigo-600 hover:text-indigo-500"
-              >Zaloguj się</Link
+            >Zaloguj się
+            </Link
             >
           </p>
         </div>

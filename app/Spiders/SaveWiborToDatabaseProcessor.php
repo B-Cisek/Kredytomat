@@ -16,7 +16,7 @@ class SaveWiborToDatabaseProcessor implements ItemProcessorInterface
         $wibors = $item->all();
 
         foreach ($wibors as $key => $value) {
-            $value = str_replace(',','.', $value);
+            $value = str_replace(',', '.', $value);
             $key = strtoupper(strrev($key));
 
             Wibor::where('type', $key)

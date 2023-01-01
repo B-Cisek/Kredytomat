@@ -13,15 +13,16 @@ class BankController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Inertia\Response
      */
-    public function index()
+    public function index(): \Inertia\Response
     {
         $banks = Bank::paginate(10);
 
         return Inertia::render('Admin/Banks/Index', [
             'banks' => $banks
         ]);
+
+
     }
 
     /**

@@ -1,10 +1,13 @@
 export function useHelpers() {
 
     function formatHarmonogram(harmonogram) {
-        let foramtted = harmonogram.map((subarray) => subarray.map((x) => x.toFixed(2)));
-
-        return foramtted;
+        return harmonogram.map((subarray) => subarray.map((x) => x.toFixed(2)));
     }
 
-    return { formatHarmonogram }
+    function toDecimal(percent) {
+        percent = percent + '%';
+        return parseFloat(percent) / 100;
+    }
+
+    return {formatHarmonogram, toDecimal}
 }

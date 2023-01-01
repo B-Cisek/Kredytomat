@@ -2,15 +2,12 @@
 
 namespace App\Spiders;
 
-use App\Enums\WiborType;
-use App\Models\Wibor;
 use Generator;
 use RoachPHP\Downloader\Middleware\RequestDeduplicationMiddleware;
 use RoachPHP\Extensions\LoggerExtension;
 use RoachPHP\Extensions\StatsCollectorExtension;
 use RoachPHP\Http\Response;
 use RoachPHP\Spider\BasicSpider;
-use RoachPHP\Spider\ParseResult;
 
 class WiborSpider extends BasicSpider
 {
@@ -40,7 +37,8 @@ class WiborSpider extends BasicSpider
     public int $requestDelay = 1;
 
     /**
-     * @return Generator<ParseResult>
+     * @param Response $response
+     * @return Generator
      */
     public function parse(Response $response): Generator
     {
