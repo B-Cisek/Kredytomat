@@ -1,54 +1,87 @@
 <script setup>
-import {ref, defineEmits, watch, onUpdated, watchEffect} from "vue";
-import {useRataCalkowitaStala} from "@/Composables/useRataCalkowitaStala.js";
-import {useHarmonogram} from "@/Composables/useHarmonogram";
+import {ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
+import {useRatyMalejace} from "@/Composables/useRatyMalejace";
+import {useRatyStale} from "@/Composables/useRatyStale";
 import Chart from "@/Components/Chart.vue";
 
-const {rataStalaFormatted, rataStala, toDecimal} = useRataCalkowitaStala();
-const {harmonogram, kosztKredytu} = useHarmonogram();
-const {formatHarmonogram} = useHelpers();
+const {getPierwszaRata, getHarmonogram: getHarmonogramMalejace} = useRatyMalejace();
+const {getRataStala, getHarmonogram: getHarmonogramStale} = useRatyStale();
+const {toDecimal, formattedToPLN, kosztKredytu} = useHelpers();
 
+// Inputs Form
 const amountOfCredit = ref(250000);
 const period = ref(25);
 const rate = ref(7);
 const commission = ref(0);
-const installment = ref(null);
-const cost = ref(0);
-const toBePaid = ref(0);
-const commissionResult = ref(0);
-const results = ref(null);
 
-const formattedToPLN = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  maximumFractionDigits: 2,
-});
+// commissionResult
+const commissionResult = ref(0);
+
+const commissionCalculation = () => {
+  commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
+}
+
+// Equal Installment
+const equalInstallment = ref(null);
+const equalInstallmentCost = ref(0);
+const equalInstallmentToBePaid = ref(0);
+
+// Decreasing Installment
+const firstDecreasingInstallment = ref(null);
+const decreasingInstallmentCost = ref(0);
+const decreasingInstallmentToBePaid = ref(0);
+
+const calc = () => {
+  let harmonogramRatyStale = getHarmonogramStale(amountOfCredit.value, period.value, rate.value);
+  let harmonogramRatyMalejace = getHarmonogramMalejace(amountOfCredit.value, period.value, rate.value);
+  commissionCalculation();
+
+  // Installments
+  firstDecreasingInstallment.value = getPierwszaRata(amountOfCredit.value, period.value, rate.value);
+  equalInstallment.value = getRataStala(amountOfCredit.value, period.value, rate.value);
+
+  // Installments cost
+  equalInstallmentCost.value = kosztKredytu(harmonogramRatyStale);
+  decreasingInstallmentCost.value = kosztKredytu(harmonogramRatyMalejace);
+
+  // The total amount to be repaid
+  equalInstallmentToBePaid.value = Number(amountOfCredit.value) + equalInstallmentCost.value + commissionResult.value;
+  decreasingInstallmentToBePaid.value =
+    Number(amountOfCredit.value) + decreasingInstallmentCost.value + commissionResult.value;
+  console.log(firstDecreasingInstallment.value);
+  console.log(equalInstallment.value);
+  drop();
+}
+
+// TODO: Scroll to result of calculation after first click
+const results = ref(null);
 
 const drop = () => {
   results.value.scrollIntoView({behavior: "smooth"});
 }
 
-const show = () => {
-  let harmon = harmonogram(amountOfCredit.value, period.value, rate.value);
-  cost.value = kosztKredytu(harmon);
-  installment.value = rataStalaFormatted(amountOfCredit.value, period.value, rate.value);
-  commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
-  toBePaid.value = Number(amountOfCredit.value) + cost.value + commissionResult.value;
-  drop();
-};
-
-
-const data = {
+const dataRatyStale = {
   labels: [`Kwota kredytu`, `Odsetki`, `Prowizja banku`],
   datasets: [
     {
-      data: [amountOfCredit, cost, commissionResult],
+      data: [amountOfCredit, equalInstallmentCost, commissionResult],
+      backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
+    },
+  ],
+};
+
+const dataRatyMalejace = {
+  labels: [`Kwota kredytu`, `Odsetki`, `Prowizja banku`],
+  datasets: [
+    {
+      data: [amountOfCredit, decreasingInstallmentCost, commissionResult],
       backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
     },
   ],
 };
 </script>
+
 <template>
   <section
     class="flex flex-col gap-5 w-full mx-auto rounded-lg shadow-2xl border border-gray-200 bg-white p-5"
@@ -169,13 +202,13 @@ const data = {
         </label>
       </div>
     </div>
-    <button @click="show" class="btn btn-primary mt-10 text-white">
+    <button @click="calc" class="btn btn-primary mt-10 text-white">
       Oblicz ratę i koszt
     </button>
   </section>
   <section
     ref="results"
-    :class="installment == null ? 'hidden' : ''"
+    :class="equalInstallment == null ? 'hidden' : ''"
     class="w-full mx-auto p-5 mt-10 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
   >
     <h1 class="text-2xl font-semibold mb-10 text-gray-700">
@@ -187,17 +220,17 @@ const data = {
           <h3 class="text-xl font-semibold mb-10">Raty stałe</h3>
           <div class="flex justify-between">
             <p class="mb-5">Wysokość raty</p>
-            <p class="text-xl font-bold">{{ installment }}</p>
+            <p class="text-xl font-bold">{{ formattedToPLN.format(equalInstallment) }}</p>
           </div>
           <div class="flex justify-between">
             <p class="mb-5">Całkowita kwota do spłaty</p>
             <p class="text-xl font-bold">
-              {{ formattedToPLN.format(cost + amountOfCredit) }}
+              {{ formattedToPLN.format(equalInstallmentCost + amountOfCredit) }}
             </p>
           </div>
         </div>
         <div class="flex justify-center items-center mt-10">
-          <Chart :data="data" />
+          <Chart :data="dataRatyStale" />
         </div>
       </div>
       <div class="w-2/4 ml-10">
@@ -205,15 +238,15 @@ const data = {
           <h3 class="text-xl font-semibold mb-10">Raty malejące</h3>
           <div class="flex justify-between">
             <p class="mb-5">Wysokość pierwszej raty</p>
-            <p class="text-xl font-bold">200 000 zł</p>
+            <p class="text-xl font-bold">{{ formattedToPLN.format(firstDecreasingInstallment) }}</p>
           </div>
           <div class="flex justify-between">
             <p class="mb-5">Całkowita kwota do spłaty</p>
-            <p class="text-xl font-bold">200 000 zł</p>
+            <p class="text-xl font-bold">{{ formattedToPLN.format(decreasingInstallmentCost + amountOfCredit) }}</p>
           </div>
         </div>
         <div class="flex justify-center items-center mt-10">
-          <Chart :data="data" />
+          <Chart :data="dataRatyMalejace" />
         </div>
       </div>
     </div>

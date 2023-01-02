@@ -7,7 +7,7 @@ import Layout from "@/Layouts/Layout.vue";
   <Layout>
     <template #header>Kalkulator raty kredytu</template>
     <template #default>
-      <InstallmentCalculator/>
+      <InstallmentCalculator />
     </template>
   </Layout>
 </template>

@@ -21,6 +21,13 @@ export function useRatyMalejace() {
         return kapital - kapitalowa;
     }
 
+    function getPierwszaRata(kwotaKredytu, n, oprocentowanie) {
+        let kwota = parseFloat(kwotaKredytu);
+        let kapitalowa = czescKapitalowa(kwota, n);
+        let odsetkowa = czescOdsetkowa(kwota, oprocentowanie);
+        return rataCalkowita(kapitalowa, odsetkowa);
+    }
+
     function getHarmonogram(kwotaKredytu, n, oprocentowanie) {
         let kwota = parseFloat(kwotaKredytu);
         let kapitalowa = czescKapitalowa(kwota, n);
@@ -55,5 +62,5 @@ export function useRatyMalejace() {
         return harmonogramKredytu;
     }
 
-    return {getHarmonogram};
+    return {getHarmonogram, getPierwszaRata};
 }

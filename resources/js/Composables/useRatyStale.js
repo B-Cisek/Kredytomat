@@ -1,10 +1,10 @@
-import { useRataCalkowitaStala } from "@/Composables/useRataCalkowitaStala.js";
+import {useHelpers} from "@/Composables/useHelpers";
 
-export function useHarmonogram() {
-    const { rataStala, toDecimal  } = useRataCalkowitaStala();
+export function useRatyStale() {
+    const {toDecimal} = useHelpers();
 
     function czescOdsetkowa(oprocentowanie, kapitalDoSplaty) {
-        let odsetkowa = ((toDecimal(oprocentowanie)/12) * kapitalDoSplaty);
+        let odsetkowa = ((toDecimal(oprocentowanie) / 12) * kapitalDoSplaty);
         return parseFloat(odsetkowa);
     }
 
@@ -18,9 +18,9 @@ export function useHarmonogram() {
         return parseFloat(kapitalPo);
     }
 
-    function harmonogram(kwotaKredytu, n, oprocentowanie) {
+    function getHarmonogram(kwotaKredytu, n, oprocentowanie) {
         let kwota = parseFloat(kwotaKredytu);
-        let rataCalkowita = rataStala(kwota, n, oprocentowanie);
+        let rataCalkowita = getRataStala(kwota, n, oprocentowanie);
         let odsetkowa = czescOdsetkowa(oprocentowanie, kwota);
         let kapitalowa = rataCalkowita - odsetkowa;
         let kapitalPo = kapitalPoSplacie(kwota, kapitalowa);
@@ -35,16 +35,14 @@ export function useHarmonogram() {
             ],
         ];
 
-
-
-        for (let index = 1; index < n*12; index++) {
+        for (let index = 1; index < n * 12; index++) {
             let ostatniaRata = harmonogramKredytu.at(-1);
             let current = [
                 ostatniaRata[4],
                 czescOdsetkowa(oprocentowanie, ostatniaRata[4]),
                 czescKapitalowa(rataCalkowita, czescOdsetkowa(oprocentowanie, ostatniaRata[4])),
                 rataCalkowita,
-                kapitalPoSplacie(ostatniaRata[4],czescKapitalowa(rataCalkowita, czescOdsetkowa(oprocentowanie, ostatniaRata[4])))
+                kapitalPoSplacie(ostatniaRata[4], czescKapitalowa(rataCalkowita, czescOdsetkowa(oprocentowanie, ostatniaRata[4])))
             ];
 
             harmonogramKredytu.push(current);
@@ -53,17 +51,29 @@ export function useHarmonogram() {
         return harmonogramKredytu;
     }
 
-    function kosztKredytu(harmonogram) {
-        let szumaKoszt = 0.00;
-        for (let index = 0; index < harmonogram.length; index++) {
-            szumaKoszt +=harmonogram[index][1];
-        }
-        return szumaKoszt;
+    function rataStalaFormatted(kwota, n, oprocentowanie) {
+        let mn = n * 12;
+        oprocentowanie = toDecimal(parseFloat(oprocentowanie) / 12);
+
+        let rata = kwota * oprocentowanie * (oprocentowanie + 1) ** mn / (((oprocentowanie + 1) ** mn) - 1);
+
+        return new Intl.NumberFormat('pl-PL', {
+            style: 'currency',
+            currency: 'PLN',
+            maximumFractionDigits: 2
+        }).format(rata);
     }
 
+    function getRataStala(kwota, n, oprocentowanie) {
+        let mn = n * 12;
+        oprocentowanie = toDecimal(parseFloat(oprocentowanie) / 12);
+        let rata = kwota * oprocentowanie * (oprocentowanie + 1) ** mn / (((oprocentowanie + 1) ** mn) - 1);
+        return parseFloat(rata);
+    }
 
     return {
-        harmonogram,
-        kosztKredytu
+        getHarmonogram,
+        getRataStala,
+        rataStalaFormatted
     }
 }
