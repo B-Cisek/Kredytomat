@@ -5,6 +5,7 @@ import {ref} from "vue";
 import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
 import {useRatyMalejaceExtended} from "@/Composables/useRatyMalejaceExtended";
 import {useHelpers} from "@/Composables/useHelpers";
+import TabsGroup from "@/Components/TabsGroup.vue";
 
 const {formattedToPLN, formatHarmonogram} = useHelpers();
 
@@ -210,7 +211,10 @@ const calculateDecreasingInstallments = (kredyt) => {
           Oblicz
         </button>
       </section>
-      <CreditSchedule :schedule="schedule"/>
+
+      <section class="mt-5">
+        <TabsGroup :schedule="schedule"/>
+      </section>
     </template>
   </Layout>
 </template>
