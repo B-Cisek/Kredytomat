@@ -37,13 +37,15 @@ Route::get('/kalkulator-rrso', function () {
 })->name('calculator.rrso');
 
 Route::get('/kalkulator-rozszerzony', function () {
-    return Inertia::render('CalculatorExtended');
+    return Inertia::render(
+        'CalculatorExtended', [
+            'wiborList' => \App\Models\Wibor::all()
+        ]);
 })->name('calculator.extended');
 
 Route::get('/profil', function () {
     return Inertia::render('MyProfil');
 })->name('profil');
-
 
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
@@ -60,8 +62,7 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 require __DIR__ . '/auth.php';
 
 Route::get('/test', function () {
-    $items = \RoachPHP\Roach::collectSpider(\App\Spiders\WiborSpider::class);
-
-    dd($items[0]);
+    return Inertia::render('Test');
 });
+
 

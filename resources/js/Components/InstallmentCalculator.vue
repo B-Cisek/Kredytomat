@@ -4,6 +4,7 @@ import {useHelpers} from "@/Composables/useHelpers";
 import {useRatyMalejace} from "@/Composables/useRatyMalejace";
 import {useRatyStale} from "@/Composables/useRatyStale";
 import Chart from "@/Components/Chart.vue";
+import RangeInput from "@/Components/RangeInput.vue";
 
 const {getPierwszaRata, getHarmonogram: getHarmonogramMalejace} = useRatyMalejace();
 const {getRataStala, getHarmonogram: getHarmonogramStale} = useRatyStale();
@@ -49,8 +50,6 @@ const calc = () => {
   equalInstallmentToBePaid.value = Number(amountOfCredit.value) + equalInstallmentCost.value + commissionResult.value;
   decreasingInstallmentToBePaid.value =
     Number(amountOfCredit.value) + decreasingInstallmentCost.value + commissionResult.value;
-  console.log(firstDecreasingInstallment.value);
-  console.log(equalInstallment.value);
   drop();
 }
 
@@ -62,7 +61,9 @@ const drop = () => {
 }
 
 const dataRatyStale = {
-  labels: [`Kwota kredytu`, `Odsetki`, `Prowizja banku`],
+  labels: [
+    `Kwota kredytu 250 000,0 zł`, `Odsetki 290 000,0 zł`, `Prowizja banku 4000,00 zł`
+  ],
   datasets: [
     {
       data: [amountOfCredit, equalInstallmentCost, commissionResult],
@@ -71,8 +72,24 @@ const dataRatyStale = {
   ],
 };
 
+const options = {
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',
+      align: 'middle',
+      labels: {
+        textAlign: 'center',
+        font: {
+          size: 16
+        }
+      }
+    }
+  }
+};
+
 const dataRatyMalejace = {
-  labels: [`Kwota kredytu`, `Odsetki`, `Prowizja banku`],
+  labels: [`Kwota kredytu 250 000,0 zł`, `Odsetki 290 000,0 zł`, `Prowizja banku 4000,00 zł`],
   datasets: [
     {
       data: [amountOfCredit, decreasingInstallmentCost, commissionResult],
@@ -80,6 +97,11 @@ const dataRatyMalejace = {
     },
   ],
 };
+
+const update = val => {
+  amountOfCredit.value = Number(val);
+}
+
 </script>
 
 <template>
@@ -88,32 +110,44 @@ const dataRatyMalejace = {
   >
     <div class="lg:flex gap-x-16">
       <div class="flex-1">
-        <div class="flex mb-3 items-center justify-between">
-          <h3 class="font-semibold text-black">Kwota kredytu</h3>
-          <div class="relative">
-            <input
-              type="number"
-              class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-              v-model="amountOfCredit"
-            />
-            <span
-              class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-            >PLN</span
-            >
-          </div>
-        </div>
-        <input
-          type="range"
-          min="50000"
-          max="2000000"
-          step="10000"
-          v-model="amountOfCredit"
-          class="range range-primary"
+<!--        <div class="flex mb-3 items-center justify-between">-->
+<!--          <h3 class="font-semibold text-black">Kwota kredytu</h3>-->
+<!--          <div class="relative">-->
+<!--            <input-->
+<!--              type="number"-->
+<!--              class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"-->
+<!--              v-model="amountOfCredit"-->
+<!--            />-->
+<!--            <span-->
+<!--              class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"-->
+<!--            >PLN</span-->
+<!--            >-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <input-->
+<!--          type="range"-->
+<!--          min="50000"-->
+<!--          max="2000000"-->
+<!--          step="10000"-->
+<!--          v-model="amountOfCredit"-->
+<!--          class="range range-primary"-->
+<!--        />-->
+<!--        <label class="label">-->
+<!--          <span class="label-text-alt text-black">50 000 zł</span>-->
+<!--          <span class="label-text-alt text-black">2 000 000 zł</span>-->
+<!--        </label>-->
+
+        <RangeInput
+          @updateInput="update"
+          input-type-label="PLN"
+          :default-value="amountOfCredit"
+          heading="Kwota kredytu"
+          :max="2000000"
+          :min="50000"
+          :step="10000"
+          label-left="50 000 zł"
+          label-right="2 000 000 zł"
         />
-        <label class="label">
-          <span class="label-text-alt text-black">50 000 zł</span>
-          <span class="label-text-alt text-black">2 000 000 zł</span>
-        </label>
       </div>
       <div class="flex-1">
         <div class="flex mb-3 items-center justify-between">
@@ -230,7 +264,7 @@ const dataRatyMalejace = {
           </div>
         </div>
         <div class="flex justify-center items-center mt-10">
-          <Chart :data="dataRatyStale" />
+          <Chart :data="dataRatyStale" :options="options" />
         </div>
       </div>
       <div class="w-2/4 ml-10">
@@ -246,7 +280,7 @@ const dataRatyMalejace = {
           </div>
         </div>
         <div class="flex justify-center items-center mt-10">
-          <Chart :data="dataRatyMalejace" />
+          <Chart :data="dataRatyMalejace" :options="options" />
         </div>
       </div>
     </div>

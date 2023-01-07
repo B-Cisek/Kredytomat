@@ -1,11 +1,61 @@
 <script setup>
 import CreditSchedule from "@/Components/CreditSchedule.vue";
 import Layout from "@/Layouts/Layout.vue";
+import {ref} from "vue";
+import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
+import {useRatyMalejaceExtended} from "@/Composables/useRatyMalejaceExtended";
+import {useHelpers} from "@/Composables/useHelpers";
+
+const {formattedToPLN, formatHarmonogram} = useHelpers();
+
+const props = defineProps({
+  wiborList: Object,
+});
+
+
+// Inputs Form
+const amountOfCredit = ref(250000);
+const period = ref(25);
+const margin = ref(1);
+const commission = ref(0);
+const wibor = ref(null);
+const typeOfInstallment = ref(null);
+const schedule = ref([])
+
+
+const getResult = () => {
+  const kredyt = {
+    kwotaKredytu: amountOfCredit.value,
+    okres: period.value,
+    marza: margin.value,
+    wibor: wibor.value,
+    prowizja: commission.value
+  }
+
+  if (typeOfInstallment.value === "rowne") calculateFixedInstallments(kredyt);
+  if (typeOfInstallment.value === "malejace") calculateDecreasingInstallments(kredyt);
+}
+
+const calculateFixedInstallments = (kredyt) => {
+  const result = useRatyStaleExtended(kredyt);
+  console.log('Rata Stała', formattedToPLN.format(result.getRataStala()));
+  schedule.value = formatHarmonogram(result.getHarmonogram());
+}
+
+const calculateDecreasingInstallments = (kredyt) => {
+  const result = useRatyMalejaceExtended(kredyt);
+  console.log('Pierwsza rata malejąca', formattedToPLN.format(result.getPierwszaRata()))
+  schedule.value = formatHarmonogram(result.getHarmonogram());
+}
+
 </script>
+
+
 <template>
   <Layout>
-    <template #header>Kalkulator rozszerzony</template>
-    <template #default>
+    <template v-slot:header>Kalkulator rozszerzony</template>
+
+    <template v-slot:default>
       <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
@@ -19,7 +69,7 @@ import Layout from "@/Layouts/Layout.vue";
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                  >PLN</span
+                >PLN</span
                 >
               </div>
             </div>
@@ -29,7 +79,7 @@ import Layout from "@/Layouts/Layout.vue";
               max="2000000"
               step="10000"
               v-model="amountOfCredit"
-              class="range range-primary"
+              class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
               <span class="label-text-alt text-black">50 000 zł</span>
@@ -47,7 +97,7 @@ import Layout from "@/Layouts/Layout.vue";
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                  >LAT</span
+                >LAT</span
                 >
               </div>
             </div>
@@ -57,7 +107,7 @@ import Layout from "@/Layouts/Layout.vue";
               max="35"
               step="1"
               v-model="period"
-              class="range range-primary"
+              class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
               <span class="label-text-alt text-black">5 lat</span>
@@ -73,11 +123,11 @@ import Layout from "@/Layouts/Layout.vue";
                 <input
                   type="number"
                   class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="rate"
+                  v-model="margin"
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                  >%</span
+                >%</span
                 >
               </div>
             </div>
@@ -86,8 +136,8 @@ import Layout from "@/Layouts/Layout.vue";
               min="0.00"
               max="15"
               step="0.01"
-              v-model="rate"
-              class="range range-primary"
+              v-model="margin"
+              class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
               <span class="label-text-alt text-black">0,01%</span>
@@ -106,7 +156,7 @@ import Layout from "@/Layouts/Layout.vue";
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                  >%</span
+                >%</span
                 >
               </div>
             </div>
@@ -116,7 +166,7 @@ import Layout from "@/Layouts/Layout.vue";
               max="15"
               step="0.01"
               v-model="commission"
-              class="range range-primary"
+              class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
               <span class="label-text-alt text-black">0%</span>
@@ -129,13 +179,16 @@ import Layout from "@/Layouts/Layout.vue";
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                id="wibor"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                v-model="wibor"
               >
-                <option disabled selected>Wybierz</option>
-                <option>1M</option>
-                <option>3M</option>
-                <option>6M</option>
+                <option disabled :value="null" selected>Wybierz</option>
+                <option
+                  v-for="wibor in props.wiborList"
+                  :key="wibor.id"
+                  :value="wibor.value"
+                >{{ wibor.type + ` (${wibor.value}%)` }}
+                </option>
               </select>
             </div>
           </div>
@@ -143,21 +196,21 @@ import Layout from "@/Layouts/Layout.vue";
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">Rodzaj rat</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                id="wibor"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                v-model="typeOfInstallment"
               >
-                <option disabled selected>Wybierz</option>
-                <option>Równe</option>
-                <option>Malejące</option>
+                <option disabled :value="null" selected>Wybierz</option>
+                <option value="rowne">Równe</option>
+                <option value="malejace">Malejące</option>
               </select>
             </div>
           </div>
         </div>
-        <button @click="show" class="btn btn-primary mt-10 text-white w-full">
+        <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
           Oblicz
         </button>
       </section>
-      <CreditSchedule />
+      <CreditSchedule :schedule="schedule"/>
     </template>
   </Layout>
 </template>

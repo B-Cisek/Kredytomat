@@ -1,22 +1,17 @@
 <script setup>
-import { useHarmonogram } from "@/Composables/useHarmonogram";
-import { useHelpers } from "@/Composables/useHelpers";
-import { ref } from "vue";
+import {ref} from "vue";
+import {useHelpers} from "@/Composables/useHelpers";
+
+const {formattedToPLN} = useHelpers();
 
 const props = defineProps({
   schedule: Object,
 });
-const scheduleOn = ref(false);
-const { harmonogram, kosztKredytu } = useHarmonogram();
-const { formatHarmonogram } = useHelpers();
-const schedule = formatHarmonogram(harmonogram(250000, 25, 8.93));
 
-const formattedToPLN = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  maximumFractionDigits: 2,
-});
+const scheduleOn = ref(false);
+
 </script>
+
 <template>
   <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
     <div class="p-7 bg-white flex justify-center">
@@ -57,30 +52,30 @@ const formattedToPLN = new Intl.NumberFormat("pl-PL", {
     </div>
     <table v-show="scheduleOn" class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr class="bg-gray-200 text-center">
-          <th scope="col" class="py-3">Nr. raty</th>
-          <th scope="col" class="py-3">Kapitał do spłaty</th>
-          <th scope="col" class="py-3">Część kapitałowa</th>
-          <th scope="col" class="py-3">Część odsetkowa</th>
-          <th scope="col" class="py-3 px-6">Rata całkowita</th>
-          <th scope="col" class="py-3 px-6">Kapitał po spłacie</th>
-        </tr>
+      <tr class="bg-gray-200 text-center">
+        <th scope="col" class="py-3">Nr. raty</th>
+        <th scope="col" class="py-3">Kapitał do spłaty</th>
+        <th scope="col" class="py-3">Część kapitałowa</th>
+        <th scope="col" class="py-3">Część odsetkowa</th>
+        <th scope="col" class="py-3 px-6">Rata całkowita</th>
+        <th scope="col" class="py-3 px-6">Kapitał po spłacie</th>
+      </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(sche, index) in schedule"
-          :key="index"
-          class="bg-white border-b hover:bg-gray-50 text-center"
-        >
-          <td class="font-medium text-gray-900 whitespace-nowrap p-3">
-            {{ index + 1 }}
-          </td>
-          <td>{{ formattedToPLN.format(sche[0]) }}</td>
-          <td>{{ formattedToPLN.format(sche[2]) }}</td>
-          <td>{{ formattedToPLN.format(sche[1]) }}</td>
-          <td>{{ formattedToPLN.format(sche[3]) }}</td>
-          <td>{{ formattedToPLN.format(sche[4]) }}</td>
-        </tr>
+      <tr
+        v-for="(sche, index) in props.schedule"
+        :key="index"
+        class="bg-white border-b hover:bg-gray-50 text-center"
+      >
+        <td class="font-medium text-gray-900 whitespace-nowrap p-3">
+          {{ index + 1 }}
+        </td>
+        <td>{{ formattedToPLN.format(sche[0]) }}</td>
+        <td>{{ formattedToPLN.format(sche[2]) }}</td>
+        <td>{{ formattedToPLN.format(sche[1]) }}</td>
+        <td>{{ formattedToPLN.format(sche[3]) }}</td>
+        <td>{{ formattedToPLN.format(sche[4]) }}</td>
+      </tr>
       </tbody>
     </table>
   </div>
