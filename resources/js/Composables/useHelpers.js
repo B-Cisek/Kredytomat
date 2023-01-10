@@ -18,7 +18,7 @@ export function useHelpers() {
     function kosztKredytu(harmonogram) {
         let szumaKoszt = 0.00;
         for (let index = 0; index < harmonogram.length; index++) {
-            szumaKoszt +=harmonogram[index][1];
+            szumaKoszt += harmonogram[index][1];
         }
         return szumaKoszt;
     }

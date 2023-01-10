@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, onUpdated, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {useRatyMalejace} from "@/Composables/useRatyMalejace";
 import {useRatyStale} from "@/Composables/useRatyStale";
@@ -57,8 +57,9 @@ const calc = () => {
 const results = ref(null);
 
 const drop = () => {
-  results.value.scrollIntoView({behavior: "smooth"});
+  results.value.scrollIntoView( {behavior: "smooth"});
 }
+
 
 const dataRatyStale = {
   labels: [
@@ -241,8 +242,8 @@ const update = val => {
     </button>
   </section>
   <section
+    v-show="equalInstallment != null"
     ref="results"
-    :class="equalInstallment == null ? 'hidden' : ''"
     class="w-full mx-auto p-5 mt-10 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
   >
     <h1 class="text-2xl font-semibold mb-10 text-gray-700">

@@ -41,6 +41,7 @@ const tabs = ref([
       <template v-if="active === 'test1'">
         <p>test1 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum cumque hic impedit itaque laudantium molestiae reiciendis, sint? Cumque cupiditate deleniti distinctio eos, et facilis laudantium nihil, nisi nulla perspiciatis temporibus!</p>
       </template>
+
     </template>
   </Tabs>
 </template>

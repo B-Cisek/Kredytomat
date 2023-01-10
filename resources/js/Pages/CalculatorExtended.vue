@@ -1,5 +1,4 @@
 <script setup>
-import CreditSchedule from "@/Components/CreditSchedule.vue";
 import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
 import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
@@ -24,6 +23,16 @@ const typeOfInstallment = ref(null);
 const schedule = ref([])
 
 
+const validationInputs = (kredyt) => {
+  if (kredyt.kwotaKredytu < 0 || kredyt.kwotaKredytu > 2000000) alert('Błąd: Kwota Kredytu');
+  if (kredyt.okres < 5 || kredyt.okres > 35) alert('Błąd: Okres');
+  if (kredyt.marza < 0 || kredyt.marza > 15) alert('Błąd: Marża');
+  if (kredyt.prowizja < 0 || kredyt.prowizja > 15) alert('Błąd: Okres');
+  if (kredyt.wibor === null) alert('Błąd: wibor');
+  if (typeOfInstallment.value === null) alert('Błąd: Typ raty');
+}
+
+
 const getResult = () => {
   const kredyt = {
     kwotaKredytu: amountOfCredit.value,
@@ -32,6 +41,8 @@ const getResult = () => {
     wibor: wibor.value,
     prowizja: commission.value
   }
+
+  validationInputs(kredyt);
 
   if (typeOfInstallment.value === "rowne") calculateFixedInstallments(kredyt);
   if (typeOfInstallment.value === "malejace") calculateDecreasingInstallments(kredyt);
@@ -207,14 +218,18 @@ const calculateDecreasingInstallments = (kredyt) => {
             </div>
           </div>
         </div>
+        <div>
+          <span>NADPŁATA</span>
+        </div>
         <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
           Oblicz
         </button>
       </section>
 
       <section class="mt-5">
-        <TabsGroup :schedule="schedule"/>
+        <TabsGroup :schedule="schedule" />
       </section>
+
     </template>
   </Layout>
 </template>

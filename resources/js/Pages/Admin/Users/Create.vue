@@ -23,10 +23,10 @@ const store = () => {
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /
+        >Dashboard >
       </Link>
       <Link :href="route('admin.users.index')" class="hover:text-indigo-700"
-        >Użytkownicy /
+        >Użytkownicy >
       </Link>
       <span class="font-light">Nowy użytkownik</span>
     </template>

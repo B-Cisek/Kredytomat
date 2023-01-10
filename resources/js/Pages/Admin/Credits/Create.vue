@@ -32,10 +32,10 @@ const store = () => {
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /
+        >Dashboard >
       </Link>
       <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
-        >Kredyty /
+        >Kredyty >
       </Link>
       <span class="font-light"> Nowy kredyt</span>
     </template>

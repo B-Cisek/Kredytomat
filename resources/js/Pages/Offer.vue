@@ -1,14 +1,8 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import RangeInput from "@/Components/RangeInput.vue";
-import {ref} from "vue";
+import CreditOverpaymentSchedule from "@/Components/CreditOverpaymentSchedule.vue";
+import ResultBox from "@/Components/ResultBox.vue";
 
-const amountOfCredit = ref(250000);
-const period = ref(25);
-
-const calc = val => {
-  amountOfCredit.value = Number(val);
-}
 
 </script>
 
@@ -16,31 +10,13 @@ const calc = val => {
   <Layout>
     <template #header> Oferta</template>
     <template #default>
-
-      <RangeInput
-        @updateInput="calc"
-        input-type-label="PLN"
-        :default-value="amountOfCredit"
-        heading="Kwota kredytu"
-        :max="2000000"
-        :min="50000"
-        :step="10000"
-        label-left="50 000 zł"
-        label-right="2 000 000 zł"
+<!--      <CreditOverpaymentSchedule />-->
+      <ResultBox
+        :amount-of-installment="2027.74"
+        :installments-left-to-pay="205"
+        :capital-installment="1007.74"
+        :interest-installment="200.00"
       />
-
-      <RangeInput
-        input-type-label="LAT"
-        :default-value="period"
-        heading="Okres spłaty"
-        :max="35"
-        :min="5"
-        :step="1"
-        label-left="5 lat"
-        label-right="35 lat"
-      />
-
-      <button @click="calc">Oblicz</button>
     </template>
   </Layout>
 </template>

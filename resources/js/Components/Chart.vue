@@ -13,7 +13,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="w-[400px]">
+  <div class="w-[400px] h-[400px]">
     <PieChart :chartData="props.data" :options="props.options"/>
   </div>
 </template>

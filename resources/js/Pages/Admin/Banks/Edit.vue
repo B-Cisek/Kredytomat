@@ -33,10 +33,10 @@ const update = () => {
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /
+        >Dashboard >
       </Link>
       <Link :href="route('admin.banks.index')" class="hover:text-indigo-700"
-        >Banki /
+        >Banki >
       </Link>
       <span class="font-light">Edycja banku</span>
     </template>

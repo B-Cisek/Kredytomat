@@ -18,7 +18,7 @@ defineProps({
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /</Link
+        >Dashboard ></Link
       >
       Użytkownicy
     </template>

@@ -1,5 +1,6 @@
 import {useHelpers} from "@/Composables/useHelpers";
 
+
 export function useRatyMalejaceExtended(kredyt) {
     const {toDecimal} = useHelpers();
 
