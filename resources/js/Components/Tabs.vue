@@ -22,7 +22,7 @@ const activeTab = ref(props.active || props.tabs[0].value);
     <div class="flex justify-around">
       <div v-for="(tab, index) in tabs"
            :key="index"
-           class="cursor-pointer"
+           class="cursor-pointer py-2 px-4"
            :class="tab.value === activeTab ? 'border-b-4 border-indigo-700' : ''"
            @click="activeTab = tab.value"
       >

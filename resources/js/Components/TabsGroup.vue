@@ -14,18 +14,18 @@ const tabs = ref([
     disabled: false
   },
   {
-    title: 'Test 1',
-    value: 'test1',
+    title: 'Symulacja dla różnych kwot',
+    value: 'rozneKwoty',
     disabled: false
   },
   {
-    title: 'Test 2',
-    value: 'test2',
+    title: 'Symulacja zmiany kwoty kredytu',
+    value: 'zmiana',
     disabled: false
   },
   {
-    title: 'Test 3',
-    value: 'test3',
+    title: 'Nadpłata kredytu',
+    value: 'nadplata',
     disabled: false
   }
 ]);
@@ -35,11 +35,19 @@ const tabs = ref([
     <template v-slot:content="{active}">
 
       <template v-if="active === 'harmonogram'">
-        <CreditSchedule :schedule="schedule"/>
+        <CreditSchedule class="mt-10" :schedule="schedule"/>
       </template>
 
-      <template v-if="active === 'test1'">
-        <p>test1 - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum cumque hic impedit itaque laudantium molestiae reiciendis, sint? Cumque cupiditate deleniti distinctio eos, et facilis laudantium nihil, nisi nulla perspiciatis temporibus!</p>
+      <template v-if="active === 'rozneKwoty'">
+        <p class="mt-10">Symulacja dla różnych kwot - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum cumque hic impedit itaque laudantium molestiae reiciendis, sint? Cumque cupiditate deleniti distinctio eos, et facilis laudantium nihil, nisi nulla perspiciatis temporibus!</p>
+      </template>
+
+      <template v-if="active === 'zmiana'">
+        <p class="mt-10">Symulacja zmiany kwoty kredytu - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum cumque hic impedit itaque laudantium molestiae reiciendis, sint? Cumque cupiditate deleniti distinctio eos, et facilis laudantium nihil, nisi nulla perspiciatis temporibus!</p>
+      </template>
+
+      <template v-if="active === 'nadplata'">
+        <p class="mt-10">Nadpłata kredytu - Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum cumque hic impedit itaque laudantium molestiae reiciendis, sint? Cumque cupiditate deleniti distinctio eos, et facilis laudantium nihil, nisi nulla perspiciatis temporibus!</p>
       </template>
 
     </template>

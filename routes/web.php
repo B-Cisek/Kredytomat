@@ -43,6 +43,13 @@ Route::get('/kalkulator-rozszerzony', function () {
         ]);
 })->name('calculator.extended');
 
+Route::get('/nadplata-kredytu', function () {
+    return Inertia::render(
+        'CreditOverpaymentView', [
+        'wiborList' => \App\Models\Wibor::all()
+    ]);
+})->name('calculator.overpayment');
+
 Route::get('/profil', function () {
     return Inertia::render('MyProfil');
 })->name('profil');

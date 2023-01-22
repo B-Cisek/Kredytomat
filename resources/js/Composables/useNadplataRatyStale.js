@@ -41,9 +41,7 @@ export function useNadplataRatyStale(kredyt, nadplata) {
         return parseFloat(rata);
     }
 
-
-    // skrocenie okresu kredytowania
-    function getHarmonogram() {
+    function getHarmonogramSkrocenieOkresuKredytowania() {
         let oprocentowanie = getOprocentowanie();
         let kwota = parseFloat(kredyt.kwotaKredytu);
         let rataCalkowita = getRataStala(kwota, kredyt.okres, oprocentowanie);
@@ -148,8 +146,8 @@ export function useNadplataRatyStale(kredyt, nadplata) {
     }
 
     return {
-        getHarmonogram,
         getRataStala,
+        getHarmonogramSkrocenieOkresuKredytowania,
         getHarmonogramNadplataZmniejsenieWyskosciRaty
     }
 }

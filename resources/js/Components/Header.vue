@@ -270,8 +270,8 @@ const handleToggleProfile = () => {
                         </div>
                       </Link>
 
-                      <a
-                        href="#"
+                      <Link
+                        :href="route('calculator.overpayment')"
                         class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
                       >
                         <!-- Heroicon name: outline/shield-check -->
@@ -291,12 +291,12 @@ const handleToggleProfile = () => {
                           />
                         </svg>
                         <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">Security</p>
+                          <p class="text-base font-medium text-gray-900">Nadpłata kredytu</p>
                           <p class="mt-1 text-sm text-gray-500">
                             Understand how we take your privacy seriously.
                           </p>
                         </div>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -405,6 +405,7 @@ const handleToggleProfile = () => {
                     :href="route('logout')"
                     method="POST"
                     class="block px-4 py-2 text-sm text-gray-700"
+                    as="button"
                   >Wyloguj się
                   </Link>
                 </div>
@@ -514,6 +515,7 @@ const handleToggleProfile = () => {
             :href="route('logout')"
             method="POST"
             class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            as="button"
           >
             Wyloguj się
           </Link>

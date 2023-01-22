@@ -25,6 +25,14 @@ export function useRatyStaleExtended(kredyt) {
         return parseFloat(kapitalPo);
     }
 
+    function getRataStala() {
+        let mn = kredyt.okres * 12;
+        let oprocentowanie = toDecimal(parseFloat(getOprocentowanie()) / 12);
+        let rata = kredyt.kwotaKredytu * oprocentowanie * (oprocentowanie + 1) ** mn / (((oprocentowanie + 1) ** mn) - 1);
+
+        return parseFloat(rata);
+    }
+
     function getHarmonogram() {
         let oprocentowanie = getOprocentowanie();
         let kwota = parseFloat(kredyt.kwotaKredytu);
@@ -57,14 +65,6 @@ export function useRatyStaleExtended(kredyt) {
         }
 
         return harmonogramKredytu;
-    }
-
-    function getRataStala() {
-        let mn = kredyt.okres * 12;
-        let oprocentowanie = toDecimal(parseFloat(getOprocentowanie()) / 12);
-        let rata = kredyt.kwotaKredytu * oprocentowanie * (oprocentowanie + 1) ** mn / (((oprocentowanie + 1) ** mn) - 1);
-
-        return parseFloat(rata);
     }
 
     return {

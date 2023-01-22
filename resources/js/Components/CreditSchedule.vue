@@ -12,9 +12,9 @@ const props = defineProps({
 
 <template>
   <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-    <div class="p-7 bg-white flex justify-center">
-        <span>Harmonogram spłaty kredytu</span>
-    </div>
+<!--    <div class="p-7 bg-white flex justify-center">-->
+<!--        <span>Harmonogram spłaty kredytu</span>-->
+<!--    </div>-->
     <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr class="bg-gray-200 text-center">

@@ -1,19 +1,11 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
-import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
-import {useRatyMalejaceExtended} from "@/Composables/useRatyMalejaceExtended";
-import {useHelpers} from "@/Composables/useHelpers";
-import TabsGroup from "@/Components/TabsGroup.vue";
-
-const {formattedToPLN, formatHarmonogram} = useHelpers();
 
 const props = defineProps({
   wiborList: Object,
 });
 
-
-// Inputs Form
 const amountOfCredit = ref(250000);
 const period = ref(25);
 const margin = ref(1);
@@ -23,50 +15,15 @@ const typeOfInstallment = ref(null);
 const schedule = ref([])
 
 
-const validationInputs = (kredyt) => {
-  if (kredyt.kwotaKredytu < 0 || kredyt.kwotaKredytu > 2000000) alert('Błąd: Kwota Kredytu');
-  if (kredyt.okres < 5 || kredyt.okres > 35) alert('Błąd: Okres');
-  if (kredyt.marza < 0 || kredyt.marza > 15) alert('Błąd: Marża');
-  if (kredyt.prowizja < 0 || kredyt.prowizja > 15) alert('Błąd: Okres');
-  if (kredyt.wibor === null) alert('Błąd: wibor');
-  if (typeOfInstallment.value === null) alert('Błąd: Typ raty');
-}
-
-
-const getResult = () => {
-  const kredyt = {
-    kwotaKredytu: amountOfCredit.value,
-    okres: period.value,
-    marza: margin.value,
-    wibor: wibor.value,
-    prowizja: commission.value
-  }
-
-  validationInputs(kredyt);
-
-  if (typeOfInstallment.value === "rowne") calculateFixedInstallments(kredyt);
-  if (typeOfInstallment.value === "malejace") calculateDecreasingInstallments(kredyt);
-}
-
-const calculateFixedInstallments = (kredyt) => {
-  const result = useRatyStaleExtended(kredyt);
-  console.log('Rata Stała', formattedToPLN.format(result.getRataStala()));
-  schedule.value = formatHarmonogram(result.getHarmonogram());
-}
-
-const calculateDecreasingInstallments = (kredyt) => {
-  const result = useRatyMalejaceExtended(kredyt);
-  console.log('Pierwsza rata malejąca', formattedToPLN.format(result.getPierwszaRata()))
-  schedule.value = formatHarmonogram(result.getHarmonogram());
-}
+console.log(amountOfCredit.value)
 
 </script>
 
-
 <template>
   <Layout>
-    <template v-slot:header>Kalkulator rozszerzony</template>
-
+    <template v-slot:header>
+      Kalulator nadpłaty kredytu
+    </template>
     <template v-slot:default>
       <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
@@ -218,15 +175,13 @@ const calculateDecreasingInstallments = (kredyt) => {
             </div>
           </div>
         </div>
+
+
+
         <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
           Oblicz
         </button>
       </section>
-
-      <section class="mt-5">
-        <TabsGroup :schedule="schedule" />
-      </section>
-
     </template>
   </Layout>
 </template>

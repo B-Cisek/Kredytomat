@@ -1,7 +1,8 @@
 <script setup>
-
-
 import {onMounted, ref} from "vue";
+import {useHelpers} from "@/Composables/useHelpers";
+
+const {formattedToPLN} = useHelpers()
 
 const props = defineProps({
   amountOfInstallment: Number,
@@ -22,11 +23,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-[#016ed6] p-10 w-[600px] rounded">
+<!-- #016ed6  003ec5-->
+  <div class="bg-[#016ed6] p-10 w-[550px] rounded">
     <div class="flex justify-between">
       <div class="block">
         <label class="text-white">Wysokość raty:</label>
-        <h3 class="text-white text-4xl mt-1">{{ amountOfInstallment }} PLN</h3>
+        <h3 class="text-white text-4xl mt-1">{{ formattedToPLN.format(amountOfInstallment) }} PLN</h3>
       </div>
       <div class="flex items-center">
         <label class="text-white mr-5">Pozostało rat:</label>

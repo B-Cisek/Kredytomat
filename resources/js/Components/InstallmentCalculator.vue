@@ -1,39 +1,38 @@
 <script setup>
-import {onMounted, onUpdated, ref, watch} from "vue";
+import {nextTick, ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {useRatyMalejace} from "@/Composables/useRatyMalejace";
 import {useRatyStale} from "@/Composables/useRatyStale";
 import Chart from "@/Components/Chart.vue";
-import RangeInput from "@/Components/RangeInput.vue";
 
 const {getPierwszaRata, getHarmonogram: getHarmonogramMalejace} = useRatyMalejace();
 const {getRataStala, getHarmonogram: getHarmonogramStale} = useRatyStale();
 const {toDecimal, formattedToPLN, kosztKredytu} = useHelpers();
 
-// Inputs Form
+/** Form inputs */
 const amountOfCredit = ref(250000);
 const period = ref(25);
 const rate = ref(7);
 const commission = ref(0);
 
-// commissionResult
+
 const commissionResult = ref(0);
 
 const commissionCalculation = () => {
   commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
 }
 
-// Equal Installment
+/** Equal Installment */
 const equalInstallment = ref(null);
 const equalInstallmentCost = ref(0);
 const equalInstallmentToBePaid = ref(0);
 
-// Decreasing Installment
+/** Decreasing Installment */
 const firstDecreasingInstallment = ref(null);
 const decreasingInstallmentCost = ref(0);
 const decreasingInstallmentToBePaid = ref(0);
 
-const calc = () => {
+const calc = async () => {
   let harmonogramRatyStale = getHarmonogramStale(amountOfCredit.value, period.value, rate.value);
   let harmonogramRatyMalejace = getHarmonogramMalejace(amountOfCredit.value, period.value, rate.value);
   commissionCalculation();
@@ -50,21 +49,18 @@ const calc = () => {
   equalInstallmentToBePaid.value = Number(amountOfCredit.value) + equalInstallmentCost.value + commissionResult.value;
   decreasingInstallmentToBePaid.value =
     Number(amountOfCredit.value) + decreasingInstallmentCost.value + commissionResult.value;
-  drop();
+
+  await nextTick(() => scrollToResult())
 }
 
-// TODO: Scroll to result of calculation after first click
 const results = ref(null);
 
-const drop = () => {
-  results.value.scrollIntoView( {behavior: "smooth"});
+const scrollToResult = () => {
+  results.value.scrollIntoView({behavior: "smooth"});
 }
 
-
 const dataRatyStale = {
-  labels: [
-    `Kwota kredytu 250 000,0 zł`, `Odsetki 290 000,0 zł`, `Prowizja banku 4000,00 zł`
-  ],
+  labels: ['Kwota kredytu', `Odsetki`, `Prowizja banku`],
   datasets: [
     {
       data: [amountOfCredit, equalInstallmentCost, commissionResult],
@@ -74,34 +70,24 @@ const dataRatyStale = {
 };
 
 const options = {
+  responsive: true,
   plugins: {
     legend: {
-      display: true,
       position: 'top',
-      align: 'middle',
-      labels: {
-        textAlign: 'center',
-        font: {
-          size: 16
-        }
-      }
-    }
+    },
   }
 };
 
 const dataRatyMalejace = {
-  labels: [`Kwota kredytu 250 000,0 zł`, `Odsetki 290 000,0 zł`, `Prowizja banku 4000,00 zł`],
+  labels: ['Kwota kredytu', `Odsetki`, `Prowizja banku`],
   datasets: [
     {
+      label: 'dsadsa',
       data: [amountOfCredit, decreasingInstallmentCost, commissionResult],
       backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
     },
   ],
 };
-
-const update = val => {
-  amountOfCredit.value = Number(val);
-}
 
 </script>
 
@@ -111,44 +97,32 @@ const update = val => {
   >
     <div class="lg:flex gap-x-16">
       <div class="flex-1">
-<!--        <div class="flex mb-3 items-center justify-between">-->
-<!--          <h3 class="font-semibold text-black">Kwota kredytu</h3>-->
-<!--          <div class="relative">-->
-<!--            <input-->
-<!--              type="number"-->
-<!--              class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"-->
-<!--              v-model="amountOfCredit"-->
-<!--            />-->
-<!--            <span-->
-<!--              class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"-->
-<!--            >PLN</span-->
-<!--            >-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <input-->
-<!--          type="range"-->
-<!--          min="50000"-->
-<!--          max="2000000"-->
-<!--          step="10000"-->
-<!--          v-model="amountOfCredit"-->
-<!--          class="range range-primary"-->
-<!--        />-->
-<!--        <label class="label">-->
-<!--          <span class="label-text-alt text-black">50 000 zł</span>-->
-<!--          <span class="label-text-alt text-black">2 000 000 zł</span>-->
-<!--        </label>-->
-
-        <RangeInput
-          @updateInput="update"
-          input-type-label="PLN"
-          :default-value="amountOfCredit"
-          heading="Kwota kredytu"
-          :max="2000000"
-          :min="50000"
-          :step="10000"
-          label-left="50 000 zł"
-          label-right="2 000 000 zł"
+        <div class="flex mb-3 items-center justify-between">
+          <h3 class="font-semibold text-black">Kwota kredytu</h3>
+          <div class="relative">
+            <input
+              type="number"
+              class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
+              v-model="amountOfCredit"
+            />
+            <span
+              class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
+            >PLN</span
+            >
+          </div>
+        </div>
+        <input
+          type="range"
+          min="50000"
+          max="2000000"
+          step="10000"
+          v-model="amountOfCredit"
+          class="range range-primary"
         />
+        <label class="label">
+          <span class="label-text-alt text-black">50 000 zł</span>
+          <span class="label-text-alt text-black">2 000 000 zł</span>
+        </label>
       </div>
       <div class="flex-1">
         <div class="flex mb-3 items-center justify-between">
@@ -244,46 +218,94 @@ const update = val => {
   <section
     v-show="equalInstallment != null"
     ref="results"
-    class="w-full mx-auto p-5 mt-10 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
+    class="w-full mx-auto p-5 mt-8 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
   >
     <h1 class="text-2xl font-semibold mb-10 text-gray-700">
       Wyniki obliczeń. Porównaj koszty kredytu
     </h1>
-    <div class="flex w-full">
-      <div class="w-2/4 mr-10">
-        <div class="flex-col">
-          <h3 class="text-xl font-semibold mb-10">Raty stałe</h3>
+    <div class="lg:flex w-full">
+      <div class="lg:w-2/4 lg:mr-10">
+        <div class="flex-col p-3">
+          <h3 class="text-xl font-bold mb-10">RATY STAŁE</h3>
           <div class="flex justify-between">
             <p class="mb-5">Wysokość raty</p>
-            <p class="text-xl font-bold">{{ formattedToPLN.format(equalInstallment) }}</p>
+            <p class="font-bold text-3xl text-indigo-600">{{ formattedToPLN.format(equalInstallment) }}</p>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between mt-2">
             <p class="mb-5">Całkowita kwota do spłaty</p>
-            <p class="text-xl font-bold">
+            <p class="font-bold text-lg">
               {{ formattedToPLN.format(equalInstallmentCost + amountOfCredit) }}
             </p>
           </div>
         </div>
-        <div class="flex justify-center items-center mt-10">
-          <Chart :data="dataRatyStale" :options="options" />
+        <div class="flex justify-center items-center mt-8">
+          <Chart :data="dataRatyStale" :options="options"/>
         </div>
       </div>
-      <div class="w-2/4 ml-10">
-        <div class="flex-col">
-          <h3 class="text-xl font-semibold mb-10">Raty malejące</h3>
+
+      <!-- DIVIDERS START -->
+      <div class="flex font-semibold items-center text-2xl text-gray-700 relative hidden lg:flex">
+        <span id="divider-vertical">VS</span>
+      </div>
+      <div class="w-full flex font-semibold items-center justify-center lg:hidden relative text-2xl text-gray-700 mt-5">
+        <span class="w-full text-center" id="divider-horizontal">VS</span>
+      </div>
+      <!-- DIVIDERS END -->
+
+      <div class="lg:w-2/4 lg:ml-10">
+        <div class="flex-col p-3">
+          <h3 class="text-xl font-bold mb-10">RATY MALEJĄCE</h3>
           <div class="flex justify-between">
             <p class="mb-5">Wysokość pierwszej raty</p>
-            <p class="text-xl font-bold">{{ formattedToPLN.format(firstDecreasingInstallment) }}</p>
+            <p class="font-bold text-3xl text-indigo-600">{{ formattedToPLN.format(firstDecreasingInstallment) }}</p>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between mt-2">
             <p class="mb-5">Całkowita kwota do spłaty</p>
-            <p class="text-xl font-bold">{{ formattedToPLN.format(decreasingInstallmentCost + amountOfCredit) }}</p>
+            <p class="text-lg font-bold">{{ formattedToPLN.format(decreasingInstallmentCost + amountOfCredit) }}</p>
           </div>
         </div>
-        <div class="flex justify-center items-center mt-10">
-          <Chart :data="dataRatyMalejace" :options="options" />
+        <div class="flex justify-center items-center mt-8">
+          <Chart :data="dataRatyMalejace" :options="options"/>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<style scoped>
+#divider-vertical:after {
+  content: "";
+  position: absolute;
+  border-left: 2px solid #374151;
+  height: 45%;
+  left: 15px;
+  bottom: 0;
+}
+
+#divider-vertical:before {
+  content: "";
+  position: absolute;
+  border-left: 2px solid #374151;
+  height: 45%;
+  top: 0;
+  left: 15px;
+}
+
+#divider-horizontal:after {
+  content: "";
+  position: absolute;
+  border-top: 2px solid #374151;
+  width: 40%;
+  top: 15px;
+  right: 5px;
+}
+
+#divider-horizontal:before {
+  content: "";
+  position: absolute;
+  border-bottom: 2px solid #444653;
+  width: 40%;
+  left: 5px;
+  top: 15px;
+}
+</style>

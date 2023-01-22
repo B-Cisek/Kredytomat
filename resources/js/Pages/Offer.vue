@@ -1,7 +1,21 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import CreditOverpaymentSchedule from "@/Components/CreditOverpaymentSchedule.vue";
+import {RatyMalejaceOprocentowanieDzienne} from "@/Composables/RatyMalejaceOprocentowanieDzienne";
+import TabsGroup from "@/Components/TabsGroup.vue";
 import ResultBox from "@/Components/ResultBox.vue";
+
+const kredyt = {
+  kwotaKredytu: 300000,
+  okres: 25,
+  marza: 1,
+  wibor: 7.93,
+  prowizja: 0
+}
+
+console.table(RatyMalejaceOprocentowanieDzienne(kredyt).getHarmonogramRatyMalejace())
+
+
+
 
 
 </script>
@@ -10,13 +24,8 @@ import ResultBox from "@/Components/ResultBox.vue";
   <Layout>
     <template #header> Oferta</template>
     <template #default>
-<!--      <CreditOverpaymentSchedule />-->
-      <ResultBox
-        :amount-of-installment="2027.74"
-        :installments-left-to-pay="205"
-        :capital-installment="1007.74"
-        :interest-installment="200.00"
-      />
+      <ResultBox :amount-of-installment="43242" :interest-installment="342432" :capital-installment="434324" :installments-left-to-pay="54354"/>
+<!--      <TabsGroup />-->
     </template>
   </Layout>
 </template>

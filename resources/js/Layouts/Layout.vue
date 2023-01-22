@@ -1,10 +1,15 @@
 <script setup>
 import Header from "@/Components/Header.vue";
 import Footer from "@/Components/Footer.vue";
+import ToastList from "@/Components/ToastList.vue";
+import {computed} from "vue";
+import {usePage} from "@inertiajs/inertia-vue3";
 
 defineProps({
   loggedIn: Boolean,
 });
+
+const auth = computed(() => usePage().props.value);
 </script>
 
 <template>

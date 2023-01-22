@@ -1,61 +1,34 @@
 <script setup>
-import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
 import {useHelpers} from "@/Composables/useHelpers";
-
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useNadplataRatyStale} from "@/Composables/useNadplataRatyStale";
+import {useNadplataRatyMalejace} from "@/Composables/useNadplataRatyMalejace";
 
+const {formatHarmonogram, formattedToPLN} = useHelpers();
 const overpayment = ref([]);
 
 const kredyt = {
-  kwotaKredytu: 250000,
+  kwotaKredytu: 300000,
   okres: 25,
   marza: 1.93,
   wibor: 7,
   prowizja: 0
 }
 
-const {formatHarmonogram, formattedToPLN} = useHelpers();
-const {getHarmonogram, getHarmonogramNadplataZmniejsenieWyskosciRaty} = useRatyStaleExtended(kredyt);
-
-const schedule = ref(getHarmonogram())
-
-
-
-const calc = () => {
-  const scheduleTest = getHarmonogram();
-
-  scheduleTest.forEach((scheduleValue, scheduleIndex) => {
-    scheduleTest[scheduleIndex].push(
-      overpayment.value[scheduleIndex] !== undefined
-        ? overpayment.value[scheduleIndex]
-        : 0
-    );
-  });
-
-  nadplataRatyStale(scheduleTest);
-}
-
-// skrocenie okresu
-function nadplataRatyStale(harmonogram) {
-  let nadplata = harmonogram[0].at(5);
-  let kapitalPoSplacie = harmonogram[0].at(4);
-
-  for (let index = 1; index < harmonogram.length; index++) {
-    harmonogram[index][0] -= nadplata;
-    if (harmonogram[index][3] > harmonogram[index][0]) {
-      harmonogram[index][3] = harmonogram[index][0] + harmonogram[index][1];
-    }
-    nadplata = harmonogram[index][5];
-  }
-
-  console.table(formatHarmonogram(harmonogram))
-}
+const {
+  getHarmonogramNadplataZmniejsenieWyskosciRaty,
+  getHarmonogramSkrocenieOkresuKredytowania
+} = useNadplataRatyMalejace(kredyt, overpayment.value);
 
 
+const schedule = ref(getHarmonogramSkrocenieOkresuKredytowania())
+
+
+// 12.01.2023
 const test = () => {
-  schedule.value = formatHarmonogram(useNadplataRatyStale(kredyt, overpayment.value).getHarmonogram());
-  console.table(schedule.value);
+  schedule.value = getHarmonogramSkrocenieOkresuKredytowania();
+
+  console.table(useHelpers().formatHarmonogram(schedule.value))
 }
 
 </script>

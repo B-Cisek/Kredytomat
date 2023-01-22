@@ -1,12 +1,16 @@
 <script setup>
-import InputCalculator from "@/Components/InputCalculator.vue";
 import Layout from "@/Layouts/Layout.vue";
+import {useNadplataRatyMalejace} from "@/Composables/useNadplataRatyMalejace";
+import {useHelpers} from "@/Composables/useHelpers";
+import CreditOverpaymentSchedule from "@/Components/CreditOverpaymentSchedule.vue";
+
 </script>
 
 <template>
   <Layout>
     <template #header> O Kredycie </template>
     <template #default>
+      <input type="number">
       <section class="w-full">
         <div class="mb-5">
           <h2 class="font-bold text-xl">Marża</h2>
@@ -30,6 +34,7 @@ import Layout from "@/Layouts/Layout.vue";
           </p>
         </div>
       </section>
+      <CreditOverpaymentSchedule />
     </template>
   </Layout>
 </template>

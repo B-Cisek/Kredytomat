@@ -5,9 +5,10 @@ import Layout from "@/Layouts/Layout.vue";
 
 <template>
   <Layout>
-    <template #header>Kalkulator raty kredytu</template>
-    <template #default>
-      <InstallmentCalculator />
+    <template v-slot:header>Kalkulator raty kredytu</template>
+
+    <template v-slot:default>
+      <InstallmentCalculator/>
     </template>
   </Layout>
 </template>
