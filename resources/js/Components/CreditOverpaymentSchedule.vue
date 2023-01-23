@@ -1,35 +1,22 @@
 <script setup>
 import {useHelpers} from "@/Composables/useHelpers";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {useNadplataRatyStale} from "@/Composables/useNadplataRatyStale";
-import {useNadplataRatyMalejace} from "@/Composables/useNadplataRatyMalejace";
+import {debounce} from "lodash";
 
-const {formatHarmonogram, formattedToPLN} = useHelpers();
+const {formattedToPLN} = useHelpers();
 const overpayment = ref([]);
 
-const kredyt = {
-  kwotaKredytu: 300000,
-  okres: 25,
-  marza: 1.93,
-  wibor: 7,
-  prowizja: 0
-}
+const props = defineProps({
+  credit: Object,
+});
 
-const {
-  getHarmonogramNadplataZmniejsenieWyskosciRaty,
-  getHarmonogramSkrocenieOkresuKredytowania
-} = useNadplataRatyMalejace(kredyt, overpayment.value);
+const schedule = ref(useNadplataRatyStale(props.credit, overpayment.value).getHarmonogramNadplataZmniejsenieWyskosciRaty())
 
+watch(overpayment.value, debounce(() => {
+  schedule.value = useNadplataRatyStale(props.credit, overpayment.value).getHarmonogramNadplataZmniejsenieWyskosciRaty();
+}, 600))
 
-const schedule = ref(getHarmonogramSkrocenieOkresuKredytowania())
-
-
-// 12.01.2023
-const test = () => {
-  schedule.value = getHarmonogramSkrocenieOkresuKredytowania();
-
-  console.table(useHelpers().formatHarmonogram(schedule.value))
-}
 
 </script>
 
@@ -63,8 +50,10 @@ const test = () => {
         <td>{{ formattedToPLN.format(sche[1]) }}</td>
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>
-          <input v-model="overpayment[index]" type="number">
-          <button class="btn" @click="test">Oblicz</button>
+          <input
+            class="border-2 p-1 rounded-lg w-2/4"
+            v-model="overpayment[index]"
+            type="number">
         </td>
       </tr>
       </tbody>

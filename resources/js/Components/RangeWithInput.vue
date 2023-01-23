@@ -1,24 +1,15 @@
 <script setup>
-import {ref} from "vue";
 
 const props = defineProps({
   inputTypeLabel: String,
   heading: String,
-  defaultValue: Number,
   min: Number,
   max: Number,
   step: Number,
   labelLeft: String,
   labelRight: String,
-  modelValue: String
+  modelValue: Number
 });
-
-const inputV = ref(props.defaultValue);
-const emit = defineEmits(['updateInput']);
-
-const send = () => {
-  emit('updateInput', inputV.value);
-}
 
 </script>
 
@@ -29,11 +20,12 @@ const send = () => {
 
     <div class="relative">
       <input
+        :value="modelValue"
+        @input="$emit('update:modelValue', Number($event.target.value))"
         type="number"
-        class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-        v-model="inputV"
-        @change="send"
+        class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[180px]"
       />
+
       <span
         class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
       >{{ inputTypeLabel }}</span>
@@ -42,11 +34,11 @@ const send = () => {
 
   <input
     type="range"
+    :value="modelValue"
+    @input="$emit('update:modelValue', Number($event.target.value))"
     :min="min"
     :max="max"
     :step="step"
-    v-model="inputV"
-    @change="send"
     class="range range-primary bg-[#d1d3d9]"
   />
 

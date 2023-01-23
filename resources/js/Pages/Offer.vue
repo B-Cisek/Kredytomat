@@ -1,22 +1,9 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {RatyMalejaceOprocentowanieDzienne} from "@/Composables/RatyMalejaceOprocentowanieDzienne";
-import TabsGroup from "@/Components/TabsGroup.vue";
-import ResultBox from "@/Components/ResultBox.vue";
+import {ref} from "vue";
+import RangeWithInput from "@/Components/RangeWithInput.vue";
 
-const kredyt = {
-  kwotaKredytu: 300000,
-  okres: 25,
-  marza: 1,
-  wibor: 7.93,
-  prowizja: 0
-}
-
-console.table(RatyMalejaceOprocentowanieDzienne(kredyt).getHarmonogramRatyMalejace())
-
-
-
-
+const margin = ref("2");
 
 </script>
 
@@ -24,8 +11,16 @@ console.table(RatyMalejaceOprocentowanieDzienne(kredyt).getHarmonogramRatyMaleja
   <Layout>
     <template #header> Oferta</template>
     <template #default>
-      <ResultBox :amount-of-installment="43242" :interest-installment="342432" :capital-installment="434324" :installments-left-to-pay="54354"/>
-<!--      <TabsGroup />-->
+      <RangeWithInput
+        v-model="margin"
+        heading="Marża"
+        input-type-label="%"
+        :min="1"
+        :max="10"
+        :step="0.01"
+        labelLeft="1 %"
+        label-right="10 %"
+      />
     </template>
   </Layout>
 </template>
