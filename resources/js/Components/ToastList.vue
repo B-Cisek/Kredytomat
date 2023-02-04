@@ -1,27 +1,41 @@
 <script setup>
 import ToastListItem from "@/Components/ToastListItem.vue";
-import {ref} from "vue";
+import {computed, onUnmounted, ref, watch} from "vue";
+import {usePage} from "@inertiajs/inertia-vue3";
+import {Inertia} from "@inertiajs/inertia";
 
 
+const flash = computed(() => usePage().props.value.flash)
 
-const items = ref([
-  {
-    key: Symbol(),
-    message: "Set yourself free."
-  },
-  {
-    key: Symbol(),
-    message: "Testowy tesks sada"
-  },
-  {
-    key: Symbol(),
-    message: "Poprawnie dodano kredyt."
-  },
-]);
+const items = ref([]);
+
+let removeFinishEventListener = Inertia.on('finish', () => {
+  if (flash.alert_type) {
+    items.value.unshift({
+      key: Symbol(),
+      message: flash.alert_message,
+      type: flash.alert_type,
+    });
+  }
+});
+
+// watch(flash, (flash) => {
+//   if (flash.alert_type) {
+//     console.log(flash.alert_message, flash.alert_type)
+//     items.value.unshift({
+//       key: Symbol(),
+//       message: flash.alert_message,
+//       type: flash.alert_type,
+//     });
+//   }
+// },{deep: true})
+
 
 function remove(index) {
   items.value.splice(index, 1);
 }
+
+onUnmounted(() => removeFinishEventListener());
 
 </script>
 
@@ -38,7 +52,7 @@ function remove(index) {
       v-for="(item, index) in items"
       :key="item.key"
       :message="item.message"
-      type="danger"
+      :type="item.type"
       @remove="remove(index)"
     />
   </TransitionGroup>

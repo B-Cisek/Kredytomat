@@ -32,6 +32,12 @@ const firstDecreasingInstallment = ref(null);
 const decreasingInstallmentCost = ref(0);
 const decreasingInstallmentToBePaid = ref(0);
 
+const results = ref(null);
+
+const scrollToResult = () => {
+  results.value.scrollIntoView({behavior: "smooth"});
+}
+
 const calc = async () => {
   let harmonogramRatyStale = getHarmonogramStale(amountOfCredit.value, period.value, rate.value);
   let harmonogramRatyMalejace = getHarmonogramMalejace(amountOfCredit.value, period.value, rate.value);
@@ -50,12 +56,6 @@ const calc = async () => {
   decreasingInstallmentToBePaid.value =
     Number(amountOfCredit.value) + decreasingInstallmentCost.value + commissionResult.value;
   await nextTick(() => scrollToResult())
-}
-
-const results = ref(null);
-
-const scrollToResult = () => {
-  results.value.scrollIntoView({behavior: "smooth"});
 }
 
 const dataRatyStale = {

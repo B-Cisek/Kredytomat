@@ -1,6 +1,19 @@
 <script setup>
 import {ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
+import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
+
+
+const kredyt = {
+  kwotaKredytu: 300000,
+  okres: 25,
+  marza: 1.5,
+  wibor: 7.7,
+  prowizja: 0
+}
+
+const harmonogram = useRatyStaleExtended(kredyt).getHarmonogram();
+
 
 const {formattedToPLN} = useHelpers();
 
@@ -28,18 +41,18 @@ const props = defineProps({
       </thead>
       <tbody>
       <tr
-        v-for="(sche, index) in props.schedule"
+        v-for="(sche, index) in schedule"
         :key="index"
         class="bg-white border-b hover:bg-gray-50 text-center"
       >
         <td class="font-medium text-gray-900 whitespace-nowrap p-3">
           {{ index + 1 }}
         </td>
-        <td>{{ formattedToPLN.format(sche[0]) }}</td>
-        <td>{{ formattedToPLN.format(sche[2]) }}</td>
         <td>{{ formattedToPLN.format(sche[1]) }}</td>
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
+        <td>{{ formattedToPLN.format(sche[2]) }}</td>
         <td>{{ formattedToPLN.format(sche[4]) }}</td>
+        <td>{{ formattedToPLN.format(sche[5]) }}</td>
       </tr>
       </tbody>
     </table>

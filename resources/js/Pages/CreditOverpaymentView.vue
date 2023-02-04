@@ -3,18 +3,15 @@ import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
-import CreditOverpaymentSchedule from "@/Components/CreditOverpaymentSchedule.vue";
-import OverpaymentInputs from "@/Components/OverpaymentInputs.vue";
-
+import RangeWithInput from "@/Components/RangeWithInput.vue";
+import InputList from "@/Components/InputList.vue";
 
 const props = defineProps({
   wiborList: Object,
 });
 
-const date = ref({
-  month: new Date().getMonth(),
-  year: new Date().getFullYear()
-})
+const wiborChanges = ref([]);
+const overpayments = ref([]);
 
 const formData = ref({
   amountOfCredit: 250000,
@@ -24,7 +21,6 @@ const formData = ref({
   wibor: null,
   typeOfInstallment: null
 });
-
 
 const kredyt = {
   kwotaKredytu: formData.value.amountOfCredit,
@@ -45,25 +41,18 @@ const rules = {
 
 const v$ = useVuelidate(rules, formData)
 
-
-const schedule = ref([])
-
-const test = ref(null);
 const getResult = () => {
   const result = v$.value.$validate();
-  console.log(date.value)
-
 }
 
-const inputs = ref([]);
-
-
-const overpaymentList = ref([]);
-
-const addOverpaymentInput = (overpayment) => {
-  inputs.value.push(OverpaymentInputs);
+const getOverpayments = (value) => {
+  overpayments.value = value;
 }
 
+const getWiborChanges = (value) => {
+  wiborChanges.value = value;
+  console.log(wiborChanges.value)
+}
 
 </script>
 
@@ -76,119 +65,54 @@ const addOverpaymentInput = (overpayment) => {
       <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Kwota kredytu</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.amountOfCredit"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >PLN</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="50000"
-              max="2000000"
-              step="10000"
+            <RangeWithInput
               v-model="formData.amountOfCredit"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="PLN"
+              heading="Kwota kredytu"
+              :min="50000"
+              :max="2000000"
+              :step="10000"
+              label-left="50 000 zł"
+              label-right="2 000 000 zł"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">50 000 zł</span>
-              <span class="label-text-alt text-black">2 000 000 zł</span>
-            </label>
           </div>
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Okres spłaty</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.period"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >LAT</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="35"
-              step="1"
+            <RangeWithInput
               v-model="formData.period"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="LAT"
+              heading="Okres spłaty"
+              :min="5"
+              :max="35"
+              :step="1"
+              label-left="5 lat"
+              label-right="35 lat"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">5 lat</span>
-              <span class="label-text-alt text-black">35 lat</span>
-            </label>
           </div>
         </div>
-        <div class="lg:flex gap-x-16">
+        <div class="lg:flex gap-x-16 mt-7">
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Marża</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.margin"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >%</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="0.00"
-              max="15"
-              step="0.01"
+            <RangeWithInput
               v-model="formData.margin"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="%"
+              heading="Marża"
+              :min="0.01"
+              :max="15"
+              :step="0.01"
+              label-left="0,01%"
+              label-right="15%"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">0,01%</span>
-              <span class="label-text-alt text-black">15%</span>
-            </label>
           </div>
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <label for="" class="font-semibold text-black">Prowizja</label>
-              <div class="relative">
-                <input
-                  id="commission"
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.commission"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >%</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="0.00"
-              max="15"
-              step="0.01"
+            <RangeWithInput
               v-model="formData.commission"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="%"
+              heading="Prowizja"
+              :min="0.00"
+              :max="15"
+              :step="0.01"
+              label-left="0,01%"
+              label-right="15%"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">0%</span>
-              <span class="label-text-alt text-black">15%</span>
-            </label>
           </div>
         </div>
         <div class="lg:flex gap-x-16 mt-7">
@@ -235,22 +159,27 @@ const addOverpaymentInput = (overpayment) => {
             >Wybierz rodzaj raty</span>
           </div>
         </div>
-        <div class="lg:flex gap-x-16 mt-7">
-          <div class="flex-1">
-            <button @click="addOverpaymentInput" class="btn bg-gray-700">Dodaj nadpłate</button>
-            <div class="space-y-1 mt-2">
-              <component v-for="input in inputs" :key="input.key" :is="input" />
-            </div>
+        <div class="mt-7">
+          <div>
+            <span class="text-xl font-semibold mr-5">Nadpłata</span>
+            <InputList
+              @input-list="getOverpayments"
+              placeholder="PLN"
+              button-text="Dodaj nadpłate"
+            />
+          </div>
+          <div>
+            <span class="text-xl font-semibold mr-5">Zmiana wiboru</span>
+            <InputList
+              @input-list="getWiborChanges"
+              placeholder="Nowy WIBOR"
+              button-text="Dodaj zmina wiboru"
+            />
           </div>
         </div>
         <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
           Oblicz
         </button>
-      </section>
-      <section
-        v-if="test != null"
-        class="w-full mx-auto p-5 mt-8 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white">
-        <CreditOverpaymentSchedule :credit="kredyt" :overpayment="[]"/>
       </section>
     </template>
   </Layout>

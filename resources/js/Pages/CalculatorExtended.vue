@@ -4,9 +4,32 @@ import {ref} from "vue";
 import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
 import {useRatyMalejaceExtended} from "@/Composables/useRatyMalejaceExtended";
 import {useHelpers} from "@/Composables/useHelpers";
-import TabsGroup from "@/Components/TabsGroup.vue";
+import {LineChart} from "vue-chart-3";
+import {Chart, registerables} from "chart.js";
+import Collapse from "@/Components/Collapse.vue";
+import ResultBox from "@/Components/ResultBox.vue";
+import CreditSchedule from "@/Components/CreditSchedule.vue";
 
 const {formattedToPLN, formatHarmonogram} = useHelpers();
+
+Chart.register(...registerables);
+
+// const labels = Utils.months({count: 7});
+const chartData = {
+  labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
+  datasets: [
+    {
+      fill: true,
+      data: [30, 40, 60, 70, 5],
+      backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
+    },
+    {
+      fill: true,
+      data: [20, 25, 35, 44, 60],
+      backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
+    },
+  ],
+};
 
 const props = defineProps({
   wiborList: Object,
@@ -223,9 +246,59 @@ const calculateDecreasingInstallments = (kredyt) => {
         </button>
       </section>
 
-      <section class="mt-5">
-        <TabsGroup :schedule="schedule" />
-      </section>
+      <Collapse class="mt-5" title="Twoje wyniki" :collapsed="true">
+        <div class="flex gap-3">
+          <div class="flex-1 bg-[#21a142] p-5 rounded text-white flex">
+            <div class="flex flex-col justify-between flex-1">
+              <div>
+                <p class="mt-1">Kwota kredytu:</p>
+                <span class="text-xl font-semibold">500 000,00 zł</span>
+              </div>
+              <div>
+                <p class="mt-1">Okres spłaty: 25 lat</p>
+                <span class="text-xl font-semibold">25 lat</span>
+              </div>
+              <div>
+                <p class="mt-1">Oprocentowanie:</p>
+                <p class="text-xl font-semibold">9,34% <span class="text-sm font-normal">(WIBOR 7,43% + marża 2,00%)</span></p>
+              </div>
+              <div>
+                <p class="mt-1">Prowizja:</p>
+                <span class="text-xl font-semibold">0%</span>
+              </div>
+            </div>
+            <div class="flex flex-col justify-between items-end text-right flex-1">
+              <div>
+                <p class="mt-1">Rodzaj raty:</p>
+                <span class="text-xl font-semibold">Stała</span>
+              </div>
+              <div>
+                <p class="mt-1">WIBOR:</p>
+                <span class="text-xl font-semibold">3M</span>
+              </div>
+              <div>
+                <p class="mt-1">Opłaty stałe łącznie:</p>
+                <span class="text-xl font-semibold">0,00 zł</span>
+              </div>
+              <div>
+                <p class="mt-1">Opłaty zmienne łącznie:</p>
+                <span class="text-xl font-semibold">0,00 zł</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-1">
+            <ResultBox/>
+          </div>
+        </div>
+        <div class="p-2 mt-3">
+          <LineChart class="h-[400px]" :chartData="chartData"/>
+        </div>
+      </Collapse>
+      <Collapse class="mt-2" title="Podsumowanie" :collapsed="false"/>
+      <Collapse class="mt-2" title="Podsumowanie" :collapsed="false"/>
+      <Collapse class="mt-2" title="Harmonogram spłaty kredytu" :collapsed="false">
+        <CreditSchedule/>
+      </Collapse>
 
     </template>
   </Layout>

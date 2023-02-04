@@ -1,19 +1,16 @@
 <?php
 
-use App\Enums\WiborType;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CreditController;
 use App\Http\Controllers\UserController;
 use App\Models\Credit;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
 Route::get('/', function () {
     return Inertia::render('Home', [
-        'credits' => Credit::with('bank')->get()
+        'credits' => Credit::with('bank', 'wibor')->get()
     ]);
 })->name('home');
 
@@ -23,10 +20,10 @@ Route::get('/oferta', function () {
     ]);
 })->name('offer');
 
-
 Route::get('/o-kredycie', function () {
     return Inertia::render('Okredycie');
 })->name('o-kredycie');
+
 
 Route::get('/kalkulator-raty', function () {
     return Inertia::render('Calculator');
@@ -68,8 +65,8 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 
 require __DIR__ . '/auth.php';
 
-Route::get('/test', function () {
-    return Inertia::render('Test');
-});
 
+Route::post('/test', function (\Illuminate\Http\Request $request) {
+   dd($request->all());
+});
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AlertType;
 use App\Http\Requests\Bank\StoreBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Models\Bank;
@@ -53,7 +54,7 @@ class BankController extends Controller
         return redirect()
             ->route('admin.banks.index')
             ->with([
-                'alert_type' => 'success',
+                'alert_type' => AlertType::SUCCESS,
                 'alert_message' => 'Bank dodany poprawnie!'
             ]);
     }

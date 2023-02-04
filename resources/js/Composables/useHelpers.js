@@ -1,7 +1,14 @@
+import {h} from "vue";
+import {el} from "date-fns/locale";
+
 export function useHelpers() {
 
     function formatHarmonogram(harmonogram) {
-        return harmonogram.map((subarray) => subarray.map((x) => x.toFixed(2)));
+        //return harmonogram.map((subarray) => subarray.map((x) => x.toFixed(2)));
+
+        return harmonogram.map((subarray) => subarray.map((x) => {
+            return (typeof x !== "object") ? x.toFixed(2) : x
+        }));
     }
 
     function toDecimal(percent) {

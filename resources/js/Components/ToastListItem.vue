@@ -29,16 +29,17 @@ const types = {
     "borderColor": "border-orange-500"
   },
 };
+
 </script>
 
 <template>
   <div
     class="border border-1 flex items-center p-4 mb-4 text-gray-500 bg-white rounded-lg shadow"
-    :class="types[props.type].borderColor"
+    :class="types.danger.borderColor"
     role="alert">
-    <div :class="types[props.type].class">
+    <div :class="props.type === 'danger' ? 'dsadsa': 'dsa'">
       <svg aria-="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" :d="types[props.type].icon" clip-rule="evenodd"></path>
+        <path fill-rule="evenodd" :d="types.danger.icon" clip-rule="evenodd"></path>
       </svg>
       <span class="sr-only">Check icon</span>
     </div>
