@@ -73,7 +73,7 @@ const formatToPLN = (amount) => {
         <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
       </div>
       <div>
-        <form @submit.prevent="Inertia.post('/test',{maraza: credit.margin, prowizja: credit.commission, wibor: credit.wibor.value})">
+        <form @submit.prevent="Inertia.get('/test',{maraza: credit.margin, prowizja: credit.commission, wibor: credit.wibor.value})">
           <PrimaryButton>Sprawdź</PrimaryButton>
         </form>
       </div>

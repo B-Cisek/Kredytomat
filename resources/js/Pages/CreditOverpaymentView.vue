@@ -1,34 +1,43 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
-import InputList from "@/Components/InputList.vue";
+import {useEqualInstallments} from "@/Composables/useEqualInstallments"
+import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
+import {useHelpers} from "@/Composables/useHelpers";
+import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
+import OverpaymentInputsList from "@/Components/OverpaymentInputsList.vue";
+
+const {formatHarmonogram} = useHelpers();
 
 const props = defineProps({
   wiborList: Object,
 });
 
-const wiborChanges = ref([]);
 const overpayments = ref([]);
+const overpaymentsStorage = ref(localStorage.getItem('overpayment-values'));
+const overpaymentType = ref(localStorage.getItem('overpayment-type') ?? "period");
+const schedule = ref([]);
 
 const formData = ref({
-  amountOfCredit: 250000,
-  period: 25,
-  margin: 1,
-  commission: 0,
-  wibor: null,
-  typeOfInstallment: null
+  amountOfCredit: Number(localStorage.getItem('overpayment-amountOfCredit') ?? 300000),
+  period: Number(localStorage.getItem('overpayment-period') ?? 25),
+  margin: Number(localStorage.getItem('overpayment-margin') ?? 2),
+  commission: Number(localStorage.getItem('overpayment-commission') ?? 0),
+  wibor: Number(localStorage.getItem('overpayment-wibor')),
+  typeOfInstallment: localStorage.getItem('overpayment-typeOfInstallment') ?? "rowne"
 });
 
-const kredyt = {
-  kwotaKredytu: formData.value.amountOfCredit,
-  okres: formData.value.period,
-  marza: formData.value.margin,
-  wibor: formData.value.wibor,
-  prowizja: formData.value.commission
-}
+watch(formData.value, (newValue, oldValue) => {
+  localStorage.setItem("overpayment-amountOfCredit", newValue.amountOfCredit.toString());
+  localStorage.setItem("overpayment-period", newValue.period.toString());
+  localStorage.setItem("overpayment-margin", newValue.margin.toString());
+  localStorage.setItem("overpayment-commission", newValue.commission.toString());
+  localStorage.setItem("overpayment-wibor", newValue.wibor.toString());
+  localStorage.setItem("overpayment-typeOfInstallment", newValue.typeOfInstallment.toString());
+});
 
 const rules = {
   amountOfCredit: {required},
@@ -39,19 +48,73 @@ const rules = {
   typeOfInstallment: {required}
 }
 
-const v$ = useVuelidate(rules, formData)
-
-const getResult = () => {
-  const result = v$.value.$validate();
+const decreasingInstallment = () => {
+  if (overpaymentType.value === "period") {
+    return useDecreasinginstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, overpayments.value, []).getScheduleShorterPeriod();
+  } else {
+    return useDecreasinginstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, overpayments.value, []).getScheduleSmallerInstallment();
+  }
 }
 
-const getOverpayments = (value) => {
+const equalInstallment = () => {
+  if (overpaymentType.value === "period") {
+    return useEqualInstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, overpayments.value, []).getScheduleShorterPeriod();
+  } else {
+    return useEqualInstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, overpayments.value, []).getScheduleSmallerInstallment();
+  }
+}
+
+const v$ = useVuelidate(rules, formData);
+
+const getResult = async () => {
+  const result = await v$.value.$validate();
+
+  if (!result) {
+    return;
+  }
+
+  let creditResult;
+
+  if (formData.value.typeOfInstallment === "rowne") creditResult = equalInstallment();
+  if (formData.value.typeOfInstallment === "malejace") creditResult = decreasingInstallment();
+
+  schedule.value = formatHarmonogram(creditResult);
+  console.table(formatHarmonogram(creditResult));
+}
+
+const getOverpayments = (value, value2) => {
   overpayments.value = value;
-}
-
-const getWiborChanges = (value) => {
-  wiborChanges.value = value;
-  console.log(wiborChanges.value)
+  localStorage.setItem("overpayment-values", JSON.stringify(overpayments.value));
+  overpaymentType.value = value2;
+  localStorage.setItem("overpayment-type", value2);
 }
 
 </script>
@@ -128,7 +191,7 @@ const getWiborChanges = (value) => {
                 <option
                   v-for="wibor in props.wiborList"
                   :key="wibor.id"
-                  :value="wibor.value"
+                  :value="Number(wibor.value)"
                 >{{ wibor.type + ` (${wibor.value}%)` }}
                 </option>
               </select>
@@ -161,25 +224,21 @@ const getWiborChanges = (value) => {
         </div>
         <div class="mt-7">
           <div>
-            <span class="text-xl font-semibold mr-5">Nadpłata</span>
-            <InputList
+            <OverpaymentInputsList
+              :data="overpaymentsStorage"
               @input-list="getOverpayments"
               placeholder="PLN"
-              button-text="Dodaj nadpłate"
-            />
-          </div>
-          <div>
-            <span class="text-xl font-semibold mr-5">Zmiana wiboru</span>
-            <InputList
-              @input-list="getWiborChanges"
-              placeholder="Nowy WIBOR"
-              button-text="Dodaj zmina wiboru"
             />
           </div>
         </div>
         <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
           Oblicz
         </button>
+      </section>
+      <section
+        v-if="schedule.length"
+        class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white mt-5">
+        <CreditScheduleOverpayment :schedule="schedule"/>
       </section>
     </template>
   </Layout>

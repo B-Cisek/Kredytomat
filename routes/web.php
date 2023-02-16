@@ -66,7 +66,10 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 require __DIR__ . '/auth.php';
 
 
-Route::post('/test', function (\Illuminate\Http\Request $request) {
-   dd($request->all());
+Route::get('/test', function (\Illuminate\Http\Request $request) {
+
+    return Inertia::render('CreditOfferCalculation', [
+        'data' => $request->all()
+    ]);
 });
 
