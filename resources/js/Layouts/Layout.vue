@@ -25,7 +25,7 @@ const auth = computed(() => usePage().props.value);
     </header>
 
     <main class="flex-1">
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 gap-y-2 flex flex-col">
         <slot />
       </div>
     </main>

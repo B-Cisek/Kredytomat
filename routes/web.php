@@ -2,15 +2,18 @@
 
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CreditController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Models\Credit;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-
 Route::get('/', function () {
     return Inertia::render('Home', [
-        'credits' => Credit::with('bank', 'wibor')->get()
+        'credits' => Credit::with('bank', 'wibor')
+            ->latest()
+            ->limit(6)
+            ->get()
     ]);
 })->name('home');
 
@@ -47,9 +50,12 @@ Route::get('/nadplata-kredytu', function () {
     ]);
 })->name('calculator.overpayment');
 
-Route::get('/profil', function () {
-    return Inertia::render('MyProfil');
-})->name('profil');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('profil' , [ProfileController::class, 'index'])->name('profil');
+    Route::post('profil' , [ProfileController::class, 'profileUpdate'])->name('profil.update');
+    Route::post('profil/zmiana-hasla' , [ProfileController::class, 'passwordUpdate'])->name('profil.password.update');
+    Route::post('profil/usun-konto' , [ProfileController::class, 'deleteAccount'])->name('profil.delete');
+});
 
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
@@ -64,12 +70,4 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
 
 
 require __DIR__ . '/auth.php';
-
-
-Route::get('/test', function (\Illuminate\Http\Request $request) {
-
-    return Inertia::render('CreditOfferCalculation', [
-        'data' => $request->all()
-    ]);
-});
 

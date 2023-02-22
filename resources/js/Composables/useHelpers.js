@@ -1,5 +1,4 @@
-import {h} from "vue";
-import {el} from "date-fns/locale";
+
 
 export function useHelpers() {
 
@@ -30,10 +29,38 @@ export function useHelpers() {
         return szumaKoszt;
     }
 
+    function totalCreditCost(schedule) {
+        let cost = 0.00;
+        for (let i = 0; i < schedule.length; i++) {
+            cost += schedule[i][3];
+        }
+        return cost + totalCreditInterest(schedule);
+    }
+
+    function totalCreditInterest(schedule) {
+        let cost = 0.00;
+        for (let i = 0; i < schedule.length; i++) {
+            cost += schedule[i][2];
+        }
+        return cost;
+    }
+
+    function totalOverpayments(schedule) {
+        let overpayments = 0.00;
+        for (let i = 0; i < schedule.length; i++) {
+            overpayments += schedule[i][6];
+        }
+        return overpayments;
+    }
+
     return {
         formatHarmonogram,
+        totalCreditInterest,
         toDecimal,
+        totalCreditCost,
         formattedToPLN,
+        totalOverpayments,
         kosztKredytu
+
     }
 }

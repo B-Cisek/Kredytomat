@@ -303,6 +303,7 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
                 ];
             } else {
                 newInstallmentTotal = getNewInstallment(lastCapitalBeforePay, index, currentWibor);
+                console.log('dsad')
                 current = [
                     currentDate,
                     capitalToPay,

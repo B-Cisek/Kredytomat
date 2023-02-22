@@ -1,41 +1,28 @@
 <script setup>
 import ToastListItem from "@/Components/ToastListItem.vue";
-import {computed, onUnmounted, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {usePage} from "@inertiajs/inertia-vue3";
-import {Inertia} from "@inertiajs/inertia";
 
-
-const flash = computed(() => usePage().props.value.flash)
+const props = computed(() => usePage().props);
 
 const items = ref([]);
 
-let removeFinishEventListener = Inertia.on('finish', () => {
-  if (flash.alert_type) {
+watch(props, (newValue) => {
+  if (newValue.value.flash.alert_message) {
     items.value.unshift({
       key: Symbol(),
-      message: flash.alert_message,
-      type: flash.alert_type,
+      message: newValue.value.flash.alert_message,
+      type: newValue.value.flash.alert_type,
     });
   }
+},{
+  immediate: true,
+  deep: true
 });
-
-// watch(flash, (flash) => {
-//   if (flash.alert_type) {
-//     console.log(flash.alert_message, flash.alert_type)
-//     items.value.unshift({
-//       key: Symbol(),
-//       message: flash.alert_message,
-//       type: flash.alert_type,
-//     });
-//   }
-// },{deep: true})
-
 
 function remove(index) {
   items.value.splice(index, 1);
 }
-
-onUnmounted(() => removeFinishEventListener());
 
 </script>
 

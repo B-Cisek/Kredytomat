@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
@@ -9,25 +9,26 @@ import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments
 import {useHelpers} from "@/Composables/useHelpers";
 import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
 import OverpaymentInputsList from "@/Components/OverpaymentInputsList.vue";
+import Collapse from "@/Components/Collapse.vue";
 
-const {formatHarmonogram} = useHelpers();
+const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
 
 const props = defineProps({
   wiborList: Object,
 });
 
 const overpayments = ref([]);
-const overpaymentsStorage = ref(localStorage.getItem('overpayment-values'));
-const overpaymentType = ref(localStorage.getItem('overpayment-type') ?? "period");
+const overpaymentsStorage = ref(localStorage.getItem("overpayment-values"));
+const overpaymentType = ref(localStorage.getItem("overpayment-type") ?? "period");
 const schedule = ref([]);
 
 const formData = ref({
-  amountOfCredit: Number(localStorage.getItem('overpayment-amountOfCredit') ?? 300000),
-  period: Number(localStorage.getItem('overpayment-period') ?? 25),
-  margin: Number(localStorage.getItem('overpayment-margin') ?? 2),
-  commission: Number(localStorage.getItem('overpayment-commission') ?? 0),
-  wibor: Number(localStorage.getItem('overpayment-wibor')),
-  typeOfInstallment: localStorage.getItem('overpayment-typeOfInstallment') ?? "rowne"
+  amountOfCredit: Number(localStorage.getItem("overpayment-amountOfCredit") ?? 300000),
+  period: Number(localStorage.getItem("overpayment-period") ?? 25),
+  margin: Number(localStorage.getItem("overpayment-margin") ?? 2),
+  commission: Number(localStorage.getItem("overpayment-commission") ?? 0),
+  wibor: Number(localStorage.getItem("overpayment-wibor")),
+  typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "rowne"
 });
 
 watch(formData.value, (newValue, oldValue) => {
@@ -52,11 +53,7 @@ const decreasingInstallment = () => {
   if (overpaymentType.value === "period") {
     return useDecreasinginstallments({
       date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
+      ...formData.value
     }, overpayments.value, []).getScheduleShorterPeriod();
   } else {
     return useDecreasinginstallments({
@@ -94,6 +91,8 @@ const equalInstallment = () => {
 
 const v$ = useVuelidate(rules, formData);
 
+const totalCost = ref(0);
+
 const getResult = async () => {
   const result = await v$.value.$validate();
 
@@ -108,15 +107,28 @@ const getResult = async () => {
 
   schedule.value = formatHarmonogram(creditResult);
   console.table(formatHarmonogram(creditResult));
+  console.log(formattedToPLN.format(totalCreditInterest(creditResult)));
+  totalCost.value = totalCreditCost(creditResult);
+
+  console.log(formattedToPLN.format(totalCreditCost(creditResult)));
 }
 
-const getOverpayments = (value, value2) => {
+const getOverpayments = (value) => {
   overpayments.value = value;
   localStorage.setItem("overpayment-values", JSON.stringify(overpayments.value));
-  overpaymentType.value = value2;
-  localStorage.setItem("overpayment-type", value2);
 }
 
+const getType = (value) => {
+  overpaymentType.value = value;
+  localStorage.setItem("overpayment-type", value);
+}
+
+onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
+
+
+const getInfo = () => {
+
+}
 </script>
 
 <template>
@@ -227,6 +239,7 @@ const getOverpayments = (value, value2) => {
             <OverpaymentInputsList
               :data="overpaymentsStorage"
               @input-list="getOverpayments"
+              @type="getType"
               placeholder="PLN"
             />
           </div>
@@ -235,10 +248,29 @@ const getOverpayments = (value, value2) => {
           Oblicz
         </button>
       </section>
+
       <section
         v-if="schedule.length"
-        class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white mt-5">
-        <CreditScheduleOverpayment :schedule="schedule"/>
+        class="flex flex-col gap-y-2"
+      >
+        <Collapse title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
+          <div v-if="overpaymentType === 'period'">
+            <h1>Zmniejszenie raty</h1>
+            <div class="flex">
+              <p>
+                Koszt kredytu: {{ formattedToPLN.format(totalCost) }}
+              </p>
+              <p>Oszczędność na całym kredycie</p>
+            </div>
+          </div>
+          <div v-if="overpaymentType === 'installment'">
+            mniejsza rata
+          </div>
+        </Collapse>
+
+        <Collapse title="Harmonogram" :collapsed="false">
+          <CreditScheduleOverpayment :schedule="schedule"/>
+        </Collapse>
       </section>
     </template>
   </Layout>

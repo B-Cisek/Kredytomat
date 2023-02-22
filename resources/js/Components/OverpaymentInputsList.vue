@@ -9,7 +9,7 @@ const props = defineProps({
   data: String
 });
 
-const emit = defineEmits(['inputList']);
+const emit = defineEmits(["inputList", "type"]);
 
 const list = ref(JSON.parse(props.data) ?? []);
 const overpaymentType = ref("period");
@@ -28,7 +28,11 @@ const remove = (id) => {
 }
 
 watch(list.value, () => {
-  emit('inputList', list.value, overpaymentType.value);
+  emit("inputList", list.value);
+});
+
+watch(overpaymentType, () => {
+  emit("type", overpaymentType.value);
 });
 </script>
 

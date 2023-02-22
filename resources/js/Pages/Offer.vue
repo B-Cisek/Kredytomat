@@ -22,9 +22,22 @@ console.table(formatHarmonogram(creditResult));
 <template>
   <Head title="Oferta" />
   <Layout>
-    <template v-slot:header>Oferta</template>
+    <template v-slot:header>Oferta Banków</template>
     <template v-slot:default>
-
+      <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5 flex">
+        <div class="flex-col flex">
+          <img src="http://localhost/storage/logos/gHE0VDwZbkLJaQWNl4YqrD8MwNjhj5OXGxyhDqbF.jpg" alt="" class="w-48">
+          <span class="">6 ofert</span>
+        </div>
+        <div>
+          <img src="" alt="">
+          <span>6 ofert</span>
+        </div>
+        <div>
+          <img src="" alt="">
+          <span>6 ofert</span>
+        </div>
+      </section>
     </template>
   </Layout>
 </template>
