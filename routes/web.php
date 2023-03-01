@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\BankController;
-use App\Http\Controllers\CreditController;
+use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\CreditController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
 use App\Models\Credit;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,11 +18,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/oferta', function () {
-    return Inertia::render('Offer', [
-        'credits' => Credit::all()
-    ]);
-})->name('offer');
 
 Route::get('/o-kredycie', function () {
     return Inertia::render('Okredycie');
@@ -49,6 +45,11 @@ Route::get('/nadplata-kredytu', function () {
         'wiborList' => \App\Models\Wibor::all()
     ]);
 })->name('calculator.overpayment');
+
+
+Route::get('/oferta', [OfferController::class, 'index'])->name('offer');
+Route::get('/oferta/{name}', [OfferController::class, 'show'])->name('offer.show');
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('profil' , [ProfileController::class, 'index'])->name('profil');

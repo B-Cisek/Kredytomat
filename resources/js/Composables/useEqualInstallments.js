@@ -6,13 +6,31 @@ import {useHelpers} from "@/Composables/useHelpers";
  * @param credit Kredyt dane
  * @param overpayment Lista nadpłat
  * @param wiborList Lasta zmian wiboru
+ * @param fixedFees Opłaty stałe
+ * @param changingFees Opłaty zmienne
  */
-export function useEqualInstallments(credit, overpayment, wiborList) {
+export function useEqualInstallments(
+    credit,
+    overpayment = [],
+    wiborList = [],
+    fixedFees = [],
+    changingFees = []
+) {
     const {toDecimal} = useHelpers();
-    let firstDateFromOverpayment = new Date(1999,0);
 
+    let firstDateFromOverpayment = new Date(1999,0);
     if (overpayment[0]) {
         firstDateFromOverpayment = new Date(overpayment[0].start.year, overpayment[0].start.month);
+    }
+
+    let firstDateFromFixedFees = new Date(1999,0);
+    if (fixedFees[0]) {
+        firstDateFromFixedFees = new Date(fixedFees[0].start.year, fixedFees[0].start.month);
+    }
+
+    let firstDateFromChangingFees = new Date(1999,0);
+    if (changingFees[0]) {
+        firstDateFromChangingFees = new Date(changingFees[0].start.year, changingFees[0].start.month);
     }
 
     /**
@@ -92,6 +110,10 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
         return parseFloat(newInstallment);
     }
 
+    function calculateChangingFee(fee, capitalToPay) {
+        return (capitalToPay * fee) / 100;
+    }
+
     function getSchedule() {
         let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
         let amount = parseFloat(credit.amountOfCredit);
@@ -110,33 +132,44 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
                 installmentTotal,
                 capitalAfterPay,
                 0,
-                credit.wibor
+                credit.wibor,
+                firstDateFromFixedFees.getTime() === credit.date.getTime()
+                    ? fixedFees[0].fee
+                    : 0,
+                firstDateFromChangingFees.getTime() === credit.date.getTime()
+                    ? calculateChangingFee(changingFees[0].fee, amount)
+                    : 0,
             ],
         ];
 
+        creditSchedule[0][4] += creditSchedule[0][8] + creditSchedule[0][9];
+
         for (let index = 1; index < credit.period * 12; index++) {
             let lastRow = creditSchedule.at(-1);
-            let lastOverpayment = 0;
             let capitalToPay = lastRow[5] - lastRow[6];
             let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
             let currentDate = getNextMonth(lastRow[0]);
             let currentWibor = lastRow[7];
-            let onceOverpayment = 0;
+            let fixedFee = 0;
+            let changingFee = 0;
 
-            wiborList.forEach(value => {
-                if (value.start.month === lastRow[0].getMonth() &&
-                    value.start.year === lastRow[0].getFullYear()) {
-                    currentWibor = value.wibor
+            fixedFees.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    fixedFee = value.fee;
                 }
             });
 
-            overpayment.forEach(value => {
-                if (value.start.month === value.end.month &&
-                    value.start.year === value.end.year) {
-                    if (value.start.month === lastRow[0].getMonth() &&
-                        value.start.year === lastRow[0].getFullYear()) {
-                        onceOverpayment = value.overpayment;
-                    }
+            changingFees.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    changingFee = calculateChangingFee(value.fee, capitalToPay);
                 }
             });
 
@@ -147,17 +180,27 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
                 getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay)),
                 getInstallment(currentWibor),
                 getCapitalAfterPay(capitalToPay, getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay))),
-                onceOverpayment !== 0 ? onceOverpayment : lastOverpayment,
-                currentWibor
+                0,
+                currentWibor,
+                fixedFee,
+                changingFee
             ];
 
+            // jezeli rata calkowita jest mniejsza od kapitalu do splaty
+            if (current[4] > current[1]) {
+                current[4] = current[1] + current[2]; // rata calkowita
+                current[3] = current[4] - current[2]; // czesc kapitalowa
+                current[5] = current[1] - current[3]; // kapital po splacie
+            }
+
+            current[4] += current[8] + current[9];
+
             creditSchedule.push(current);
-            onceOverpayment = 0;
+            if (current[5] <= 0) break;
         }
 
         return creditSchedule;
     }
-
 
     function getScheduleShorterPeriod() {
         let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
@@ -303,7 +346,6 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
                 ];
             } else {
                 newInstallmentTotal = getNewInstallment(lastCapitalBeforePay, index, currentWibor);
-                console.log('dsad')
                 current = [
                     currentDate,
                     capitalToPay,
@@ -326,6 +368,7 @@ export function useEqualInstallments(credit, overpayment, wiborList) {
     return {
         getScheduleShorterPeriod,
         getScheduleSmallerInstallment,
+        getSchedule,
         getInstallment,
     }
 }

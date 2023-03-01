@@ -53,6 +53,46 @@ export function useHelpers() {
         return overpayments;
     }
 
+    function getCapitalPartArray(schedule) {
+        let arr = [];
+        schedule.forEach((value) => {
+            arr.push(value[3]);
+        })
+        return arr;
+    }
+
+    function getInterestPartArray(schedule) {
+        let arr = [];
+        schedule.forEach((value) => {
+            arr.push(value[2]);
+        })
+        return arr;
+    }
+
+    function getPaidInterestToIndex(schedule, index) {
+        let sum = 0;
+        for (let i = 0; i < index; i++) {
+            sum += schedule[i][2];
+        }
+        return sum;
+    }
+
+    function getPaidCapitalToIndex(schedule, index) {
+        let sum = 0;
+        for (let i = 0; i < index; i++) {
+            sum += schedule[i][3];
+        }
+        return sum;
+    }
+
+    function getCapitalToPayFromIndex(schedule, index) {
+        let sum = 0;
+        for (let i = index; i < schedule.length; i++) {
+            sum += schedule[i][3];
+        }
+        return sum;
+    }
+
     return {
         formatHarmonogram,
         totalCreditInterest,
@@ -60,7 +100,11 @@ export function useHelpers() {
         totalCreditCost,
         formattedToPLN,
         totalOverpayments,
-        kosztKredytu
-
+        kosztKredytu,
+        getCapitalPartArray,
+        getInterestPartArray,
+        getPaidInterestToIndex,
+        getPaidCapitalToIndex,
+        getCapitalToPayFromIndex
     }
 }

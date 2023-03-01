@@ -1,8 +1,6 @@
 <script setup>
-
 import Header from "@/Components/Header.vue";
 import AdminHeader from "@/Components/AdminHeader.vue";
-import ToastList from "@/Components/ToastList.vue";
 
 </script>
 

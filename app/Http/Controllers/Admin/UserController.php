@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Enums\AlertType;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Inertia\Response
-     */
-    public function index()
+    public function index(): Response
     {
         $users = User::paginate(10);
 
@@ -26,23 +23,12 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Inertia\Response
-     */
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Admin/Users/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param StoreUserRequest $request
-     * @return RedirectResponse
-     */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
 
@@ -53,32 +39,19 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => 'success',
+                'alert_type' => AlertType::SUCCESS,
                 'alert_message' => 'Użytkownik poprawnie dodany!'
             ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param User $user
-     * @return \Inertia\Response
-     */
-    public function edit(User $user)
+    public function edit(User $user): Response
     {
         return Inertia::render('Admin/Users/Edit', [
             'user' => $user
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \App\Http\Requests\User\UpdateUserRequest $request
-     * @param \App\Models\User $user
-     * @return RedirectResponse
-     */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $attributes = $request->validated();
 
@@ -87,23 +60,19 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => 'info',
+                'alert_type' => AlertType::INFO,
                 'alert_message' => 'Użytkownik zaktualizowany!'
             ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     */
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
         $user->delete();
 
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => 'danger',
+                'alert_type' => AlertType::DANGER,
                 'alert_message' => 'Użytkownik usunięty!'
             ]);
     }

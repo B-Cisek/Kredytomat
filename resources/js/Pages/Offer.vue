@@ -1,41 +1,40 @@
 <script setup>
-import { Head } from "@inertiajs/inertia-vue3";
+import {Head} from "@inertiajs/inertia-vue3";
 import Layout from "@/Layouts/Layout.vue";
-import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
-import {useHelpers} from "@/Composables/useHelpers";
+import {Link} from "@inertiajs/inertia-vue3";
 
-const {formatHarmonogram} = useHelpers();
+const props = defineProps({
+  banks: Object
+});
 
-let creditResult = useDecreasinginstallments({
-  date: new Date(2023, 0),
-  amountOfCredit: 250000,
-  period: 25,
-  margin: 2,
-  wibor: 7.77,
-  commission: 0
-}, [], []).getScheduleShorterPeriod();
 
-console.table(formatHarmonogram(creditResult));
 </script>
 
 
 <template>
-  <Head title="Oferta" />
+  <Head title="Oferta"/>
   <Layout>
     <template v-slot:header>Oferta Banków</template>
     <template v-slot:default>
-      <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5 flex">
-        <div class="flex-col flex">
-          <img src="http://localhost/storage/logos/gHE0VDwZbkLJaQWNl4YqrD8MwNjhj5OXGxyhDqbF.jpg" alt="" class="w-48">
-          <span class="">6 ofert</span>
-        </div>
-        <div>
-          <img src="" alt="">
-          <span>6 ofert</span>
-        </div>
-        <div>
-          <img src="" alt="">
-          <span>6 ofert</span>
+      <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
+        <div class="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div
+            v-for="bank in props.banks"
+            :key="bank.id"
+            class=""
+          >
+            <Link :href="route('offer.show', bank.slug)">
+              <div
+                class="bg-gray-200 w-full text-center rounded-lg">
+                <img
+                  :src="bank.logo_path"
+                  alt="logo"
+                  class="h-[105px] w-full border rounded-t-lg"
+                >
+                <span class="py-2 block font-semibold text-ml">{{ bank.credits_count }} Ofert</span>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
     </template>

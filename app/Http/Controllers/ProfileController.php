@@ -6,20 +6,23 @@ use App\Enums\AlertType;
 use App\Http\Requests\Profile\UpdatePasswordRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Profile');
     }
 
-    public function profileUpdate(UpdateProfileRequest $request)
+    public function profileUpdate(UpdateProfileRequest $request): RedirectResponse
     {
         $user = Auth::user();
         $attributes = $request->validated();
@@ -31,7 +34,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function passwordUpdate(UpdatePasswordRequest $request)
+    public function passwordUpdate(UpdatePasswordRequest $request): RedirectResponse
     {
         $user = Auth::user();
         $attributes = $request->validated();
@@ -39,7 +42,7 @@ class ProfileController extends Controller
         if (!Hash::check($attributes['current_password'], $user->password)) {
             return back()->with([
                 'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Stare hasło nie pasuje do podanego!'
+                'alert_message' => 'Aktualne hasło nie jest poprawne!'
             ]);
         }
 
@@ -52,7 +55,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function deleteAccount(Request $request)
+    public function deleteAccount(Request $request): RedirectResponse|Redirector
     {
         $user = Auth::user();
 

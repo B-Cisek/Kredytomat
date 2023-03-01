@@ -1,19 +1,5 @@
 <script setup>
-import {ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
-
-
-const kredyt = {
-  kwotaKredytu: 300000,
-  okres: 25,
-  marza: 1.5,
-  wibor: 7.7,
-  prowizja: 0
-}
-
-const harmonogram = useRatyStaleExtended(kredyt).getHarmonogram();
-
 
 const {formattedToPLN} = useHelpers();
 
@@ -36,6 +22,7 @@ const props = defineProps({
         <th scope="col" class="py-3">Część kapitałowa</th>
         <th scope="col" class="py-3">Część odsetkowa</th>
         <th scope="col" class="py-3 px-6">Rata całkowita</th>
+        <th scope="col" class="py-3 px-6">Opłaty</th>
         <th scope="col" class="py-3 px-6">Kapitał po spłacie</th>
       </tr>
       </thead>
@@ -52,6 +39,7 @@ const props = defineProps({
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>{{ formattedToPLN.format(sche[2]) }}</td>
         <td>{{ formattedToPLN.format(sche[4]) }}</td>
+        <td>{{ formattedToPLN.format(sche[8] + sche[9]) }}</td>
         <td>{{ formattedToPLN.format(sche[5]) }}</td>
       </tr>
       </tbody>

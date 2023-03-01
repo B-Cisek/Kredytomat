@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Enums\AlertType;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Credit\StoreCreditRequest;
 use App\Http\Requests\Credit\UpdateCreditRequest;
 use App\Models\Bank;
 use App\Models\Credit;
 use App\Models\Wibor;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class CreditController extends Controller
 {
-    /**
-     * @return \Inertia\Response
-     */
-    public function index()
+    public function index(): Response
     {
         $credits = Credit::with('bank')
             ->paginate(10);
@@ -24,12 +25,7 @@ class CreditController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Inertia\Response
-     */
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Admin/Credits/Create', [
             'banks' => Bank::all(),
@@ -37,31 +33,22 @@ class CreditController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\Credit\StoreCreditRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(StoreCreditRequest $request)
+    public function store(StoreCreditRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
+        $attributes['slug'] = $attributes['credit_name'];
 
         Credit::create($attributes);
 
         return redirect()
             ->route('admin.credits.index')
-            ->with('message', 'Kredyt poprawnie dodany!');
+            ->with([
+                'alert_type' => AlertType::SUCCESS,
+                'alert_message' => 'Kredyt poprawnie dodany!'
+            ]);
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Credit $credit)
+    public function edit(Credit $credit): Response
     {
         return Inertia::render('Admin/Credits/Edit', [
             'credit' => $credit,
@@ -70,14 +57,7 @@ class CreditController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\Credit\UpdateCreditRequest  $request
-     * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(UpdateCreditRequest $request, Credit $credit)
+    public function update(UpdateCreditRequest $request, Credit $credit): RedirectResponse
     {
         $attributes = $request->validated();
 
@@ -86,25 +66,19 @@ class CreditController extends Controller
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => 'info',
+                'alert_type' => AlertType::INFO,
                 'alert_message' => 'Kredyt zaktualizowany!'
             ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Credit  $credit
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Credit $credit)
+    public function destroy(Credit $credit): RedirectResponse
     {
         $credit->delete();
 
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => 'danger',
+                'alert_type' => AlertType::DANGER,
                 'alert_message' => 'Kredyt usunięty!'
             ]);
     }

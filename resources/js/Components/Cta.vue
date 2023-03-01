@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+
+</script>
 
 <template>
   <section class="rounded-lg shadow-2xl border border-gray-200 bg-white">

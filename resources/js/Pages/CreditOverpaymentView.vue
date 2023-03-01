@@ -8,7 +8,7 @@ import {useEqualInstallments} from "@/Composables/useEqualInstallments"
 import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
 import {useHelpers} from "@/Composables/useHelpers";
 import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
-import OverpaymentInputsList from "@/Components/OverpaymentInputsList.vue";
+import OverpaymentInputsList from "@/Components/InputsList/OverpaymentInputsList.vue";
 import Collapse from "@/Components/Collapse.vue";
 
 const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
@@ -125,10 +125,6 @@ const getType = (value) => {
 
 onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
 
-
-const getInfo = () => {
-
-}
 </script>
 
 <template>

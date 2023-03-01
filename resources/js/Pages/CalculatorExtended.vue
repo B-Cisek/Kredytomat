@@ -1,87 +1,179 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {ref} from "vue";
-import {useRatyStaleExtended} from "@/Composables/useRatyStaleExtended";
-import {useRatyMalejaceExtended} from "@/Composables/useRatyMalejaceExtended";
+import {nextTick, onMounted, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
 import Collapse from "@/Components/Collapse.vue";
 import ResultBox from "@/Components/ResultBox.vue";
 import CreditSchedule from "@/Components/CreditSchedule.vue";
+import useVuelidate from "@vuelidate/core";
+import {required} from "@vuelidate/validators";
+import {useEqualInstallments} from "@/Composables/useEqualInstallments";
+import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
+import FeesInputsList from "@/Components/InputsList/FeesInputsList.vue";
+import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.vue";
+import InterestRateChange from "@/Components/InterestRateChange.vue";
+import {Link} from "@inertiajs/inertia-vue3";
+import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/vue/24/solid";
 
-const {formattedToPLN, formatHarmonogram} = useHelpers();
+const {formattedToPLN, formatHarmonogram, getCapitalPartArray, getInterestPartArray} = useHelpers();
 
 Chart.register(...registerables);
-
-// const labels = Utils.months({count: 7});
-const chartData = {
-  labels: ['Paris', 'Nîmes', 'Toulon', 'Perpignan', 'Autre'],
-  datasets: [
-    {
-      fill: true,
-      data: [30, 40, 60, 70, 5],
-      backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-    },
-    {
-      fill: true,
-      data: [20, 25, 35, 44, 60],
-      backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-    },
-  ],
-};
 
 const props = defineProps({
   wiborList: Object,
 });
 
+const fees = ref({
+  fixed: [],
+  changing: []
+});
 
-// Inputs Form
-const amountOfCredit = ref(250000);
-const period = ref(25);
-const margin = ref(1);
-const commission = ref(0);
-const wibor = ref(null);
-const typeOfInstallment = ref(null);
+const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
+const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
+
+const getFixedFees = (value) => {
+  fees.value.fixed = value;
+  localStorage.setItem("extended-fixedFees", JSON.stringify(fees.value.fixed));
+}
+
+const getChangingFees = (value) => {
+  fees.value.changing = value;
+  localStorage.setItem("extended-changingFees", JSON.stringify(fees.value.changing));
+}
+
+const results = ref(null);
+
+const scrollToResult = () => {
+  results.value.scrollIntoView({behavior: "smooth"});
+}
+
 const schedule = ref([])
 
+const formData = ref({
+  amountOfCredit: Number(localStorage.getItem("extended-amountOfCredit") ?? 300000),
+  period: Number(localStorage.getItem("extended-period") ?? 25),
+  margin: Number(localStorage.getItem("extended-margin") ?? 2),
+  commission: Number(localStorage.getItem("extended-commission") ?? 0),
+  wibor: Number(localStorage.getItem("extended-wibor")),
+  typeOfInstallment: localStorage.getItem("extended-typeOfInstallment") ?? "rowne"
+});
 
-const validationInputs = (kredyt) => {
-  if (kredyt.kwotaKredytu < 0 || kredyt.kwotaKredytu > 2000000) alert('Błąd: Kwota Kredytu');
-  if (kredyt.okres < 5 || kredyt.okres > 35) alert('Błąd: Okres');
-  if (kredyt.marza < 0 || kredyt.marza > 15) alert('Błąd: Marża');
-  if (kredyt.prowizja < 0 || kredyt.prowizja > 15) alert('Błąd: Okres');
-  if (kredyt.wibor === null) alert('Błąd: wibor');
-  if (typeOfInstallment.value === null) alert('Błąd: Typ raty');
+watch(formData.value, (newValue, oldValue) => {
+  localStorage.setItem("extended-amountOfCredit", newValue.amountOfCredit.toString());
+  localStorage.setItem("extended-period", newValue.period.toString());
+  localStorage.setItem("extended-margin", newValue.margin.toString());
+  localStorage.setItem("extended-commission", newValue.commission.toString());
+  localStorage.setItem("extended-wibor", newValue.wibor.toString());
+  localStorage.setItem("extended-typeOfInstallment", newValue.typeOfInstallment.toString());
+});
+
+const rules = {
+  amountOfCredit: {required},
+  period: {required},
+  margin: {required},
+  commission: {required},
+  wibor: {required},
+  typeOfInstallment: {required}
 }
 
+const v$ = useVuelidate(rules, formData);
 
-const getResult = () => {
-  const kredyt = {
-    kwotaKredytu: amountOfCredit.value,
-    okres: period.value,
-    marza: margin.value,
-    wibor: wibor.value,
-    prowizja: commission.value
+const interestPartArray = ref(null);
+const capitalPartArray = ref(null);
+
+const getResult = async () => {
+  const result = await v$.value.$validate();
+
+  if (!result) {
+    return;
   }
 
-  validationInputs(kredyt);
+  if (formData.value.typeOfInstallment === "rowne") {
+    schedule.value = useEqualInstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, [], [], fees.value.fixed, fees.value.changing).getSchedule();
+  } else {
+    schedule.value = useDecreasinginstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: formData.value.amountOfCredit,
+      period: formData.value.period,
+      margin: formData.value.margin,
+      wibor: formData.value.wibor,
+      commission: formData.value.commission
+    }, [], []).getScheduleSmallerInstallment();
+  }
 
-  if (typeOfInstallment.value === "rowne") calculateFixedInstallments(kredyt);
-  if (typeOfInstallment.value === "malejace") calculateDecreasingInstallments(kredyt);
+  interestPartArray.value = getInterestPartArray(schedule.value);
+  capitalPartArray.value = getCapitalPartArray(schedule.value);
+
+  console.table(schedule.value)
+
+  let label = [];
+  for (let i = 1; i <= schedule.value.length; i++) {
+    label.push(i);
+  }
+  chartData.value.datasets[0].data = interestPartArray.value;
+  chartData.value.datasets[1].data = capitalPartArray.value;
+  let combinedData = [];
+  for (let i = 0; i < schedule.value.length; i++) {
+    combinedData.push(schedule.value[i][2] + schedule.value[i][3]);
+  }
+  chartData.value.datasets[2].data = combinedData;
+  chartData.value.labels = label;
+
+  await nextTick(() => scrollToResult())
 }
 
-const calculateFixedInstallments = (kredyt) => {
-  const result = useRatyStaleExtended(kredyt);
-  console.log('Rata Stała', formattedToPLN.format(result.getRataStala()));
-  schedule.value = formatHarmonogram(result.getHarmonogram());
-}
+const chartData = ref({
+  labels: [],
+  datasets: [
+    {
+      label: "RATA ODSETKOWA",
+      fill: false,
+      data: [],
+      backgroundColor: '#DF2935',
 
-const calculateDecreasingInstallments = (kredyt) => {
-  const result = useRatyMalejaceExtended(kredyt);
-  console.log('Pierwsza rata malejąca', formattedToPLN.format(result.getPierwszaRata()))
-  schedule.value = formatHarmonogram(result.getHarmonogram());
-}
+    },
+    {
+      label: "RATA KAPITAŁOWA",
+      fill: false,
+      data: [],
+      backgroundColor: '#21A179',
+    },
+    {
+      label: "RATA CAŁKOWITA",
+      fill: false,
+      data: [],
+      backgroundColor: '#d7ba21',
+    },
+  ],
+});
+
+let options = {
+  scales: {
+    y: {
+      ticks: {
+        beginAtZero: true,
+        stacked: true
+      }
+    },
+    x: {
+      stacked: true
+    }
+  }
+};
+
+onMounted(() => {
+  fees.value.fixed = JSON.parse(fixedFeeStorage.value);
+  fees.value.changing = JSON.parse(changingFeeStorage.value);
+});
 
 </script>
 
@@ -100,7 +192,7 @@ const calculateDecreasingInstallments = (kredyt) => {
                 <input
                   type="number"
                   class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="amountOfCredit"
+                  v-model="formData.amountOfCredit"
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
@@ -113,7 +205,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               min="50000"
               max="2000000"
               step="10000"
-              v-model="amountOfCredit"
+              v-model="formData.amountOfCredit"
               class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
@@ -128,7 +220,7 @@ const calculateDecreasingInstallments = (kredyt) => {
                 <input
                   type="number"
                   class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="period"
+                  v-model="formData.period"
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
@@ -141,7 +233,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               min="5"
               max="35"
               step="1"
-              v-model="period"
+              v-model="formData.period"
               class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
@@ -158,7 +250,7 @@ const calculateDecreasingInstallments = (kredyt) => {
                 <input
                   type="number"
                   class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="margin"
+                  v-model="formData.margin"
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
@@ -171,7 +263,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               min="0.00"
               max="15"
               step="0.01"
-              v-model="margin"
+              v-model="formData.margin"
               class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
@@ -187,7 +279,7 @@ const calculateDecreasingInstallments = (kredyt) => {
                   id="commission"
                   type="number"
                   class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="commission"
+                  v-model="formData.commission"
                 />
                 <span
                   class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
@@ -200,7 +292,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               min="0.00"
               max="15"
               step="0.01"
-              v-model="commission"
+              v-model="formData.commission"
               class="range range-primary bg-[#d1d3d9]"
             />
             <label class="label">
@@ -215,7 +307,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
               <select
                 class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
-                v-model="wibor"
+                v-model="formData.wibor"
               >
                 <option disabled :value="null" selected>Wybierz</option>
                 <option
@@ -232,7 +324,7 @@ const calculateDecreasingInstallments = (kredyt) => {
               <label class="font-semibold text-black" for="wibor">Rodzaj rat</label>
               <select
                 class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
-                v-model="typeOfInstallment"
+                v-model="formData.typeOfInstallment"
               >
                 <option disabled :value="null" selected>Wybierz</option>
                 <option value="rowne">Równe</option>
@@ -241,65 +333,99 @@ const calculateDecreasingInstallments = (kredyt) => {
             </div>
           </div>
         </div>
-        <button @click="getResult" class="btn btn-primary mt-10 text-white w-full">
+        <div class="mt-5">
+          <FeesInputsList
+            @input-list="getFixedFees"
+            title="Opłaty stałe:"
+            placeholder="Kwota [PLN]"
+            :data="fixedFeeStorage"
+          />
+        </div>
+        <div class="mt-5">
+          <FeesInputsList
+            @input-list="getChangingFees"
+            title="Opłaty zmienne:"
+            placeholder="[%]"
+            :data="changingFeeStorage"
+          />
+        </div>
+        <button @click="getResult" class="btn btn-primary mt-5 text-white w-full">
           Oblicz
         </button>
       </section>
-
-      <Collapse class="mt-5" title="Twoje wyniki" :collapsed="true">
-        <div class="flex gap-3">
-          <div class="flex-1 bg-[#21a142] p-5 rounded text-white flex">
-            <div class="flex flex-col justify-between flex-1">
-              <div>
-                <p class="mt-1">Kwota kredytu:</p>
-                <span class="text-xl font-semibold">500 000,00 zł</span>
+      <section
+        ref="results"
+        v-if="schedule.length">
+        <Collapse class="mt-5 relative" title="Twoje wyniki" :collapsed="true">
+          <div class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center bg-white">
+            <Link
+              v-if="true"
+              href="#">
+              <PlusCircleIcon class="h-12 w-12 text-green-600" />
+            </Link>
+            <Link
+              v-if="false"
+              href="#">
+              <MinusCircleIcon class="h-12 w-12 text-red-500" />
+            </Link>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex-1 bg-[#21a142] p-5 rounded text-white flex">
+              <div class="flex flex-col justify-between flex-1">
+                <div>
+                  <p class="mt-1">Kwota kredytu:</p>
+                  <span class="text-xl font-semibold">{{ formattedToPLN.format(formData.amountOfCredit) }}</span>
+                </div>
+                <div>
+                  <p class="mt-1">Okres spłaty:</p>
+                  <span class="text-xl font-semibold">{{ formData.period }} lat</span>
+                </div>
+                <div>
+                  <p class="mt-1">Oprocentowanie:</p>
+                  <p class="text-xl font-semibold">{{ Number(formData.margin) + Number(formData.wibor) }}% <span class="text-sm font-normal">(WIBOR {{ formData.wibor }}% + marża {{ formData.margin}}%)</span></p>
+                </div>
+                <div>
+                  <p class="mt-1">Prowizja:</p>
+                  <span class="text-xl font-semibold">{{ formData.commission }}%</span>
+                </div>
               </div>
-              <div>
-                <p class="mt-1">Okres spłaty: 25 lat</p>
-                <span class="text-xl font-semibold">25 lat</span>
-              </div>
-              <div>
-                <p class="mt-1">Oprocentowanie:</p>
-                <p class="text-xl font-semibold">9,34% <span class="text-sm font-normal">(WIBOR 7,43% + marża 2,00%)</span></p>
-              </div>
-              <div>
-                <p class="mt-1">Prowizja:</p>
-                <span class="text-xl font-semibold">0%</span>
+              <div class="flex flex-col justify-between items-end text-right flex-1">
+                <div>
+                  <p class="mt-1">Rodzaj raty:</p>
+                  <span class="text-xl font-semibold">{{ formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące' }}</span>
+                </div>
+                <div>
+                  <p class="mt-1">WIBOR:</p>
+                  <span class="text-xl font-semibold">3M</span>
+                </div>
+                <div>
+                  <p class="mt-1">Opłaty stałe łącznie:</p>
+                  <span class="text-xl font-semibold">0,00 zł</span>
+                </div>
+                <div>
+                  <p class="mt-1">Opłaty zmienne łącznie:</p>
+                  <span class="text-xl font-semibold">0,00 zł</span>
+                </div>
               </div>
             </div>
-            <div class="flex flex-col justify-between items-end text-right flex-1">
-              <div>
-                <p class="mt-1">Rodzaj raty:</p>
-                <span class="text-xl font-semibold">Stała</span>
-              </div>
-              <div>
-                <p class="mt-1">WIBOR:</p>
-                <span class="text-xl font-semibold">3M</span>
-              </div>
-              <div>
-                <p class="mt-1">Opłaty stałe łącznie:</p>
-                <span class="text-xl font-semibold">0,00 zł</span>
-              </div>
-              <div>
-                <p class="mt-1">Opłaty zmienne łącznie:</p>
-                <span class="text-xl font-semibold">0,00 zł</span>
-              </div>
+            <div class="flex-1">
+              <ResultBox :schedule="schedule"/>
             </div>
           </div>
-          <div class="flex-1">
-            <ResultBox/>
+          <div class="p-2 mt-3">
+            <LineChart class="h-[400px]" :chartData="chartData" :options="options"/>
           </div>
-        </div>
-        <div class="p-2 mt-3">
-          <LineChart class="h-[400px]" :chartData="chartData"/>
-        </div>
-      </Collapse>
-      <Collapse class="mt-2" title="Podsumowanie" :collapsed="false"/>
-      <Collapse class="mt-2" title="Podsumowanie" :collapsed="false"/>
-      <Collapse class="mt-2" title="Harmonogram spłaty kredytu" :collapsed="false">
-        <CreditSchedule/>
-      </Collapse>
-
+        </Collapse>
+        <Collapse class="mt-2" title="Symulacja spłaty kapitału" :collapsed="false">
+          <CapitalRepaymentSimulation :schedule="schedule" />
+        </Collapse>
+        <Collapse class="mt-2" title="Jak zmieni się rata przy zmianie stopy procentowej?" :collapsed="false">
+          <InterestRateChange :credit="formData"/>
+        </Collapse>
+        <Collapse class="mt-2" title="Harmonogram spłaty kredytu" :collapsed="false">
+          <CreditSchedule :schedule="schedule"/>
+        </Collapse>
+      </section>
     </template>
   </Layout>
 </template>

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\AlertType;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Bank\StoreBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Models\Bank;
@@ -48,6 +49,7 @@ class BankController extends Controller
 
         Bank::create([
             'bank_name' => $request->bank_name,
+            'slug' => $request->bank_name,
             'logo_path' => $logo
         ]);
 

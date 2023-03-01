@@ -3,39 +3,37 @@
 namespace App\Models;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Credit extends Model
 {
     use HasFactory;
 
-
     protected $guarded = [];
 
-    /**
-     * @return BelongsTo
-     */
     public function bank(): BelongsTo
     {
         return $this->belongsTo(Bank::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function wibor(): BelongsTo
     {
         return $this->belongsTo(Wibor::class);
     }
 
-    /**
-     * @param DateTimeInterface $date
-     * @return string
-     */
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format('d-m-Y / H:i');
+    }
+
+    protected function slug(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => Str::slug($value)
+        );
     }
 }
