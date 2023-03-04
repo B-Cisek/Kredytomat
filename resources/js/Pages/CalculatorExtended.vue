@@ -16,6 +16,7 @@ import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.
 import InterestRateChange from "@/Components/InterestRateChange.vue";
 import {Link} from "@inertiajs/inertia-vue3";
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/vue/24/solid";
+import {Inertia} from "@inertiajs/inertia";
 
 const {formattedToPLN, formatHarmonogram, getCapitalPartArray, getInterestPartArray} = useHelpers();
 
@@ -175,6 +176,20 @@ onMounted(() => {
   fees.value.changing = JSON.parse(changingFeeStorage.value);
 });
 
+
+const saveSimulation = () => {
+  Inertia.post(route('credit-simulation.save'), {
+    amount_of_credit: formData.value.amountOfCredit,
+    period: formData.value.period,
+    margin: formData.value.margin,
+    commission: formData.value.commission,
+    type_of_installment: formData.value.typeOfInstallment,
+    wibor_id: formData.value.wibor,
+    fixed_fees: JSON.stringify(fees.value.fixed),
+    changing_fees: JSON.stringify(fees.value.changing),
+
+  });
+}
 </script>
 
 
@@ -358,11 +373,11 @@ onMounted(() => {
         v-if="schedule.length">
         <Collapse class="mt-5 relative" title="Twoje wyniki" :collapsed="true">
           <div class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center bg-white">
-            <Link
+            <button
               v-if="true"
-              href="#">
+              @click="saveSimulation">
               <PlusCircleIcon class="h-12 w-12 text-green-600" />
-            </Link>
+            </button>
             <Link
               v-if="false"
               href="#">

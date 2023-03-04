@@ -1,54 +1,32 @@
 <?php
 
+use App\Http\Controllers\AboutCreditController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CreditController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CreditSimulationsController;
+use App\Http\Controllers\ExtendedCalculatorController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstallmentCalculatorController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\OverpaymentCalculatorController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Credit;
+use App\Http\Controllers\RrsoCalculatorController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Home', [
-        'credits' => Credit::with('bank', 'wibor')
-            ->latest()
-            ->limit(6)
-            ->get()
-    ]);
-})->name('home');
-
-
-Route::get('/o-kredycie', function () {
-    return Inertia::render('Okredycie');
-})->name('o-kredycie');
-
-
-Route::get('/kalkulator-raty', function () {
-    return Inertia::render('Calculator');
-})->name('calculator.installment');
-
-Route::get('/kalkulator-rrso', function () {
-    return Inertia::render('CalculatorRrso');
-})->name('calculator.rrso');
-
-Route::get('/kalkulator-rozszerzony', function () {
-    return Inertia::render(
-        'CalculatorExtended', [
-            'wiborList' => \App\Models\Wibor::all()
-        ]);
-})->name('calculator.extended');
-
-Route::get('/nadplata-kredytu', function () {
-    return Inertia::render(
-        'CreditOverpaymentView', [
-        'wiborList' => \App\Models\Wibor::all()
-    ]);
-})->name('calculator.overpayment');
-
+Route::get('/', HomeController::class)->name('home');
 
 Route::get('/oferta', [OfferController::class, 'index'])->name('offer');
 Route::get('/oferta/{name}', [OfferController::class, 'show'])->name('offer.show');
+
+Route::get('/o-kredycie', AboutCreditController::class)->name('about-credit');
+
+Route::get('/kalkulator-raty', InstallmentCalculatorController::class)->name('calculator.installment');
+Route::get('/kalkulator-rrso', RrsoCalculatorController::class)->name('calculator.rrso');
+Route::get('/kalkulator-rozszerzony', ExtendedCalculatorController::class)->name('calculator.extended');
+Route::get('/nadplata-kredytu', OverpaymentCalculatorController::class)->name('calculator.overpayment');
+
 
 
 Route::group(['middleware' => 'auth'], function () {
@@ -56,8 +34,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('profil' , [ProfileController::class, 'profileUpdate'])->name('profil.update');
     Route::post('profil/zmiana-hasla' , [ProfileController::class, 'passwordUpdate'])->name('profil.password.update');
     Route::post('profil/usun-konto' , [ProfileController::class, 'deleteAccount'])->name('profil.delete');
-});
 
+    Route::post('zapisz-symulacje', [CreditSimulationsController::class, 'save'])->name('credit-simulation.save');
+});
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users', UserController::class)->except(['show']);

@@ -12,12 +12,13 @@ return new class extends Migration
             $table->id();
             $table->integer('amount_of_credit');
             $table->integer('period');
-            $table->integer('margin');
-            $table->integer('commission');
-            $table->integer('type_of_installment');
+            $table->decimal('margin', 4, 2);
+            $table->decimal('commission', 4, 2);
+            $table->string('type_of_installment');
             $table->foreignId('wibor_id')->constrained();
-            $table->text('fixedFees');
-            $table->text('changingFees');
+            $table->text('fixed_fees')->nullable();
+            $table->text('changing_fees')->nullable();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

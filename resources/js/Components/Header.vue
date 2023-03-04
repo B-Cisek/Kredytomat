@@ -120,8 +120,8 @@ const handleToggleProfile = () => {
               </NavLink>
 
               <NavLink
-                :href="route('o-kredycie')"
-                :active="$page.component === 'Okredycie'"
+                :href="route('about-credit')"
+                :active="$page.component === 'AboutCredit'"
               >
                 O Kredycie
               </NavLink>
@@ -435,8 +435,8 @@ const handleToggleProfile = () => {
 
         <NavLink
           class="block"
-          :href="route('o-kredycie')"
-          :active="$page.component === 'Okredycie'"
+          :href="route('about-credit')"
+          :active="$page.component === 'AboutCredit'"
         >
           O Kredycie
         </NavLink>
