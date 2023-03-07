@@ -27,8 +27,8 @@ const submit = () => {
       WYŚLIJ LINK DO RESETOWANIA HASŁA
     </h1>
     <div class="mb-4 text-sm text-gray-600">
-      Zapomniałeś hasła? Nie ma problemu. Podaj nam swój adres e-mail, a my wyślemy Ci
-      link do resetowania hasła.
+      <p>Zapomniałeś hasła? Nie ma problemu.</p>
+      <p>Podaj nam swój adres e-mail, a my wyślemy Ci link do resetowania hasła.</p>
     </div>
 
     <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -52,6 +52,7 @@ const submit = () => {
 
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
+          class="w-full"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
         >

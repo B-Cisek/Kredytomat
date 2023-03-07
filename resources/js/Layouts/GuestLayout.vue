@@ -1,10 +1,12 @@
 <script setup>
 import Header from "@/Components/Header.vue";
 import Footer from "@/Components/Footer.vue";
+import ToastList from "@/Components/ToastList.vue";
 </script>
 
 <template>
   <Header />
+  <ToastList />
   <div
     class="h-[calc(100vh-80px-68px)] flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100"
   >

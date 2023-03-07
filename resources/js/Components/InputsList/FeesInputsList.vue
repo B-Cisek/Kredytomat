@@ -33,7 +33,7 @@ watch(list.value, () => {
 </script>
 
 <template>
-  <div class="flex justify-between items-center mb-5">
+  <div class="flex justify-between items-center">
     <div class="flex">
       <span class="text-xl font-semibold mr-5">{{ props.title }}</span>
       <button @click="add">

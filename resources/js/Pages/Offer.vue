@@ -6,8 +6,6 @@ import {Link} from "@inertiajs/inertia-vue3";
 const props = defineProps({
   banks: Object
 });
-
-
 </script>
 
 
@@ -24,8 +22,7 @@ const props = defineProps({
             class=""
           >
             <Link :href="route('offer.show', bank.slug)">
-              <div
-                class="bg-gray-200 w-full text-center rounded-lg">
+              <div class="bg-gray-200 w-full text-center rounded-lg">
                 <img
                   :src="bank.logo_path"
                   alt="logo"

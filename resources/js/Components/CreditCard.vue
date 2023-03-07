@@ -1,12 +1,10 @@
 <script setup>
 import {ref} from "vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {Inertia} from "@inertiajs/inertia";
+import {Link} from "@inertiajs/inertia-vue3";
 
 const props = defineProps({
   credits: Object,
 });
-
 
 const showed = ref([]);
 
@@ -30,6 +28,9 @@ const formatToPLN = (amount) => {
 </script>
 
 <template>
+  <div>
+    <span class="font-semibold text-gray-600 ml-2">Najnowsze 6 ofert:</span>
+  </div>
   <section
     v-for="(credit, index) in credits"
     :key="credit.id"
@@ -45,11 +46,11 @@ const formatToPLN = (amount) => {
           <img
             :src="credit.bank.logo_path"
             :alt="credit.bank.bank_name"
-            class="w-full h-full object-contain"
+            class="w-full h-full object-fit"
           />
         </div>
       </div>
-      <div class="">
+      <div>
         <span class="text-gray-500">Okres</span>
         <p class="font-semibold text-lg">
           {{ credit.period_from / 12 }}-{{ credit.period_to / 12 }} lat
@@ -68,14 +69,15 @@ const formatToPLN = (amount) => {
         <p class="font-semibold">9,33%</p>
       </div>
       <div class="">
-        <span class="text-gray-500">Kwota</span>
-        <p class="font-semibold">{{ formatToPLN(credit.amount_from) }} -</p>
+        <span class="text-gray-500">Kwota do</span>
         <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
       </div>
       <div>
-        <form @submit.prevent="Inertia.get('/test',{maraza: credit.margin, prowizja: credit.commission, wibor: credit.wibor.value})">
-          <PrimaryButton>Sprawdź</PrimaryButton>
-        </form>
+       <Link
+         :href="route('offer.show.credit', [credit.bank.slug, credit.slug])"
+         class="px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">
+         Sprawdź
+       </Link>
       </div>
     </div>
     <div class="w-full border-t py-1 flex justify-center">

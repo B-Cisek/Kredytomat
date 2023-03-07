@@ -1,8 +1,7 @@
 <script setup>
-import {Head} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
-
 const props = defineProps({
   credits: Object
 });
@@ -57,9 +56,11 @@ console.log(props.credits);
           v-for="credit in props.credits"
           :key="credit.id"
         >
-          <h1>{{ credit.credit_name }}</h1>
-          <h1>{{ credit.margin }}</h1>
-          <h1>{{ credit.period_to }}</h1>
+          <Link :href="route('offer.show.credit', [credit.bank.slug, credit.slug])">
+            <h1>{{ credit.credit_name }}</h1>
+            <h1>{{ credit.margin }}</h1>
+            <h1>{{ credit.period_to }}</h1>
+          </Link>
         </div>
       </section>
     </template>

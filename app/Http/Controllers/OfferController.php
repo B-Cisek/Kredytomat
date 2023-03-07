@@ -22,10 +22,21 @@ class OfferController extends Controller
         ]);
     }
 
-    public function show(Request $request, $name): Response
+    public function show(Request $request, $bank): Response
     {
         return Inertia::render('OfferBank', [
-            'credits' => Credit::whereRelation('bank', 'slug', '=', $name)->get()
+            'credits' => Credit::with('bank')
+                ->whereRelation('bank', 'slug', $bank)
+                ->get()
+        ]);
+    }
+
+    public function showCredit($bank, $credit): Response
+    {
+        return Inertia::render('OfferCredit', [
+            'credit' => Credit::whereRelation('bank', 'slug', $bank)
+                ->where('slug', $credit)
+                ->get()
         ]);
     }
 }

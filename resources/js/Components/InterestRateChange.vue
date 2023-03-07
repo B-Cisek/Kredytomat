@@ -12,48 +12,23 @@ const props = defineProps({
   credit: Object
 });
 
+const baseInstallment = ref(null);
 
-const installment = ref([]);
+const calcBaseInstallment = () => {
+  props.credit.date = new Date(2023,0);
+  if (props.credit.typeOfInstallment === 'rowne') {
+    let result = useEqualInstallments(props.credit).getSchedule();
+    baseInstallment.value = result[0][4];
+  }
+}
 
-const decrease = ref({
-  one: Number,
-  two: Number,
-  three: Number,
-  four: Number,
-  five: Number,
-});
-
-const increase = ref([]);
-
-const change = ref([]);
-const result = ref(null);
 
 const calculate = () => {
-  if (props.credit.typeOfInstallment === "rowne") {
-    result.value = useEqualInstallments({
-      date: new Date(2023, 0), ...props.credit
-    }).getSchedule()
-  } else {
-    result.value = useDecreasinginstallments({date: new Date(2023, 0), ...props.credit}).getScheduleShorterPeriod()
-  }
 
-  for (let i = 0; i < 5; i++) {
-    let change = 0.5;
-    increase[i] = useEqualInstallments({
-      date: new Date(2023, 0),
-      amountOfCredit: props.amountOfCredit,
-      period: props.period,
-      margin: props.margin,
-      wibor: props.wibor - change,
-      commission: props.commission
-    }).getSchedule()
-    change += 0.5;
-  }
-  console.table(increase.value);
 }
 
 onMounted(() => {
-  calculate()
+  calcBaseInstallment();
 })
 
 
@@ -64,13 +39,13 @@ const chartData = {
   labels: labels,
   datasets: [
     {
-      label: 'Dataset 1',
+      label: 'Obecna rata',
       data: [20,30,40,50,50,30,70,75,55,100],
       backgroundColor: "#ff4069",
       stack: 'Stack 0',
     },
     {
-      label: 'Dataset 2',
+      label: 'Zmiana',
       data: [15,50,20,50,50,30,70,75,55,100],
       backgroundColor: "#22cfcf",
       stack: 'Stack 0',
@@ -82,12 +57,6 @@ const chartOptions = {
   type: 'bar',
   data: chartData,
   options: {
-    plugins: {
-      title: {
-        display: true,
-        text: 'Chart.js Bar Chart - Stacked'
-      },
-    },
     responsive: true,
     interaction: {
       intersect: false,
@@ -97,7 +66,10 @@ const chartOptions = {
         stacked: true,
       },
       y: {
-        stacked: true
+        ticks: {
+          beginAtZero: true,
+          stacked: true
+        }
       }
     }
   }
@@ -118,8 +90,8 @@ const chartOptions = {
     </select>
   </div>
 
-  <div class="flex">
-    <div class="flex-1 flex-col flex gap-5 justify-center">
+  <div class="flex flex-col">
+    <div class="flex-col flex gap-5 justify-center px-5">
       <div class="flex justify-end gap-20">
         <span></span>
         <span>zmiana</span>
@@ -174,8 +146,9 @@ const chartOptions = {
 
 
 
-    <div class="flex-1">
+    <div>
       <Bar
+        class="w-[500px]"
         :chartOptions="chartOptions"
         :chartData="chartData"
       />

@@ -102,6 +102,7 @@ const handleToggleProfile = () => {
             </svg>
           </button>
         </div>
+
         <div
           class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"
         >
@@ -155,151 +156,145 @@ const handleToggleProfile = () => {
                   </svg>
                 </button>
 
-                <!--
-                                  'More' flyout menu, show/hide based on flyout menu state.
-
-                                  Entering: "transition ease-out duration-200"
-                                    From: "opacity-0 translate-y-1"
-                                    To: "opacity-100 translate-y-0"
-                                  Leaving: "transition ease-in duration-150"
-                                    From: "opacity-100 translate-y-0"
-                                    To: "opacity-0 translate-y-1"
-                                -->
-                <div
-                  v-show="toggleOnNavLinks"
-                  class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0"
+                <transition
+                  enter-active-class="transition ease-out duration-200"
+                  enter-from-class="opacity-0 translate-y-1"
+                  enter-to-class="opacity-100 translate-y-0"
+                  leave-active-class="transition ease-in duration-150"
+                  leave-from-class="opacity-100 translate-y-0"
+                  leave-to-class="opacity-0 translate-y-1"
                 >
                   <div
-                    class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                    v-show="toggleOnNavLinks"
+                    class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 transform px-2 sm:px-0"
                   >
-                    <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                      <Link
-                        :href="route('calculator.installment')"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
-                      >
-                        <!-- Heroicon name: outline/lifebuoy -->
-
-                        <svg
-                          class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="{1.5}"
-                          stroke="currentColor"
-                          className="w-6 h-6"
+                    <div
+                      class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                    >
+                      <div class="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
+                        <Link
+                          :href="route('calculator.installment')"
+                          class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
-                          />
-                        </svg>
+                          <!-- Heroicon name: outline/lifebuoy -->
 
-                        <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">
-                            Kalkulator raty
-                          </p>
-                          <p class="mt-1 text-sm text-gray-500">
-                            Oblicz miesięczną rate kredytu hipotecznego.
-                          </p>
-                        </div>
-                      </Link>
+                          <svg
+                            class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="{1.5}"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
+                            />
+                          </svg>
 
-                      <Link
-                        :href="route('calculator.rrso')"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
-                      >
-                        <!-- Heroicon name: outline/lifebuoy -->
+                          <div class="ml-4">
+                            <p class="text-base font-medium text-gray-900">
+                              Kalkulator raty
+                            </p>
+                            <p class="mt-1 text-sm text-gray-500">
+                              Oblicz miesięczną rate kredytu hipotecznego.
+                            </p>
+                          </div>
+                        </Link>
 
-                        <svg
-                          class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="{1.5}"
-                          stroke="currentColor"
-                          className="w-6 h-6"
+                        <Link
+                          :href="route('calculator.rrso')"
+                          class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
-                          />
-                        </svg>
+                          <svg
+                            class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="{1.5}"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
+                            />
+                          </svg>
 
-                        <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">
-                            Kalkulator RRSO
-                          </p>
-                          <p class="mt-1 text-sm text-gray-500">
-                            Oblicz rzeczywistą roczną stopę procentową.
-                          </p>
-                        </div>
-                      </Link>
+                          <div class="ml-4">
+                            <p class="text-base font-medium text-gray-900">
+                              Kalkulator RRSO
+                            </p>
+                            <p class="mt-1 text-sm text-gray-500">
+                              Oblicz rzeczywistą roczną stopę procentową.
+                            </p>
+                          </div>
+                        </Link>
 
-                      <Link
-                        :href="route('calculator.extended')"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
-                      >
-                        <!-- Heroicon name: outline/lifebuoy -->
-
-                        <svg
-                          class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="{1.5}"
-                          stroke="currentColor"
-                          className="w-6 h-6"
+                        <Link
+                          :href="route('calculator.extended')"
+                          class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
-                          />
-                        </svg>
+                          <svg
+                            class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="{1.5}"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
+                            />
+                          </svg>
 
-                        <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">
-                            Kalkulator Rozszerzony
-                          </p>
-                          <p class="mt-1 text-sm text-gray-500">
-                            Oblicz miesięczną rate kredytu hipotecznego oraz harmonogram
-                            spłaty.
-                          </p>
-                        </div>
-                      </Link>
+                          <div class="ml-4">
+                            <p class="text-base font-medium text-gray-900">
+                              Kalkulator Rozszerzony
+                            </p>
+                            <p class="mt-1 text-sm text-gray-500">
+                              Oblicz miesięczną rate kredytu hipotecznego oraz harmonogram
+                              spłaty.
+                            </p>
+                          </div>
+                        </Link>
 
-                      <Link
-                        :href="route('calculator.overpayment')"
-                        class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
-                      >
-                        <!-- Heroicon name: outline/shield-check -->
-                        <svg
-                          class="h-6 w-6 flex-shrink-0 text-indigo-600"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          aria-hidden="true"
+                        <Link
+                          :href="route('calculator.overpayment')"
+                          class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
                         >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
-                          />
-                        </svg>
-                        <div class="ml-4">
-                          <p class="text-base font-medium text-gray-900">Nadpłata kredytu</p>
-                          <p class="mt-1 text-sm text-gray-500">
-                            Understand how we take your privacy seriously.
-                          </p>
-                        </div>
-                      </Link>
+                          <svg
+                            class="h-6 w-6 flex-shrink-0 text-indigo-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                            />
+                          </svg>
+                          <div class="ml-4">
+                            <p class="text-base font-medium text-gray-900">Nadpłata kredytu</p>
+                            <p class="mt-1 text-sm text-gray-500">
+                              Understand how we take your privacy seriously.
+                            </p>
+                          </div>
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </transition>
               </div>
             </div>
           </div>
@@ -322,32 +317,9 @@ const handleToggleProfile = () => {
           </div>
           <div
             v-if="loggedIn"
-            class="hidden items-center justify-end md:flex md:flex-1 lg:w-0"
+            class="hidden items-center justify-end sm:flex sm:flex-1 lg:w-0"
           >
             <div class="ml-4 flex items-center md:ml-6">
-              <button
-                type="button"
-                class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-              >
-                <span class="sr-only">View notifications</span>
-                <!-- Heroicon name: outline/bell -->
-                <svg
-                  class="h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                  />
-                </svg>
-              </button>
-
               <!-- Profile dropdown -->
               <div class="relative ml-3" ref="targetProfile">
                 <div>
@@ -361,54 +333,60 @@ const handleToggleProfile = () => {
                   >
                     <span class="sr-only">Open user menu</span>
                     <img
-                      class="h-8 w-8 rounded-full"
-                      src="https://i.pravatar.cc/200"
-                      alt=""
+                      class="h-10 w-10 rounded-full"
+                      src="https://img.icons8.com/fluency/96/null/user-male-circle.png"
+                      alt="profile"
                     />
                   </button>
                 </div>
-
-                <!--
-                                  Dropdown menu, show/hide based on menu state.
-
-                                  Entering: "transition ease-out duration-100"
-                                    From: "transform opacity-0 scale-95"
-                                    To: "transform opacity-100 scale-100"
-                                  Leaving: "transition ease-in duration-75"
-                                    From: "transform opacity-100 scale-100"
-                                    To: "transform opacity-0 scale-95"
-                                -->
-                <div
-                  v-show="toggleOnProfile"
-                  class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
-                  tabindex="-1"
+                <transition
+                  enter="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-to-class="transform opacity-0 scale-95"
+                  leave-from-class="transform opacity-100 scale-100"
                 >
-                  <!-- Active: "bg-gray-100", Not Active: "" -->
+                  <div
+                    v-show="toggleOnProfile"
+                    class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu-button"
+                    tabindex="-1"
+                  >
+                    <!-- Active: "bg-gray-100", Not Active: "" -->
 
-                  <Link
-                    :href="route('profil')"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                  >Your Profile
-                  </Link>
+                    <Link
+                      :href="route('profil')"
+                      class="block px-4 py-2 text-sm text-gray-700"
+                    >Twój Profil
+                    </Link>
 
-                  <Link
-                    v-if="isAdmin"
-                    :href="route('admin.dashboard')"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                  >Dashboard
-                  </Link>
+                    <Link
+                      v-if="loggedIn"
+                      :href="route('profil.saved-simulations')"
+                      class="block px-4 py-2 text-sm text-gray-700"
+                    >Twoje kalkulacje
+                    </Link>
 
-                  <Link
-                    :href="route('logout')"
-                    method="POST"
-                    class="block px-4 py-2 text-sm text-gray-700"
-                    as="button"
-                  >Wyloguj się
-                  </Link>
-                </div>
+                    <Link
+                      v-if="isAdmin"
+                      :href="route('admin.dashboard')"
+                      class="block px-4 py-2 text-sm text-gray-700"
+                    >Dashboard
+                    </Link>
+
+                    <Link
+                      :href="route('logout')"
+                      method="POST"
+                      class="block px-4 py-2 text-sm text-gray-700"
+                      as="button"
+                    >Wyloguj się
+                    </Link>
+                  </div>
+                </transition>
+
               </div>
             </div>
           </div>

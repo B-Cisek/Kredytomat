@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {nextTick, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
@@ -14,13 +14,14 @@ import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments
 import FeesInputsList from "@/Components/InputsList/FeesInputsList.vue";
 import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
-import {Link} from "@inertiajs/inertia-vue3";
-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/vue/24/solid";
+import {Link, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 
 const {formattedToPLN, formatHarmonogram, getCapitalPartArray, getInterestPartArray} = useHelpers();
 
 Chart.register(...registerables);
+
+const auth = computed(() => usePage().props.value.auth);
 
 const props = defineProps({
   wiborList: Object,
@@ -121,13 +122,13 @@ const getResult = async () => {
     label.push(i);
   }
   chartData.value.datasets[0].data = interestPartArray.value;
-  chartData.value.datasets[1].data = capitalPartArray.value;
   let combinedData = [];
   for (let i = 0; i < schedule.value.length; i++) {
     combinedData.push(schedule.value[i][2] + schedule.value[i][3]);
   }
-  chartData.value.datasets[2].data = combinedData;
+  chartData.value.datasets[1].data = combinedData;
   chartData.value.labels = label;
+
 
   await nextTick(() => scrollToResult())
 }
@@ -137,36 +138,45 @@ const chartData = ref({
   datasets: [
     {
       label: "RATA ODSETKOWA",
-      fill: false,
+      fill: true,
       data: [],
       backgroundColor: '#DF2935',
 
     },
     {
       label: "RATA KAPITAŁOWA",
-      fill: false,
+      fill: true,
       data: [],
-      backgroundColor: '#21A179',
-    },
-    {
-      label: "RATA CAŁKOWITA",
-      fill: false,
-      data: [],
-      backgroundColor: '#d7ba21',
+      backgroundColor: '#1cb027',
     },
   ],
 });
 
 let options = {
+  elements: {
+    point: {
+      pointRadius: 0
+    }
+  },
+  plugins: {
+    title: {
+      display: true,
+      text: 'Stacked'
+    },
+  },
+  responsive: true,
+  interaction: {
+    intersect: false,
+  },
   scales: {
+    x: {
+      stacked: true,
+    },
     y: {
       ticks: {
         beginAtZero: true,
         stacked: true
       }
-    },
-    x: {
-      stacked: true
     }
   }
 };
@@ -198,7 +208,7 @@ const saveSimulation = () => {
     <template v-slot:header>Kalkulator rozszerzony</template>
 
     <template v-slot:default>
-      <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
+      <section class="flex flex-col gap-8 w-full mx-auto rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
             <div class="flex mb-3 items-center justify-between">
@@ -316,7 +326,7 @@ const saveSimulation = () => {
             </label>
           </div>
         </div>
-        <div class="lg:flex gap-x-16 mt-7">
+        <div class="lg:flex gap-x-16">
           <div class="flex-1">
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
@@ -348,7 +358,7 @@ const saveSimulation = () => {
             </div>
           </div>
         </div>
-        <div class="mt-5">
+        <div>
           <FeesInputsList
             @input-list="getFixedFees"
             title="Opłaty stałe:"
@@ -356,7 +366,7 @@ const saveSimulation = () => {
             :data="fixedFeeStorage"
           />
         </div>
-        <div class="mt-5">
+        <div>
           <FeesInputsList
             @input-list="getChangingFees"
             title="Opłaty zmienne:"
@@ -364,7 +374,7 @@ const saveSimulation = () => {
             :data="changingFeeStorage"
           />
         </div>
-        <button @click="getResult" class="btn btn-primary mt-5 text-white w-full">
+        <button @click="getResult" class="btn btn-primary text-white w-full">
           Oblicz
         </button>
       </section>
@@ -372,17 +382,14 @@ const saveSimulation = () => {
         ref="results"
         v-if="schedule.length">
         <Collapse class="mt-5 relative" title="Twoje wyniki" :collapsed="true">
-          <div class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center bg-white">
+          <div
+            v-if="auth.loggedIn"
+            class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
             <button
-              v-if="true"
-              @click="saveSimulation">
-              <PlusCircleIcon class="h-12 w-12 text-green-600" />
+              @click="saveSimulation"
+            >
+              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
             </button>
-            <Link
-              v-if="false"
-              href="#">
-              <MinusCircleIcon class="h-12 w-12 text-red-500" />
-            </Link>
           </div>
           <div class="flex gap-3">
             <div class="flex-1 bg-[#21a142] p-5 rounded text-white flex">

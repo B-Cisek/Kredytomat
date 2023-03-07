@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
@@ -10,8 +10,11 @@ import {useHelpers} from "@/Composables/useHelpers";
 import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
 import OverpaymentInputsList from "@/Components/InputsList/OverpaymentInputsList.vue";
 import Collapse from "@/Components/Collapse.vue";
+import {usePage} from "@inertiajs/inertia-vue3";
 
 const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
+
+const auth = computed(() => usePage().props.value.auth);
 
 const props = defineProps({
   wiborList: Object,
@@ -124,6 +127,10 @@ const getType = (value) => {
 }
 
 onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
+
+const saveSimulation = () => {
+
+}
 
 </script>
 
@@ -249,7 +256,15 @@ onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
         v-if="schedule.length"
         class="flex flex-col gap-y-2"
       >
-        <Collapse title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
+        <Collapse class="mt-5 relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
+          <div
+            v-if="auth.loggedIn"
+            class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
+            <button
+              @click="saveSimulation">
+              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
+            </button>
+          </div>
           <div v-if="overpaymentType === 'period'">
             <h1>Zmniejszenie raty</h1>
             <div class="flex">

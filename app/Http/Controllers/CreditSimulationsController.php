@@ -8,9 +8,20 @@ use App\Models\Wibor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CreditSimulationsController extends Controller
 {
+    public function index(): Response
+    {
+        $creditSimulations = CreditSimulation::all();
+
+        return Inertia::render('CreditSimulations', [
+            'creditSimulations' => $creditSimulations
+        ]);
+    }
+
     public function save(Request $request): RedirectResponse
     {
         $validated = $request->validate([
