@@ -21,6 +21,10 @@ export function useHelpers() {
         maximumFractionDigits: 2,
     });
 
+    const formattedToCurrency = new Intl.NumberFormat("pl-PL", {
+        maximumFractionDigits: 2,
+    });
+
     function kosztKredytu(harmonogram) {
         let szumaKoszt = 0.00;
         for (let index = 0; index < harmonogram.length; index++) {
@@ -100,6 +104,7 @@ export function useHelpers() {
         totalCreditCost,
         formattedToPLN,
         totalOverpayments,
+        formattedToCurrency,
         kosztKredytu,
         getCapitalPartArray,
         getInterestPartArray,

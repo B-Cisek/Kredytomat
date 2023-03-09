@@ -16,6 +16,7 @@ import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.
 import InterestRateChange from "@/Components/InterestRateChange.vue";
 import {Link, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
+import ChangesInterestrRatesTable from "@/Components/Tables/ChangesInterestrRatesTable.vue";
 
 const {formattedToPLN, formatHarmonogram, getCapitalPartArray, getInterestPartArray} = useHelpers();
 
@@ -115,7 +116,7 @@ const getResult = async () => {
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
-  console.table(schedule.value)
+  //console.table(schedule.value)
 
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
@@ -197,8 +198,7 @@ const saveSimulation = () => {
     wibor_id: formData.value.wibor,
     fixed_fees: JSON.stringify(fees.value.fixed),
     changing_fees: JSON.stringify(fees.value.changing),
-
-  });
+  }, {preserveScroll: true});
 }
 </script>
 
@@ -208,7 +208,7 @@ const saveSimulation = () => {
     <template v-slot:header>Kalkulator rozszerzony</template>
 
     <template v-slot:default>
-      <section class="flex flex-col gap-8 w-full mx-auto rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
+      <section class="flex flex-col gap-8 w-full mx-auto rounded-lg shadow-md border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
             <div class="flex mb-3 items-center justify-between">
@@ -338,7 +338,7 @@ const saveSimulation = () => {
                 <option
                   v-for="wibor in props.wiborList"
                   :key="wibor.id"
-                  :value="wibor.value"
+                  :value="Number(wibor.value)"
                 >{{ wibor.type + ` (${wibor.value}%)` }}
                 </option>
               </select>
@@ -379,16 +379,17 @@ const saveSimulation = () => {
         </button>
       </section>
       <section
+        class="flex flex-col gap-2 mt-5"
         ref="results"
         v-if="schedule.length">
-        <Collapse class="mt-5 relative" title="Twoje wyniki" :collapsed="true">
+        <Collapse class="relative" title="Twoje wyniki" :collapsed="true">
           <div
             v-if="auth.loggedIn"
             class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
             <button
               @click="saveSimulation"
             >
-              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
+              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png" alt=""/>
             </button>
           </div>
           <div class="flex gap-3">
@@ -438,14 +439,17 @@ const saveSimulation = () => {
             <LineChart class="h-[400px]" :chartData="chartData" :options="options"/>
           </div>
         </Collapse>
-        <Collapse class="mt-2" title="Symulacja spłaty kapitału" :collapsed="false">
+        <Collapse title="Symulacja spłaty kapitału" :collapsed="false">
           <CapitalRepaymentSimulation :schedule="schedule" />
         </Collapse>
-        <Collapse class="mt-2" title="Jak zmieni się rata przy zmianie stopy procentowej?" :collapsed="false">
+        <Collapse title="Jak zmieni się rata przy zmianie stopy procentowej?" :collapsed="false">
           <InterestRateChange :credit="formData"/>
         </Collapse>
-        <Collapse class="mt-2" title="Harmonogram spłaty kredytu" :collapsed="false">
+        <Collapse title="Harmonogram spłaty kredytu" :collapsed="false">
           <CreditSchedule :schedule="schedule"/>
+        </Collapse>
+        <Collapse title="Symulacja zmiany raty dla zmian stóp procentowych" collapsed="true">
+          <ChangesInterestrRatesTable :schedule="schedule" :credit="formData"/>
         </Collapse>
       </section>
     </template>

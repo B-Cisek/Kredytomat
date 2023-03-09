@@ -59,11 +59,11 @@ onMounted(() => result())
       <h6 class="text-white">RATA ODSETKOWA: {{ Math.round(interestWidth) }}%</h6>
     </div>
     <div class="flex justify-between mt-2 gap-3">
-      <div class="bg-[#21A179] text-right rounded py-1 pr-2" :style="`width: ${capitalWidth}%`">
+      <div class="bg-[#21A179] text-right rounded py-1 pr-2" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
         <p class="text-center  text-white">{{ formattedToPLN.format(capitalPart) }}</p>
       </div>
       <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${interestWidth}%`">
-        <p class="text-center font-semibold text-white">{{ formattedToPLN.format(interestPart) }}</p>
+        <p class="text-center font-semibold text-white">{{ formattedToPLN.format((interestPart < 8 ? 20 : interestPart)) }}</p>
       </div>
     </div>
     <div class="flex mt-7">

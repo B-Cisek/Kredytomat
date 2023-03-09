@@ -7,7 +7,7 @@ const props = defineProps({
   schedule: Object
 });
 
-const period = ref(1);
+const period = ref(0);
 const capitalWidth = ref(0);
 const interestWidth = ref(0);
 
@@ -33,9 +33,9 @@ onMounted(() => {
       <input
         type="range"
         v-model="period"
-        min="1"
+        min="0"
         step="1"
-        :max="props.schedule.length"
+        :max="props.schedule.length - 1"
         class="range range-primary bg-[#d1d3d9]"
       />
       <label class="label">
@@ -95,10 +95,10 @@ onMounted(() => {
           <h6 class="text-white">RATA ODSETKOWA: {{ Math.round(interestWidth) }}%</h6>
         </div>
         <div class="flex justify-between mt-2 gap-3">
-          <div class="bg-[#21A179] text-right rounded py-1 pr-2" :style="`width: ${capitalWidth}%`">
+          <div class="bg-[#21A179] text-right rounded py-1 pr-2" :style="`width: ${(capitalWidth < 8) ? 8 : capitalWidth}%`">
             <p class="text-center  text-white">{{ formattedToPLN.format(props.schedule[period][3]) }}</p>
           </div>
-          <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${interestWidth}%`">
+          <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${(interestWidth < 8) ? 8 : interestWidth}%`">
             <p class="text-center font-semibold text-white">{{ formattedToPLN.format(props.schedule[period][2]) }}</p>
           </div>
         </div>

@@ -24,7 +24,7 @@ const collapsed = ref(props.collapsed);
   <transition
     enter-to-class="duration-300"
   >
-    <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white">
+    <section class="w-full rounded-lg border border-gray-200 shadow-md bg-white">
       <div @click="collapsed = !collapsed" class="flex items-center justify-between cursor-pointer p-5">
         <h1 class="font-semibold text-xl">{{ props.title }}</h1>
         <ArrowDownCircleIcon v-show="!collapsed" class="h-10 h-10 text-gray-500"/>

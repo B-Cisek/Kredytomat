@@ -35,8 +35,9 @@ class OfferController extends Controller
     {
         return Inertia::render('OfferCredit', [
             'credit' => Credit::whereRelation('bank', 'slug', $bank)
+                ->with('bank', 'wibor')
                 ->where('slug', $credit)
-                ->get()
+                ->first()
         ]);
     }
 }

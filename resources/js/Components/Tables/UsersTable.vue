@@ -1,10 +1,13 @@
 <script setup>
-import { defineProps } from "vue";
+import {defineProps, ref} from "vue";
 import RowLink from "@/Components/RowLink.vue";
 
 defineProps({
   users: Object,
 });
+
+const usersMassDelete = ref([]);
+
 </script>
 
 <template>
@@ -38,7 +41,7 @@ defineProps({
           <td class="p-4 w-4">
             <div class="flex items-center">
               <input
-                id="checkbox-table-search-1"
+                v-model="usersMassDelete[user.id]"
                 type="checkbox"
                 class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500"
               />

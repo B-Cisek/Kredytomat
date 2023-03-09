@@ -1,5 +1,8 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
+import {useHelpers} from "@/Composables/useHelpers";
+
+const {formattedToPLN, formattedToCurrency} = useHelpers();
 
 const props = defineProps({
   credit: Object
@@ -11,7 +14,102 @@ console.log(props.credit);
 <template>
   <Layout>
     <template v-slot:header>
-      Kredyt
+      {{ credit.bank.bank_name }} - {{ credit.credit_name }}
+    </template>
+    <template v-slot:default>
+      <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 flex flex-col sm:flex-row justify-between">
+          <div>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{{ credit.bank.bank_name }}</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ credit.credit_name }}</p>
+          </div>
+          <img class="w-[200px] mt-3 sm:mt-0" :src="credit.bank.logo_path" alt="Logo banku">
+        </div>
+        <div class="border-t border-gray-200">
+          <dl>
+            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Oprocentowanie</dt>
+              <dd class="mt-1 text-sm font-bold text-gray-900 sm:col-span-2 sm:mt-0">
+                {{ Number(credit.margin) + Number(credit.wibor.value) }}%
+              </dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Marża</dt>
+              <dd class="mt-1 text-sm font-bold text-gray-900 sm:col-span-2 sm:mt-0">{{ credit.margin}}%</dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">WIBOR</dt>
+              <dd class="mt-1 text-sm font-bold text-gray-900 sm:col-span-2 sm:mt-0">{{ credit.wibor.value }}%</dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Prowizja</dt>
+              <dd class="mt-1 text-sm font-bold text-gray-900 sm:col-span-2 sm:mt-0">{{ credit.commission }}%</dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Kwota</dt>
+              <dd class="mt-1 text-sm font-bold text-gray-900 sm:col-span-2 sm:mt-0">
+                {{ formattedToPLN.format(credit.amount_from) }} - {{ formattedToPLN.format(credit.amount_to) }}
+              </dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Ubezpieczenie na życie</dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">120,000</dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Ubezpieczenie pomostowe</dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">120,000</dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Wycena nieruchomości</dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">120,000</dd>
+            </div>
+            <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">About</dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">Fugiat ipsum ipsum deserunt culpa aute sint
+                do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id
+                mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing
+                reprehenderit deserunt qui eu.
+              </dd>
+            </div>
+            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <dt class="text-sm font-medium text-gray-500">Attachments</dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                <ul role="list" class="divide-y divide-gray-200 rounded-md border border-gray-200">
+                  <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                    <div class="flex w-0 flex-1 items-center">
+                      <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                           aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                              clip-rule="evenodd"/>
+                      </svg>
+                      <span class="ml-2 w-0 flex-1 truncate">resume_back_end_developer.pdf</span>
+                    </div>
+                    <div class="ml-4 flex-shrink-0">
+                      <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+                    </div>
+                  </li>
+                  <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                    <div class="flex w-0 flex-1 items-center">
+                      <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                           aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
+                              clip-rule="evenodd"/>
+                      </svg>
+                      <span class="ml-2 w-0 flex-1 truncate">coverletter_back_end_developer.pdf</span>
+                    </div>
+                    <div class="ml-4 flex-shrink-0">
+                      <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Download</a>
+                    </div>
+                  </li>
+                </ul>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
     </template>
   </Layout>
 </template>
