@@ -16,9 +16,9 @@ import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.
 import InterestRateChange from "@/Components/InterestRateChange.vue";
 import {Link, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
-import ChangesInterestrRatesTable from "@/Components/Tables/ChangesInterestrRatesTable.vue";
+import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
 
-const {formattedToPLN, formatHarmonogram, getCapitalPartArray, getInterestPartArray} = useHelpers();
+const {formattedToPLN, getCapitalPartArray, getInterestPartArray, getTotalFixedFees, getTotalChangingFees} = useHelpers();
 
 Chart.register(...registerables);
 
@@ -116,7 +116,7 @@ const getResult = async () => {
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
-  //console.table(schedule.value)
+  console.table(schedule.value)
 
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
@@ -423,11 +423,11 @@ const saveSimulation = () => {
                 </div>
                 <div>
                   <p class="mt-1">Opłaty stałe łącznie:</p>
-                  <span class="text-xl font-semibold">0,00 zł</span>
+                  <span class="text-xl font-semibold">{{ formattedToPLN.format(getTotalFixedFees(schedule)) }}</span>
                 </div>
                 <div>
                   <p class="mt-1">Opłaty zmienne łącznie:</p>
-                  <span class="text-xl font-semibold">0,00 zł</span>
+                  <span class="text-xl font-semibold">{{ formattedToPLN.format(getTotalChangingFees(schedule)) }}</span>
                 </div>
               </div>
             </div>
@@ -448,8 +448,8 @@ const saveSimulation = () => {
         <Collapse title="Harmonogram spłaty kredytu" :collapsed="false">
           <CreditSchedule :schedule="schedule"/>
         </Collapse>
-        <Collapse title="Symulacja zmiany raty dla zmian stóp procentowych" collapsed="true">
-          <ChangesInterestrRatesTable :schedule="schedule" :credit="formData"/>
+        <Collapse title="Symulacja zmiany raty dla zmian stóp procentowych" :collapsed="true">
+          <ChangesInterestsRatesTable :schedule="schedule" :credit="formData"/>
         </Collapse>
       </section>
     </template>

@@ -72,7 +72,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <div class="bg-[#465775] rounded-lg mt-5">
+  <div class="bg-[#465775] rounded-b-lg mt-5">
     <div class="p-5 flex flex-col gap-5">
       <div class="flex justify-between">
         <div>
@@ -81,11 +81,11 @@ onMounted(() => {
         </div>
         <div>
           <label class="text-white/80">Miesiąc spłaty</label>
-          <h1 class="text-white font-semibold text-3xl">{{ period }}</h1>
+          <h1 class="text-white font-semibold text-3xl">{{ Number(period) + 1 }}</h1>
         </div>
         <div>
           <label class="text-white/80">Rok spłaty</label>
-          <h1 class="text-white font-semibold text-3xl">1</h1>
+          <h1 class="text-white font-semibold text-3xl">{{ Math.floor(Number(period / 12)) + 1 }}</h1>
         </div>
       </div>
 

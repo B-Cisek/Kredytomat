@@ -53,6 +53,10 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 
+Route::get('/test', function () {
+    return \Inertia\Inertia::render('PdfGenerator');
+});
+
 
 require __DIR__ . '/auth.php';
 

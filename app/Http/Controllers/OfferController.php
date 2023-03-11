@@ -24,10 +24,23 @@ class OfferController extends Controller
 
     public function show(Request $request, $bank): Response
     {
+        $credits = Credit::with('bank')
+            ->whereRelation('bank', 'slug', $bank);
+
+        if ($request->has('sort')) {
+            $credits->orderBy('created_at', $request->get('sort'));
+        }
+
+        if ($request->has('marza')) {
+            $credits->orderBy('margin', $request->get('marza'));
+        }
+
+        if ($request->has('prowizja')) {
+            $credits->orderBy('commission', $request->get('prowizja'));
+        }
+
         return Inertia::render('OfferBank', [
-            'credits' => Credit::with('bank')
-                ->whereRelation('bank', 'slug', $bank)
-                ->get()
+            'credits' => $credits->get()
         ]);
     }
 

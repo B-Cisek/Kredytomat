@@ -2,6 +2,7 @@
 import {useHelpers} from "@/Composables/useHelpers";
 import {useEqualInstallments} from "@/Composables/useEqualInstallments";
 import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
+import {onMounted, ref} from "vue";
 
 const {
   totalCreditCost,
@@ -15,8 +16,6 @@ const props = defineProps({
   schedule: Object,
   credit: Object
 });
-
-import {onMounted, ref} from "vue";
 
 const result = ref([]);
 
@@ -150,7 +149,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(row.installment.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.installment.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.installment.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.installment.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.installment.change / defaultResult.installment) * 100) }}%
           </span></p>
         </td>
@@ -161,7 +161,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(row.creditInterests.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.creditInterests.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.creditInterests.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.creditInterests.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.creditInterests.change / defaultResult.creditInterests) * 100) }}%
           </span></p>
         </td>
@@ -172,7 +173,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(-row.creditCapital.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.creditCapital.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(-row.creditCapital.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(-row.creditCapital.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round(-(row.creditCapital.change / defaultResult.creditCapital) * 100) }}%
           </span></p>
         </td>
@@ -183,7 +185,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(row.creditInterest10years.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(row.creditCapital.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.creditInterest10years.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.creditInterest10years.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.creditInterest10years.change / defaultResult.creditInterest10years) * 100) }}%
           </span></p>
         </td>
@@ -194,7 +197,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(-row.creditCapital10years.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.creditCapital10years.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.creditCapital10years.change) < 0 ? 'bg-green-200' : 'bg-red-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.creditCapital10years.change) < 0 ? 'bg-green-200' : 'bg-red-200'">
             {{ Math.round(-(row.creditCapital10years.change / defaultResult.creditCapital10years) * 100) }}%
           </span></p>
         </td>
@@ -205,7 +209,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(row.totalCreditInterest.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.totalCreditInterest.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.totalCreditInterest.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.totalCreditInterest.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.totalCreditInterest.change / defaultResult.totalCreditInterest) * 100) }}%
           </span></p>
         </td>
@@ -216,7 +221,8 @@ function changeCalc(oldValue, newValue) {
             class="text-xs font-semibold"
             :class="Number(row.totalCreditCost.change) < 0 ? 'text-red-700' : 'text-green-700'"
           >{{ formattedToPLN.format(-row.totalCreditCost.change) }}
-            <span class="p-1 rounded-lg text-xs ml-2" :class="Number(row.totalCreditCost.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
+            <span class="p-1 rounded-lg text-xs ml-2"
+                  :class="Number(row.totalCreditCost.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.totalCreditCost.change / defaultResult.totalCreditCost) * 100) }}%
           </span></p>
         </td>

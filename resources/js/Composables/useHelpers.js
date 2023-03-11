@@ -97,7 +97,25 @@ export function useHelpers() {
         return sum;
     }
 
+    function getTotalFixedFees(schedule) {
+        let fixedFees = 0.00;
+        for (let i = 0; i < schedule.length; i++) {
+            fixedFees += schedule[i][8];
+        }
+        return fixedFees;
+    }
+
+    function getTotalChangingFees(schedule) {
+        let changingFees = 0.00;
+        for (let i = 0; i < schedule.length; i++) {
+            changingFees += schedule[i][9];
+        }
+        return changingFees;
+    }
+
     return {
+        getTotalChangingFees,
+        getTotalFixedFees,
         formatHarmonogram,
         totalCreditInterest,
         toDecimal,
