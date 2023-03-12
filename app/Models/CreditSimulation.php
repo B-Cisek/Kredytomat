@@ -16,4 +16,9 @@ class CreditSimulation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function wibor(): BelongsTo
+    {
+        return $this->belongsTo(Wibor::class);
+    }
 }

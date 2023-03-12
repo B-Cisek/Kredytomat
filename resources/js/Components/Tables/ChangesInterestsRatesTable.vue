@@ -113,7 +113,7 @@ function changeCalc(oldValue, newValue) {
 </script>
 
 <template>
-  <div class="overflow-x-auto relative shadow-md">
+  <div class="overflow-x-auto relative">
     <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr class="bg-gray-200 text-center">

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('fixed_fees')->nullable();
             $table->text('changing_fees')->nullable();
             $table->foreignId('user_id')->constrained();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

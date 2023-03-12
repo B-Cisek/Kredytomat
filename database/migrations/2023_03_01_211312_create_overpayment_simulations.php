@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('overpayments');
             $table->string('overpayment_type');
             $table->foreignId('user_id')->constrained();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

@@ -15,10 +15,17 @@ class CreditSimulationsController extends Controller
 {
     public function index(): Response
     {
-        $creditSimulations = CreditSimulation::all();
+        $creditSimulations = CreditSimulation::with('wibor')->paginate(10);
 
         return Inertia::render('CreditSimulations', [
             'creditSimulations' => $creditSimulations
+        ]);
+    }
+
+    public function show($creditSimulation): Response
+    {
+        return Inertia::render('CreditSimulation', [
+            'creditSimulation' => CreditSimulation::with('wibor')->findOrFail($creditSimulation)
         ]);
     }
 

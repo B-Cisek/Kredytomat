@@ -15,7 +15,7 @@ defineProps({
     </template>
     <template v-slot:default>
       <section class="flex flex-col gap-3 mt-2">
-        <Tile :href="route('profil.saved-simulations.credit')">
+        <Tile :href="route('profil.credit.index')">
           <template v-slot:title>Kalkulacje kredytu</template>
           <template v-slot:icon>
             <h1 class="font-semibold text-xl">({{ creditSimulationCount }})</h1>

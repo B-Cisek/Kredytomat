@@ -3,7 +3,6 @@ import {Head, Link, usePage} from "@inertiajs/inertia-vue3";
 import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import {Inertia} from "@inertiajs/inertia";
 
 const {formattedToPLN} = useHelpers();
 
@@ -11,18 +10,8 @@ const props = defineProps({
   credits: Object
 });
 
-
-console.log(props.credits)
-const url = usePage().url;
-console.log(url.value);
-
-const sortDesc = ref(`${url.value}?sort=desc`);
-const sortAsc = ref(`${url.value}?sort=asc`);
 const filterOpen = ref(false);
-
-console.log(usePage().url.value);
 </script>
-
 
 <template>
   <Head title="Oferta"/>
@@ -119,7 +108,7 @@ console.log(usePage().url.value);
 
         </div>
         <div
-          class="rounded-lg shadow-2xl border border-gray-200 bg-white p-5"
+          class="rounded-lg shadow-2xl border border-gray-200 bg-white p-5 hover:bg-gray-200"
           v-for="(credit, index) in props.credits"
           :key="credit.id"
         >
@@ -141,7 +130,7 @@ console.log(usePage().url.value);
               <div>
                 <span class="text-gray-500">Okres</span>
                 <p class="font-semibold text-lg">
-                   {{ credit.period_from / 12 }} - {{ credit.period_to / 12}} lat
+                  {{ credit.period_from / 12 }} - {{ credit.period_to / 12 }} lat
                 </p>
               </div>
               <div class="">

@@ -24,4 +24,9 @@ class Wibor extends Model
     {
         return $this->hasMany(Credit::class);
     }
+
+    public function creditSimulations(): HasMany
+    {
+        return $this->hasMany(CreditSimulation::class);
+    }
 }

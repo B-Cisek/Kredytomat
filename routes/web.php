@@ -41,7 +41,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('profil/zapisane-symulacje', UserSimulationsController::class)
         ->name('profil.saved-simulations');
     Route::get('profil/zapisane-kalkulacje-kredytu', [CreditSimulationsController::class, 'index'])
-        ->name('profil.saved-simulations.credit');
+        ->name('profil.credit.index');
+    Route::get('profil/zapisane-kalkulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'show'])
+        ->name('profil.credit.show');
     Route::get('profil/zapisane-kalkulacje-nadplaty-kredytu', [OverpaymentSimulationsController::class, 'index'])
         ->name('profil.saved-simulations.overpayment');
 });
