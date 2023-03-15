@@ -135,7 +135,7 @@ function changeCalc(oldValue, newValue) {
         :class="row.interest.value == null ? 'bg-blue-200 hover:bg-blue-600 hover:text-white' : ''"
       >
         <td class="whitespace-nowrap p-3">
-          <p class="font-medium text-gray-900">{{ row.interest.value ?? defaultResult.interest }} %</p>
+          <p class="font-medium text-gray-900">{{ Math.round((row.interest.value ?? defaultResult.interest) * 100) / 100}} %</p>
           <p
             v-if="row.interest.value"
             :class="Number(row.interest.change) < 0 ? 'text-xs text-green-600 font-medium' : 'text-xs text-red-600 font-medium'"

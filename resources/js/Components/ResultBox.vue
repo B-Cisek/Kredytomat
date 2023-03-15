@@ -52,14 +52,14 @@ onMounted(() => result())
       </div>
     </div>
     <div class="mb-5 mt-5">
-      <p class="text-white">W skład Twojej raty wchodzi:</p>
+      <p class="text-white">W skład Twojej pierwszej raty wchodzi:</p>
     </div>
     <div class="flex justify-between">
       <h6 class="text-white">RATA KAPITAŁOWA: {{ Math.round(capitalWidth) }}%</h6>
       <h6 class="text-white">RATA ODSETKOWA: {{ Math.round(interestWidth) }}%</h6>
     </div>
     <div class="flex justify-between mt-2 gap-3">
-      <div class="bg-[#21A179] text-right rounded py-1 pr-2" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
+      <div class="bg-[#21A179] text-right rounded py-1 pr-2 min-w-min" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
         <p class="text-center  text-white">{{ formattedToPLN.format(capitalPart) }}</p>
       </div>
       <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${interestWidth}%`">

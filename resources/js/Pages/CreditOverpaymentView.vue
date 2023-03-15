@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
@@ -11,6 +11,7 @@ import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpay
 import OverpaymentInputsList from "@/Components/InputsList/OverpaymentInputsList.vue";
 import Collapse from "@/Components/Collapse.vue";
 import {usePage} from "@inertiajs/inertia-vue3";
+import {Inertia} from "@inertiajs/inertia";
 
 const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
 
@@ -20,10 +21,20 @@ const props = defineProps({
   wiborList: Object,
 });
 
+const results = ref(null);
+
+const scrollToResult = () => {
+  results.value.scrollIntoView({behavior: "smooth"});
+}
+
 const overpayments = ref([]);
 const overpaymentsStorage = ref(localStorage.getItem("overpayment-values"));
+console.log(overpaymentsStorage);
 const overpaymentType = ref(localStorage.getItem("overpayment-type") ?? "period");
 const schedule = ref([]);
+const formattedSchedule = ref([]);
+const baseCreditSchedule = ref([]);
+const costCostDiff = ref(null);
 
 const formData = ref({
   amountOfCredit: Number(localStorage.getItem("overpayment-amountOfCredit") ?? 300000),
@@ -54,40 +65,49 @@ const rules = {
 
 const decreasingInstallment = () => {
   if (overpaymentType.value === "period") {
+    baseCreditSchedule.value = useDecreasinginstallments({
+      date: new Date(2023, 0),
+      ...formData.value
+    }, [], []).getScheduleShorterPeriod()
+
     return useDecreasinginstallments({
       date: new Date(2023, 0),
       ...formData.value
     }, overpayments.value, []).getScheduleShorterPeriod();
   } else {
+    baseCreditSchedule.value = useDecreasinginstallments({
+      date: new Date(2023, 0),
+      ...formData.value
+    }, [], []).getScheduleSmallerInstallment();
+
     return useDecreasinginstallments({
       date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
+      ...formData.value
     }, overpayments.value, []).getScheduleSmallerInstallment();
   }
 }
 
 const equalInstallment = () => {
   if (overpaymentType.value === "period") {
+    baseCreditSchedule.value = useEqualInstallments({
+        date: new Date(2023, 0),
+        ...formData.value
+      }, [], []
+    ).getScheduleShorterPeriod();
+
     return useEqualInstallments({
       date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
+      ...formData.value
     }, overpayments.value, []).getScheduleShorterPeriod();
   } else {
+    baseCreditSchedule.value = useEqualInstallments({
+      date: new Date(2023, 0),
+     ...formData.value
+    }, [], []).getScheduleSmallerInstallment();
+
     return useEqualInstallments({
       date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
+      ...formData.value
     }, overpayments.value, []).getScheduleSmallerInstallment();
   }
 }
@@ -108,12 +128,14 @@ const getResult = async () => {
   if (formData.value.typeOfInstallment === "rowne") creditResult = equalInstallment();
   if (formData.value.typeOfInstallment === "malejace") creditResult = decreasingInstallment();
 
-  schedule.value = formatHarmonogram(creditResult);
-  console.table(formatHarmonogram(creditResult));
-  console.log(formattedToPLN.format(totalCreditInterest(creditResult)));
+
+  schedule.value = creditResult;
+  formattedSchedule.value = formatHarmonogram(creditResult);
   totalCost.value = totalCreditCost(creditResult);
 
-  console.log(formattedToPLN.format(totalCreditCost(creditResult)));
+  costCostDiff.value = totalCreditCost(baseCreditSchedule.value) - totalCreditCost(schedule.value);
+
+  await nextTick(() => scrollToResult());
 }
 
 const getOverpayments = (value) => {
@@ -129,8 +151,18 @@ const getType = (value) => {
 onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
 
 const saveSimulation = () => {
-
+  Inertia.post(route('profil.overpayment.save'), {
+    amount_of_credit: formData.value.amountOfCredit,
+    period: formData.value.period,
+    margin: formData.value.margin,
+    commission: formData.value.commission,
+    type_of_installment: formData.value.typeOfInstallment,
+    wibor_id: formData.value.wibor,
+    overpayment_type: overpaymentType.value,
+    overpayments: JSON.stringify(overpayments.value),
+  }, {preserveScroll: true});
 }
+
 
 </script>
 
@@ -253,9 +285,66 @@ const saveSimulation = () => {
       </section>
 
       <section
-        v-if="schedule.length"
+        ref="results"
+        v-if="formattedSchedule.length"
         class="flex flex-col gap-y-2"
       >
+        <Collapse title="Dane" :collapsed="true">
+          <div class="bg-[#21a142] px-5 pt-5 rounded-t text-white flex">
+            <div class="flex flex-col justify-between flex-1 gap-3">
+              <div>
+                <p class="mt-1">Kwota kredytu:</p>
+                <span class="text-xl font-semibold">{{ formattedToPLN.format(formData.amountOfCredit) }}</span>
+              </div>
+              <div>
+                <p class="mt-1">Okres spłaty:</p>
+                <span class="text-xl font-semibold">{{ formData.period }} lat</span>
+              </div>
+              <div>
+                <p class="mt-1">Oprocentowanie:</p>
+                <p class="text-xl font-semibold">{{ formData.wibor + formData.margin }}% <span
+                  class="text-sm font-normal">(WIBOR {{ formData.wibor }}% + marża {{ formData.margin }}%)</span></p>
+              </div>
+            </div>
+            <div class="flex flex-col justify-between items-end text-right flex-1">
+              <div>
+                <p class="mt-1">Rodzaj raty:</p>
+                <span class="text-xl font-semibold">
+                  {{ formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące' }}</span>
+              </div>
+              <div>
+                <p class="mt-1">WIBOR:</p>
+                <span class="text-xl font-semibold">3M</span>
+              </div>
+              <div>
+                <p class="mt-1">Prowizja:</p>
+                <span class="text-xl font-semibold">{{ formData.commission }}%</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-[#21a142] px-5 text-white pb-5 pt-3 rounded-b-md flex">
+            <div class="flex-1">
+              <p>Nadpłaty:</p>
+              <ul class="list-disc ml-5">
+                <li
+                  class="text-xl font-semibold"
+                  v-for="(overpayment, index) in overpayments"
+                  :key="index"
+                >{{ overpayment.start.month + 1 }}/{{ overpayment.start.year }} -
+                  {{ overpayment.end.month + 1 }}/{{ overpayment.end.year }}:
+                  {{ formattedToPLN.format(overpayment.overpayment) }}
+                </li>
+              </ul>
+            </div>
+            <div class="text-right">
+              <p class="mt-1">Nadpłata na:</p>
+              <span class="text-xl font-semibold">
+                {{ overpaymentType === 'period' ? 'Skrócenie okresu kredytowania' : 'Zminiejszenie raty' }}
+              </span>
+            </div>
+          </div>
+        </Collapse>
+
         <Collapse class="mt-5 relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
           <div
             v-if="auth.loggedIn"
@@ -265,23 +354,32 @@ const saveSimulation = () => {
               <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
             </button>
           </div>
-          <div v-if="overpaymentType === 'period'">
-            <h1>Zmniejszenie raty</h1>
-            <div class="flex">
-              <p>
-                Koszt kredytu: {{ formattedToPLN.format(totalCost) }}
-              </p>
-              <p>Oszczędność na całym kredycie</p>
+
+          <div class="flex justify-center gap-10">
+              <div class="flex-col flex p-10">
+                <label>Oszczędność na całym kredycie</label>
+                <span class="text-2xl font-semibold">{{ formattedToPLN.format(costCostDiff)}}</span>
+              </div>
+              <div class="flex-col flex p-10">
+                <label>Miesięczna oszczędność</label>
+                <span class="text-2xl font-semibold">159,08 PLN</span>
+              </div>
+
+              <div class="flex-col flex p-10">
+                <label>Roczna oszczędność</label>
+                <span class="text-2xl font-semibold">1 451,04 PLN</span>
+              </div>
+              <div class="flex-col flex p-10">
+                <label>Roczna oszczędność</label>
+                <span class="text-2xl font-semibold">1 451,04 PLN</span>
+              </div>
             </div>
-          </div>
-          <div v-if="overpaymentType === 'installment'">
-            mniejsza rata
-          </div>
         </Collapse>
 
-        <Collapse title="Harmonogram" :collapsed="false">
-          <CreditScheduleOverpayment :schedule="schedule"/>
+        <Collapse title="Harmonogram" :collapsed="true">
+          <CreditScheduleOverpayment :schedule="formattedSchedule"/>
         </Collapse>
+
       </section>
     </template>
   </Layout>

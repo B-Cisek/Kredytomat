@@ -18,7 +18,13 @@ import {Link, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
 
-const {formattedToPLN, getCapitalPartArray, getInterestPartArray, getTotalFixedFees, getTotalChangingFees} = useHelpers();
+const {
+  formattedToPLN,
+  getCapitalPartArray,
+  getInterestPartArray,
+  getTotalFixedFees,
+  getTotalChangingFees
+} = useHelpers();
 
 Chart.register(...registerables);
 
@@ -116,7 +122,7 @@ const getResult = async () => {
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
-  console.table(schedule.value)
+  //console.table(schedule.value)
 
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
@@ -161,7 +167,7 @@ let options = {
   },
   plugins: {
     title: {
-      display: true,
+      display: false,
       text: 'Stacked'
     },
   },
@@ -382,6 +388,7 @@ const saveSimulation = () => {
         class="flex flex-col gap-2 mt-5"
         ref="results"
         v-if="schedule.length">
+
         <Collapse class="relative" title="Twoje wyniki" :collapsed="true">
           <div
             v-if="auth.loggedIn"
@@ -405,7 +412,12 @@ const saveSimulation = () => {
                 </div>
                 <div>
                   <p class="mt-1">Oprocentowanie:</p>
-                  <p class="text-xl font-semibold">{{ Number(formData.margin) + Number(formData.wibor) }}% <span class="text-sm font-normal">(WIBOR {{ formData.wibor }}% + marża {{ formData.margin}}%)</span></p>
+                  <p class="text-xl font-semibold">
+                    {{ Math.round((Number(formData.margin) + Number(formData.wibor)) * 100) / 100 }}%
+                    <span class="text-sm font-normal">
+                      (WIBOR {{ formData.wibor }}% + marża {{ formData.margin }}%)
+                  </span>
+                  </p>
                 </div>
                 <div>
                   <p class="mt-1">Prowizja:</p>
@@ -415,7 +427,9 @@ const saveSimulation = () => {
               <div class="flex flex-col justify-between items-end text-right flex-1">
                 <div>
                   <p class="mt-1">Rodzaj raty:</p>
-                  <span class="text-xl font-semibold">{{ formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące' }}</span>
+                  <span class="text-xl font-semibold">{{
+                      formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące'
+                    }}</span>
                 </div>
                 <div>
                   <p class="mt-1">WIBOR:</p>
@@ -435,21 +449,26 @@ const saveSimulation = () => {
               <ResultBox :schedule="schedule"/>
             </div>
           </div>
+
           <div class="p-2 mt-3">
             <LineChart class="h-[400px]" :chartData="chartData" :options="options"/>
           </div>
         </Collapse>
-        <Collapse title="Symulacja spłaty kapitału" :collapsed="false">
-          <CapitalRepaymentSimulation :schedule="schedule" />
+
+        <Collapse title="Symulacja spłaty kapitału" :collapsed="true">
+          <CapitalRepaymentSimulation :schedule="schedule"/>
         </Collapse>
-        <Collapse title="Jak zmieni się rata przy zmianie stopy procentowej?" :collapsed="false">
-          <InterestRateChange :credit="formData"/>
+
+        <Collapse title="Roczny wzrost obciążeń z tytułu kredytu" :collapsed="true">
+          <InterestRateChange :credit="formData" :schedule="schedule"/>
         </Collapse>
-        <Collapse title="Harmonogram spłaty kredytu" :collapsed="false">
-          <CreditSchedule :schedule="schedule"/>
-        </Collapse>
+
         <Collapse title="Symulacja zmiany raty dla zmian stóp procentowych" :collapsed="true">
           <ChangesInterestsRatesTable :schedule="schedule" :credit="formData"/>
+        </Collapse>
+
+        <Collapse title="Harmonogram spłaty kredytu" :collapsed="true">
+          <CreditSchedule :schedule="schedule"/>
         </Collapse>
       </section>
     </template>

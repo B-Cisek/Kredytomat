@@ -175,10 +175,10 @@ onBeforeMount(() => {
       </div>
 
       <section id="pdf-export">
-        <div class="flex items-center justify-between cursor-pointer p-5 w-full">
-          <h1 class="font-semibold text-xl">Twoje wyniki</h1>
-        </div>
         <div class="w-full rounded-lg border border-gray-200 bg-white">
+          <div class="flex items-center justify-between cursor-pointer p-5 w-full">
+            <h1 class="font-semibold text-xl">Twoje wyniki</h1>
+          </div>
           <div>
             <div>
               <div class="flex-1 bg-[#21a142] p-5 text-white flex">
@@ -247,8 +247,6 @@ onBeforeMount(() => {
           </div>
         </div>
       </section>
-
-
     </template>
   </Layout>
 </template>

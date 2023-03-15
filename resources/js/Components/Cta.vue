@@ -12,7 +12,7 @@ import {Link} from "@inertiajs/inertia-vue3";
       <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
         <div class="inline-flex rounded-md shadow">
           <Link
-            :href="route('offer')"
+            :href="route('offer.all')"
             class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-5 py-3 text-base font-medium text-white hover:bg-indigo-700"
           >Zobacz wszystkie oferty
           </Link>

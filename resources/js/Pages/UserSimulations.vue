@@ -21,7 +21,7 @@ defineProps({
             <h1 class="font-semibold text-xl">({{ creditSimulationCount }})</h1>
           </template>
         </Tile>
-        <Tile :href="route('profil.saved-simulations.overpayment')">
+        <Tile :href="route('profil.overpayment.index')">
           <template v-slot:title>Kalkulacje nadpłaty kredytu</template>
           <template v-slot:icon>
             <h1 class="font-semibold text-xl">({{ overpaymentSimulationCount }})</h1>

@@ -1,75 +1,97 @@
 <script setup>
-import { Bar } from 'vue-chartjs'
+import {Bar} from 'vue-chartjs'
 import {Chart, registerables} from "chart.js";
 import {onMounted, ref} from "vue";
-import {useEqualInstallments} from "@/Composables/useEqualInstallments";
-import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
 import {useHelpers} from "@/Composables/useHelpers";
+import {useEqualInstallments} from "@/Composables/useEqualInstallments";
 
 Chart.register(...registerables);
+
 const {formattedToPLN} = useHelpers();
+
 const props = defineProps({
-  credit: Object
+  credit: Object,
+  schedule: Object
 });
 
-const baseInstallment = ref(null);
+const result = ref([]);
 
-const calcBaseInstallment = () => {
-  props.credit.date = new Date(2023,0);
-  if (props.credit.typeOfInstallment === 'rowne') {
-    let result = useEqualInstallments(props.credit).getSchedule();
-    baseInstallment.value = result[0][4];
+const interestRateChanges = [
+  -2.50, -2.00, -1.50, -1.00, -0.50, 0.50, 1.00, 1.50, 2.00, 2.50
+];
+
+const scheduleCalculate = (index) => {
+  if (props.credit.typeOfInstallment === "rowne") {
+    return useEqualInstallments({
+      date: new Date(2023, 0),
+      amountOfCredit: props.credit.amountOfCredit,
+      period: props.credit.period,
+      margin: props.credit.margin,
+      wibor: props.credit.wibor + interestRateChanges[index],
+      commission: props.credit.commission
+    }).getSchedule();
   }
 }
 
-
 const calculate = () => {
+  for (let i = 0; i < 10; i++) {
+    let newSchedule = scheduleCalculate(i);
 
+    result.value.push({
+      change: props.schedule[0][4] - newSchedule[0][4],
+      installment: newSchedule[0][4]
+    });
+  }
 }
 
 onMounted(() => {
-  calcBaseInstallment();
-})
+  calculate();
 
+  result.value.splice(5, 0, {
+    change: 0,
+    installment: props.schedule[0][4]
+  });
 
+  let changesArr = [];
+  let installmentArr = [];
 
-const labels = ['Spadek o 2,5%','Spadek o 2%','Spadek o 1,5%','Spadek o 1%','Spadek o 0,5%','obecnie',
-                'Wzrost o 0,5%','Wzrost o 1%','Wzrost o 1,5%', 'Wzrost o 2%', 'Wzrost o 2,5%'];
-const chartData = {
+  result.value.forEach((val) => {
+    changesArr.push(val.change > 0 ? val.change : -val.change);
+    installmentArr.push(val.installment);
+  })
+
+  chartData.value.datasets[0].data = installmentArr;
+  chartData.value.datasets[1].data = changesArr;
+});
+
+const labels = ['Spadek o 2,5%', 'Spadek o 2%', 'Spadek o 1,5%', 'Spadek o 1%', 'Spadek o 0,5%', 'obecnie',
+  'Wzrost o 0,5%', 'Wzrost o 1%', 'Wzrost o 1,5%', 'Wzrost o 2%', 'Wzrost o 2,5%'];
+
+const chartData = ref({
   labels: labels,
   datasets: [
     {
       label: 'Obecna rata',
-      data: [20,30,40,50,50,30,70,75,55,100],
-      backgroundColor: "#ff4069",
+      data: [],
+      backgroundColor: "#acbac9",
       stack: 'Stack 0',
     },
     {
       label: 'Zmiana',
-      data: [15,50,20,50,50,30,70,75,55,100],
-      backgroundColor: "#22cfcf",
+      data: [],
+      backgroundColor: "#00b55a",
       stack: 'Stack 0',
     },
   ]
-};
+});
 
 const chartOptions = {
-  type: 'bar',
-  data: chartData,
-  options: {
-    responsive: true,
-    interaction: {
-      intersect: false,
-    },
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        ticks: {
-          beginAtZero: true,
-          stacked: true
-        }
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    yAxes: {
+      ticks: {
+        beginAtZero: true
       }
     }
   }
@@ -79,79 +101,41 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="flex flex-col px-5">
-    <label class="font-semibold text-black" for="wibor">Porównaj:</label>
-    <select
-      class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none
-           focus:shadow-none font-semibold input outline-none w-[260px]"
-    >
-      <option value="rowne">Miesięczną rate</option>
-      <option value="malejace">Roczny wzrost obciążeń z tytułu kredytu</option>
-    </select>
-  </div>
-
-  <div class="flex flex-col">
+  <div class="flex justify-between p-5">
     <div class="flex-col flex gap-5 justify-center px-5">
-      <div class="flex justify-end gap-20">
-        <span></span>
-        <span>zmiana</span>
-        <span>wysokość raty</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oproc. kredytu na obecnym poziomie</span>
-        <span>0,00 PLN</span>
-<!--        <span>{{ formattedToPLN.format(result[0][4]) }}</span>-->
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
-      <div class="flex justify-between gap-10">
-        <span>Oprocentowanie spada o -2,5%</span>
-        <span>- 337,06 PLN</span>
-        <span>1 469,70 PLN</span>
-      </div>
+      <span></span>
+      <p>Oprocentowanie spada o <span class="font-semibold">-2,5%</span></p>
+      <p>Oprocentowanie spada o <span class="font-semibold">-2,0%</span></p>
+      <p>Oprocentowanie spada o <span class="font-semibold">-1,5%</span></p>
+      <p>Oprocentowanie spada o <span class="font-semibold">-1,0%</span></p>
+      <p>Oprocentowanie spada o <span class="font-semibold">-0,5%</span></p>
+      <p>Oproc. kredytu na obecnym poziomie</p>
+      <p>Oprocentowanie wzrasta o <span class="font-semibold">0,5%</span></p>
+      <p>Oprocentowanie wzrasta o <span class="font-semibold">1,0%</span></p>
+      <p>Oprocentowanie wzrasta o <span class="font-semibold">1,5%</span></p>
+      <p>Oprocentowanie wzrasta o <span class="font-semibold">2,0%</span></p>
+      <p>Oprocentowanie wzrasta o <span class="font-semibold"> 2,5%</span></p>
     </div>
-
-
-
-    <div>
-      <Bar
-        class="w-[500px]"
-        :chartOptions="chartOptions"
-        :chartData="chartData"
-      />
+    <div class="flex-col flex gap-5 justify-center px-5 text-center">
+      <span>ROCZNA ZMIANA</span>
+      <span
+        v-for="(res, index) in result"
+        :key="index"
+      >{{ formattedToPLN.format(-res.change)}}</span>
     </div>
+    <div class="flex-col flex gap-5 justify-center px-5 text-right">
+      <span>WYSOKOŚĆ RATY</span>
+      <span
+        v-for="(res, index) in result"
+        :key="index"
+      >{{formattedToPLN.format(res.installment)}}</span>
+    </div>
+  </div>
+  <div>
+    <Bar
+      class="w-full p-5"
+      :chartOptions="chartOptions"
+      :chartData="chartData"
+    />
   </div>
 </template>

@@ -49,7 +49,7 @@ console.log(props.creditSimulations)
                 </thead>
                 <tbody>
                 <tr
-                  v-for="(credit, index) in props.creditSimulations.data"
+                  v-for="credit in props.creditSimulations.data"
                   :key="credit.id"
                 >
                   <td
