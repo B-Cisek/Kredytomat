@@ -44,18 +44,26 @@ watch(list.value, () => {
   <div
     v-for="(input, index) in list"
     :key="index"
-    class="flex gap-6 mt-3"
+    class="flex gap-2 mt-3 lg:flex-row flex-col"
   >
-    <Datepicker v-model="input.start" month-picker locale="pl" auto-apply/>
-    <Datepicker v-model="input.end" month-picker locale="pl" auto-apply/>
-    <input
-      v-model="input.fee"
-      class="border-gray-200 h-10 rounded-md"
-      type="number"
-      :placeholder="props.placeholder"
-    >
-    <button @click="remove(index)">
-      <XCircleIcon class="h-6 w-6"/>
-    </button>
+    <div class="flex gap-2">
+      <Datepicker v-model="input.start" month-picker locale="pl" auto-apply/>
+      <Datepicker v-model="input.end" month-picker locale="pl" auto-apply/>
+    </div>
+    <div class="flex md:flex-row md:gap-2">
+      <div>
+        <input
+          v-model="input.fee"
+          class="border-gray-200 h-10 rounded-md"
+          type="number"
+          :placeholder="props.placeholder"
+        >
+      </div>
+      <div class="flex">
+        <button @click="remove(index)">
+          <XCircleIcon class="h-6 w-6"/>
+        </button>
+      </div>
+    </div>
   </div>
 </template>

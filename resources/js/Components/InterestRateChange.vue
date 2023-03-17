@@ -7,7 +7,7 @@ import {useEqualInstallments} from "@/Composables/useEqualInstallments";
 
 Chart.register(...registerables);
 
-const {formattedToPLN} = useHelpers();
+const {formattedToPLN, getTotalInstallmentsYear} = useHelpers();
 
 const props = defineProps({
   credit: Object,
@@ -38,8 +38,8 @@ const calculate = () => {
     let newSchedule = scheduleCalculate(i);
 
     result.value.push({
-      change: props.schedule[0][4] - newSchedule[0][4],
-      installment: newSchedule[0][4]
+      change: getTotalInstallmentsYear(props.schedule) - getTotalInstallmentsYear(newSchedule),
+      sumInstallments: getTotalInstallmentsYear(newSchedule)
     });
   }
 }
@@ -49,15 +49,15 @@ onMounted(() => {
 
   result.value.splice(5, 0, {
     change: 0,
-    installment: props.schedule[0][4]
+    sumInstallments: getTotalInstallmentsYear(props.schedule)
   });
 
   let changesArr = [];
   let installmentArr = [];
 
   result.value.forEach((val) => {
-    changesArr.push(val.change > 0 ? val.change : -val.change);
-    installmentArr.push(val.installment);
+    changesArr.push(Math.abs(val.change));
+    installmentArr.push(val.sumInstallments - Math.abs(val.change));
   })
 
   chartData.value.datasets[0].data = installmentArr;
@@ -96,44 +96,48 @@ const chartOptions = {
     }
   }
 };
-
-
 </script>
 
 <template>
   <div class="flex justify-between p-5">
-    <div class="flex-col flex gap-5 justify-center px-5">
-      <span></span>
-      <p>Oprocentowanie spada o <span class="font-semibold">-2,5%</span></p>
-      <p>Oprocentowanie spada o <span class="font-semibold">-2,0%</span></p>
-      <p>Oprocentowanie spada o <span class="font-semibold">-1,5%</span></p>
-      <p>Oprocentowanie spada o <span class="font-semibold">-1,0%</span></p>
-      <p>Oprocentowanie spada o <span class="font-semibold">-0,5%</span></p>
-      <p>Oproc. kredytu na obecnym poziomie</p>
-      <p>Oprocentowanie wzrasta o <span class="font-semibold">0,5%</span></p>
-      <p>Oprocentowanie wzrasta o <span class="font-semibold">1,0%</span></p>
-      <p>Oprocentowanie wzrasta o <span class="font-semibold">1,5%</span></p>
-      <p>Oprocentowanie wzrasta o <span class="font-semibold">2,0%</span></p>
-      <p>Oprocentowanie wzrasta o <span class="font-semibold"> 2,5%</span></p>
+    <div class=" flex-1 flex flex-col gap-3">
+      <div><p class="font-semibold">ZMIANA OPROCENTOWANIA</p></div>
+      <div><p>Oprocentowanie spada o <span class="font-semibold">-2,5%</span></p></div>
+      <div><p>Oprocentowanie spada o <span class="font-semibold">-2,0%</span></p></div>
+      <div><p>Oprocentowanie spada o <span class="font-semibold">-1,5%</span></p></div>
+      <div><p>Oprocentowanie spada o <span class="font-semibold">-1,0%</span></p></div>
+      <div><p>Oprocentowanie spada o <span class="font-semibold">-0,5%</span></p></div>
+      <div><p>Oproc. kredytu na obecnym poziomie</p></div>
+      <div><p>Oprocentowanie wzrasta o <span class="font-semibold">0,5%</span></p></div>
+      <div><p>Oprocentowanie wzrasta o <span class="font-semibold">1,0%</span></p></div>
+      <div><p>Oprocentowanie wzrasta o <span class="font-semibold">1,5%</span></p></div>
+      <div><p>Oprocentowanie wzrasta o <span class="font-semibold">2,0%</span></p></div>
+      <div><p>Oprocentowanie wzrasta o <span class="font-semibold"> 2,5%</span></p></div>
     </div>
-    <div class="flex-col flex gap-5 justify-center px-5 text-center">
-      <span>ROCZNA ZMIANA</span>
-      <span
+    <div class=" flex-1 text-right flex flex-col gap-3">
+      <div><p class="font-semibold">ROCZNA ZMIANA</p></div>
+      <div
+        :class="res.change >= 0 ? 'text-[#00b55a]' : 'text-red-800'"
         v-for="(res, index) in result"
         :key="index"
-      >{{ formattedToPLN.format(-res.change)}}</span>
+      >
+        <p class="font-semibold">{{ formattedToPLN.format(-res.change) }}</p>
+      </div>
     </div>
-    <div class="flex-col flex gap-5 justify-center px-5 text-right">
-      <span>WYSOKOŚĆ RATY</span>
-      <span
+    <div class=" flex-1 text-right flex flex-col gap-3">
+      <div><p class="font-semibold">SUMA RAT</p></div>
+      <div
+        :class="res.change >= 0 ? 'text-[#00b55a]' : 'text-red-800'"
         v-for="(res, index) in result"
         :key="index"
-      >{{formattedToPLN.format(res.installment)}}</span>
+      >
+        <p class="font-semibold">{{ formattedToPLN.format(res.sumInstallments) }}</p>
+      </div>
     </div>
   </div>
   <div>
     <Bar
-      class="w-full p-5"
+      class="p-5 w-full"
       :chartOptions="chartOptions"
       :chartData="chartData"
     />

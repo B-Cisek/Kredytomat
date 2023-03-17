@@ -36,12 +36,11 @@ export function useEqualInstallments(
     /**
      * @param margin Marża
      * @param wibor WIBOR
-     * @param commission Prowizja
      * @returns Oprocentowanie kredytu
      */
-    function getCreditInterest(margin, wibor, commission) {
+    function getCreditInterest(margin, wibor) {
         let creditInterest = 0;
-        let tab = [margin, wibor, commission].map(x => Number(x));
+        let tab = [margin, wibor].map(x => Number(x));
         tab.forEach(elm => creditInterest += elm);
         return creditInterest;
     }
@@ -54,7 +53,7 @@ export function useEqualInstallments(
     function getInstallment(wibor) {
         let mn = credit.period * 12;
         let creditInterest =
-            toDecimal(parseFloat(getCreditInterest(credit.margin, wibor, credit.commission)) / 12);
+            toDecimal(parseFloat(getCreditInterest(credit.margin, wibor)) / 12);
         let installment =
             credit.amountOfCredit * creditInterest * (creditInterest + 1) ** mn / (((creditInterest + 1) ** mn) - 1);
         return parseFloat(installment);
@@ -103,7 +102,7 @@ export function useEqualInstallments(
     function getNewInstallment(capitalToPay, index, currentWibor) {
         let mn = credit.period * 12;
         let interest  =
-            toDecimal(parseFloat(getCreditInterest(credit.margin, currentWibor, credit.commission)) / 12);
+            toDecimal(parseFloat(getCreditInterest(credit.margin, currentWibor)) / 12);
         let newInstallment =
             capitalToPay * interest * (interest + 1) ** (mn - index) / (((interest + 1) ** (mn - index)) - 1);
 
@@ -115,7 +114,7 @@ export function useEqualInstallments(
     }
 
     function getSchedule() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
+        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
         let amount = parseFloat(credit.amountOfCredit);
         let installmentTotal = getInstallment(credit.wibor);
         let interestPart = getInterestPart(creditInterest, amount);
@@ -142,12 +141,12 @@ export function useEqualInstallments(
             ],
         ];
 
-        creditSchedule[0][4] += creditSchedule[0][8] + creditSchedule[0][9];
+        //creditSchedule[0][4] += creditSchedule[0][8] + creditSchedule[0][9];
 
         for (let index = 1; index < credit.period * 12; index++) {
             let lastRow = creditSchedule.at(-1);
             let capitalToPay = lastRow[5] - lastRow[6];
-            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
             let currentDate = getNextMonth(lastRow[0]);
             let currentWibor = lastRow[7];
             let fixedFee = 0;
@@ -193,7 +192,8 @@ export function useEqualInstallments(
                 current[5] = current[1] - current[3]; // kapital po splacie
             }
 
-            current[4] += current[8] + current[9];
+            // sumowanie oplat
+            //current[4] += current[8] + current[9];
 
             creditSchedule.push(current);
             if (current[5] <= 0) break;
@@ -203,7 +203,7 @@ export function useEqualInstallments(
     }
 
     function getScheduleShorterPeriod() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
+        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
         let amount = parseFloat(credit.amountOfCredit);
         let installmentTotal = getInstallment(credit.wibor);
         let interestPart = getInterestPart(creditInterest, amount);
@@ -230,7 +230,7 @@ export function useEqualInstallments(
             let lastRow = creditSchedule.at(-1);
             let lastOverpayment = 0;
             let capitalToPay = lastRow[5] - lastRow[6];
-            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
             let currentDate = getNextMonth(lastRow[0]);
             let currentWibor = lastRow[7];
             let onceOverpayment = 0;
@@ -280,7 +280,7 @@ export function useEqualInstallments(
     }
 
     function getScheduleSmallerInstallment() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
+        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
         let amount = parseFloat(credit.amountOfCredit);
         let installmentTotal = getInstallment(credit.wibor);
         let interestPart = getInterestPart(creditInterest, amount);
@@ -306,7 +306,7 @@ export function useEqualInstallments(
             let lastRow = creditSchedule.at(-1);
             let lastOverpayment = lastRow[6];
             let capitalToPay = lastRow[5] - lastRow[6];
-            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
             let currentDate = getNextMonth(lastRow[0]);
             let currentWibor = lastRow[7];
             let onceOverpayment = 0;

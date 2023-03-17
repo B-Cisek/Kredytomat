@@ -14,33 +14,30 @@ import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments
 import FeesInputsList from "@/Components/InputsList/FeesInputsList.vue";
 import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
-import {Link, usePage} from "@inertiajs/inertia-vue3";
+import {usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
+import RangeWithInput from "@/Components/RangeWithInput.vue";
 
 const {
   formattedToPLN,
   getCapitalPartArray,
   getInterestPartArray,
   getTotalFixedFees,
-  getTotalChangingFees
+  getTotalChangingFees,
+  getCommissionValue
 } = useHelpers();
 
 Chart.register(...registerables);
 
 const auth = computed(() => usePage().props.value.auth);
-
-const props = defineProps({
-  wiborList: Object,
-});
-
+const props = defineProps({wiborList: Object});
+const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
+const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
 const fees = ref({
   fixed: [],
   changing: []
 });
-
-const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
-const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
 
 const getFixedFees = (value) => {
   fees.value.fixed = value;
@@ -86,6 +83,15 @@ const rules = {
   wibor: {required},
   typeOfInstallment: {required}
 }
+const wiborName = ref("");
+
+const getProperWibor = () => {
+  props.wiborList.forEach(val => {
+    if (formData.value.wibor === Number(val.value)) {
+      wiborName.value = val.type;
+    }
+  });
+}
 
 const v$ = useVuelidate(rules, formData);
 
@@ -116,7 +122,7 @@ const getResult = async () => {
       margin: formData.value.margin,
       wibor: formData.value.wibor,
       commission: formData.value.commission
-    }, [], []).getScheduleSmallerInstallment();
+    }, [], [], fees.value.fixed, fees.value.changing).getSchedule();
   }
 
   interestPartArray.value = getInterestPartArray(schedule.value);
@@ -136,7 +142,8 @@ const getResult = async () => {
   chartData.value.datasets[1].data = combinedData;
   chartData.value.labels = label;
 
-
+  console.table(schedule.value);
+  getProperWibor();
   await nextTick(() => scrollToResult())
 }
 
@@ -217,127 +224,62 @@ const saveSimulation = () => {
       <section class="flex flex-col gap-8 w-full mx-auto rounded-lg shadow-md border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Kwota kredytu</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.amountOfCredit"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >PLN</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="50000"
-              max="2000000"
-              step="10000"
+            <RangeWithInput
               v-model="formData.amountOfCredit"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="PLN"
+              heading="Kwota kredytu"
+              :min="50000"
+              :max="2000000"
+              :step="10000"
+              label-left="50 000 zł"
+              label-right="2 000 000 zł"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">50 000 zł</span>
-              <span class="label-text-alt text-black">2 000 000 zł</span>
-            </label>
           </div>
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Okres spłaty</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.period"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >LAT</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="5"
-              max="35"
-              step="1"
+            <RangeWithInput
               v-model="formData.period"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="LAT"
+              heading="Okres spłaty"
+              :min="5"
+              :max="35"
+              :step="1"
+              label-left="5 lat"
+              label-right="35 lat"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">5 lat</span>
-              <span class="label-text-alt text-black">35 lat</span>
-            </label>
           </div>
         </div>
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <h3 class="font-semibold text-black">Marża</h3>
-              <div class="relative">
-                <input
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.margin"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >%</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="0.00"
-              max="15"
-              step="0.01"
+            <RangeWithInput
               v-model="formData.margin"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="%"
+              heading="Marża"
+              :min="0.00"
+              :max="15"
+              :step="0.01"
+              label-left="0%"
+              label-right="15%"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">0,01%</span>
-              <span class="label-text-alt text-black">15%</span>
-            </label>
           </div>
           <div class="flex-1">
-            <div class="flex mb-3 items-center justify-between">
-              <label for="" class="font-semibold text-black">Prowizja</label>
-              <div class="relative">
-                <input
-                  id="commission"
-                  type="number"
-                  class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[150px]"
-                  v-model="formData.commission"
-                />
-                <span
-                  class="absolute right-0 w-10 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
-                >%</span
-                >
-              </div>
-            </div>
-            <input
-              type="range"
-              min="0.00"
-              max="15"
-              step="0.01"
+            <RangeWithInput
               v-model="formData.commission"
-              class="range range-primary bg-[#d1d3d9]"
+              input-type-label="%"
+              heading="Prowizja"
+              :min="0.00"
+              :max="15"
+              :step="0.01"
+              label-left="0%"
+              label-right="15%"
             />
-            <label class="label">
-              <span class="label-text-alt text-black">0%</span>
-              <span class="label-text-alt text-black">15%</span>
-            </label>
           </div>
         </div>
-        <div class="lg:flex gap-x-16">
+        <div class="flex flex-col gap-4 lg:flex-row gap-x-16">
           <div class="flex-1">
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-[260px] w-[180px]"
                 v-model="formData.wibor"
               >
                 <option disabled :value="null" selected>Wybierz</option>
@@ -354,7 +296,7 @@ const saveSimulation = () => {
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">Rodzaj rat</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-[260px] w-[180px]"
                 v-model="formData.typeOfInstallment"
               >
                 <option disabled :value="null" selected>Wybierz</option>
@@ -390,7 +332,9 @@ const saveSimulation = () => {
         v-if="schedule.length">
 
         <Collapse class="relative" title="Twoje wyniki" :collapsed="true">
+          <!--  SAVE BUTTON   -->
           <div
+            id="save-button"
             v-if="auth.loggedIn"
             class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
             <button
@@ -399,7 +343,8 @@ const saveSimulation = () => {
               <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png" alt=""/>
             </button>
           </div>
-          <div class="flex gap-3">
+
+          <div class="flex gap-3 flex-col lg:flex-row">
             <div class="flex-1 bg-[#21a142] p-5 rounded text-white flex">
               <div class="flex flex-col justify-between flex-1">
                 <div>
@@ -433,7 +378,7 @@ const saveSimulation = () => {
                 </div>
                 <div>
                   <p class="mt-1">WIBOR:</p>
-                  <span class="text-xl font-semibold">3M</span>
+                  <span class="text-xl font-semibold">{{ wiborName }}</span>
                 </div>
                 <div>
                   <p class="mt-1">Opłaty stałe łącznie:</p>
@@ -446,7 +391,11 @@ const saveSimulation = () => {
               </div>
             </div>
             <div class="flex-1">
-              <ResultBox :schedule="schedule"/>
+              <ResultBox
+                :schedule="schedule"
+                :amount-of-credit="formData.amountOfCredit"
+                :commission="formData.commission"
+              />
             </div>
           </div>
 
@@ -459,7 +408,8 @@ const saveSimulation = () => {
           <CapitalRepaymentSimulation :schedule="schedule"/>
         </Collapse>
 
-        <Collapse title="Roczny wzrost obciążeń z tytułu kredytu" :collapsed="true">
+        <Collapse v-if="formData.typeOfInstallment === 'rowne'" title="Roczny wzrost obciążeń z tytułu kredytu"
+                  :collapsed="true">
           <InterestRateChange :credit="formData" :schedule="schedule"/>
         </Collapse>
 
@@ -474,3 +424,13 @@ const saveSimulation = () => {
     </template>
   </Layout>
 </template>
+
+<style scoped>
+#save-button:hover {
+  transform: scale(1.5);
+}
+
+#save-button {
+  transition: transform .2s;
+}
+</style>

@@ -8,7 +8,6 @@ const props = defineProps({
   creditSimulations: Object
 });
 
-console.log(props.creditSimulations)
 </script>
 
 <template>

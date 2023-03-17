@@ -113,7 +113,21 @@ export function useHelpers() {
         return changingFees;
     }
 
+    function getTotalInstallmentsYear(schedule) {
+        let totalInstallmentsYear = 0;
+        for (let i = 0; i < 11; i++) {
+            totalInstallmentsYear += schedule[i][4];
+        }
+        return totalInstallmentsYear;
+    }
+
+    function getCommissionValue(commission, amountOfCredit) {
+        return toDecimal(commission) * amountOfCredit;
+    }
+
     return {
+        getCommissionValue,
+        getTotalInstallmentsYear,
         getTotalChangingFees,
         getTotalFixedFees,
         formatHarmonogram,

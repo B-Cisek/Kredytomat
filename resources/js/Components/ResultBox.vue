@@ -2,10 +2,12 @@
 import {onMounted, onUpdated, ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 
-const {formattedToPLN, totalCreditCost, totalCreditInterest} = useHelpers()
+const {formattedToPLN, totalCreditCost, totalCreditInterest, getCommissionValue} = useHelpers()
 
 const props = defineProps({
-  schedule: Object
+  schedule: Object,
+  amountOfCredit: Number,
+  commission: Number
 });
 
 const capitalWidth = ref(null);
@@ -39,7 +41,6 @@ onMounted(() => result())
 </script>
 
 <template>
-<!-- #016ed6  003ec5-->
   <div class="bg-[#4338ca] p-5 w-full rounded">
     <div class="flex justify-between">
       <div class="block">
@@ -60,7 +61,7 @@ onMounted(() => result())
     </div>
     <div class="flex justify-between mt-2 gap-3">
       <div class="bg-[#21A179] text-right rounded py-1 pr-2 min-w-min" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
-        <p class="text-center  text-white">{{ formattedToPLN.format(capitalPart) }}</p>
+        <p class="text-center font-semibold text-white">{{ formattedToPLN.format(capitalPart) }}</p>
       </div>
       <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${interestWidth}%`">
         <p class="text-center font-semibold text-white">{{ formattedToPLN.format((interestPart < 8 ? 20 : interestPart)) }}</p>
@@ -73,7 +74,9 @@ onMounted(() => result())
       </div>
       <div class="flex-1 text-end">
         <p class="text-white text-xl">Całkowity koszt kredytu</p>
-        <p class="text-white text-2xl mt-1 font-semibold">{{ formattedToPLN.format(totalCostOfCredit) }}</p>
+        <p class="text-white text-2xl mt-1 font-semibold">
+          {{ formattedToPLN.format(totalCostOfCredit + getCommissionValue(commission, amountOfCredit)) }}
+        </p>
       </div>
     </div>
   </div>

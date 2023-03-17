@@ -35,7 +35,7 @@ const props = defineProps({
         <td>{{ formattedToPLN.format(sche[1]) }}</td>
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>{{ formattedToPLN.format(sche[2]) }}</td>
-        <td>{{ formattedToPLN.format(sche[4]) }}</td>
+        <td>{{ formattedToPLN.format(sche[4] + sche[8] + sche[9]) }}</td>
         <td>{{ formattedToPLN.format(sche[8] + sche[9]) }}</td>
         <td>{{ formattedToPLN.format(sche[5]) }}</td>
       </tr>

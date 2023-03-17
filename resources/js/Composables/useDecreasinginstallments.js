@@ -6,13 +6,31 @@ import {useHelpers} from "@/Composables/useHelpers";
  * @param credit Kredyt dane
  * @param overpayment Lista nadpłat
  * @param wiborList Lasta zmian wiboru
+ * @param fixedFees
+ * @param changingFees
  */
-export function useDecreasinginstallments(credit, overpayment, wiborList) {
+export function useDecreasinginstallments(
+    credit,
+    overpayment = [],
+    wiborList = [],
+    fixedFees = [],
+    changingFees = []) {
+
     const {toDecimal} = useHelpers();
     let firstDateFromOverpayment = new Date(1999,0);
 
-    if (overpayment[0]) {
+    if (overpayment?.[0] !== undefined) {
         firstDateFromOverpayment = new Date(overpayment[0].start.year, overpayment[0].start.month);
+    }
+
+    let firstDateFromFixedFees = new Date(1999,0);
+    if (fixedFees[0]) {
+        firstDateFromFixedFees = new Date(fixedFees[0].start.year, fixedFees[0].start.month);
+    }
+
+    let firstDateFromChangingFees = new Date(1999,0);
+    if (changingFees[0]) {
+        firstDateFromChangingFees = new Date(changingFees[0].start.year, changingFees[0].start.month);
     }
 
     /**
@@ -200,5 +218,87 @@ export function useDecreasinginstallments(credit, overpayment, wiborList) {
         return creditSchedule;
     }
 
-    return {getScheduleShorterPeriod, getScheduleSmallerInstallment}
+    function calculateChangingFee(fee, capitalToPay) {
+        return (capitalToPay * fee) / 100;
+    }
+
+    function getSchedule() {
+        let creditInterest = getCreditInterest(credit.margin, credit.wibor, credit.commission);
+        let amount = parseFloat(credit.amountOfCredit);
+        let interestPart = getInterestPart(amount, creditInterest);
+        let capitalPart = getCapitalPart(amount, credit.period);
+        let installmentTotal = getInstallment(capitalPart, interestPart);
+        let capitalAfterPay = getCapitalAfterPay(amount, capitalPart);
+
+        let creditSchedule = [
+            [
+                credit.date,
+                amount,
+                interestPart,
+                capitalPart,
+                installmentTotal,
+                capitalAfterPay,
+                0,
+                credit.wibor,
+                firstDateFromFixedFees.getTime() === credit.date.getTime()
+                    ? fixedFees[0].fee
+                    : 0,
+                firstDateFromChangingFees.getTime() === credit.date.getTime()
+                    ? calculateChangingFee(changingFees[0].fee, amount)
+                    : 0,
+            ],
+        ];
+
+        for (let index = 1; index < credit.period * 12; index++) {
+            let lastRow = creditSchedule.at(-1);
+            let capitalToPay = lastRow[5] - lastRow[6];
+            let currentDate = getNextMonth(lastRow[0]);
+            let currentWibor = lastRow[7];
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
+            let lastCapitalPart = (lastRow[6] === 0)
+                ? lastRow[3]
+                : getNewCapitalPart(capitalToPay, credit.period * 12, index);
+            let fixedFee = 0;
+            let changingFee = 0;
+
+            fixedFees.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    fixedFee = value.fee;
+                }
+            });
+
+            changingFees.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    changingFee = calculateChangingFee(value.fee, capitalToPay);
+                }
+            });
+
+            let current = [
+                currentDate,
+                capitalToPay,
+                getInterestPart(capitalToPay, lastCreditInterest),
+                lastCapitalPart,
+                getInstallment(lastCapitalPart, getInterestPart(capitalToPay, lastCreditInterest)),
+                getCapitalAfterPay(capitalToPay, lastCapitalPart),
+                0,
+                currentWibor,
+                fixedFee,
+                changingFee
+            ];
+
+            creditSchedule.push(current);
+        }
+
+        return creditSchedule;
+    }
+
+    return {getScheduleShorterPeriod, getScheduleSmallerInstallment, getSchedule}
 }

@@ -14,21 +14,21 @@ const auth = computed(() => usePage().props.value);
 
 <template>
   <div class="min-h-screen flex-col flex bg-gray-100">
-    <Header :loggedIn="loggedIn" />
+    <Header :loggedIn="loggedIn"/>
     <header class="bg-gray-100 shadow">
-      <ToastList />
-      <div class="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
+      <ToastList/>
+      <div class="mx-auto max-w-7xl py-5 px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-          <slot name="header" />
+          <slot name="header"/>
         </h1>
       </div>
     </header>
 
     <main class="flex-1">
       <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 gap-y-2 flex flex-col">
-        <slot />
+        <slot/>
       </div>
     </main>
-    <Footer />
+    <Footer/>
   </div>
 </template>

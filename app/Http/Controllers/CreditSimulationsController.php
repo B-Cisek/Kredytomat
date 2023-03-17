@@ -71,4 +71,16 @@ class CreditSimulationsController extends Controller
             'alert_message' => 'Zapisano symulacje kredytu!'
         ]);
     }
+
+    public function destroy(CreditSimulation $creditSimulation)
+    {
+        CreditSimulation::destroy($creditSimulation->id);
+
+        return redirect()
+            ->route('profil.credit.index')
+            ->with([
+                'alert_type' => AlertType::SUCCESS,
+                'alert_message' => 'Symulacja usunięta!'
+            ]);
+    }
 }

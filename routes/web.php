@@ -41,14 +41,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('zapisz-symulacje', [CreditSimulationsController::class, 'save'])
         ->name('credit-simulation.save');
 
-    Route::get('profil/zapisane-symulacje', UserSimulationsController::class)
+    Route::get('twoje-symulacje', UserSimulationsController::class)
         ->name('profil.saved-simulations');
 
 
-    Route::get('profil/zapisane-kalkulacje-kredytu', [CreditSimulationsController::class, 'index'])
+    Route::get('symulacje-kredytu', [CreditSimulationsController::class, 'index'])
         ->name('profil.credit.index');
-    Route::get('profil/zapisane-kalkulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'show'])
+    Route::get('symulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'show'])
         ->name('profil.credit.show');
+    Route::delete('symulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'destroy'])
+        ->name('profil.credit.destroy');
+
+
 
     Route::get('profil/zapisane-kalkulacje-nadplaty-kredytu', [OverpaymentSimulationsController::class, 'index'])
         ->name('profil.overpayment.index');

@@ -40,7 +40,7 @@ const formatToPLN = (amount) => {
       <span>{{ index + 1 }}.</span>
       <span class="ml-5">{{ credit.credit_name }}</span>
     </div>
-    <div class="w-full flex justify-around items-center py-3 text-center">
+    <div class="w-full flex justify-between px-8 items-center py-3 text-center flex-col lg:flex-row">
       <div>
         <div class="w-[150px] h-[60px]">
           <img
@@ -50,34 +50,36 @@ const formatToPLN = (amount) => {
           />
         </div>
       </div>
+      <div class="flex w-full justify-around px-10 flex-wrap my-5 lg:my-0">
+        <div>
+          <span class="text-gray-500">Okres</span>
+          <p class="font-semibold text-lg">
+            {{ credit.period_from / 12 }}-{{ credit.period_to / 12 }} lat
+          </p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Prowizja</span>
+          <p class="font-semibold">{{ credit.commission }}%</p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Marża</span>
+          <p class="font-semibold">{{ credit.margin }}%</p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">RRSO</span>
+          <p class="font-semibold">9,33%</p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Kwota do</span>
+          <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
+        </div>
+      </div>
       <div>
-        <span class="text-gray-500">Okres</span>
-        <p class="font-semibold text-lg">
-          {{ credit.period_from / 12 }}-{{ credit.period_to / 12 }} lat
-        </p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Prowizja</span>
-        <p class="font-semibold">{{ credit.commission }}%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Marża</span>
-        <p class="font-semibold">{{ credit.margin }}%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">RRSO</span>
-        <p class="font-semibold">9,33%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Kwota do</span>
-        <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
-      </div>
-      <div>
-       <Link
-         :href="route('offer.show.credit', [credit.bank.slug, credit.slug])"
-         class="px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">
-         Sprawdź
-       </Link>
+        <Link
+          :href="route('offer.show.credit', [credit.bank.slug, credit.slug])"
+          class="px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">
+          Sprawdź
+        </Link>
       </div>
     </div>
     <div class="w-full border-t py-1 flex justify-center">

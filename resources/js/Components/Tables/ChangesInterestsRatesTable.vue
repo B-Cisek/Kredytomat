@@ -102,7 +102,7 @@ function scheduleCalculate(index) {
       margin: props.credit.margin,
       wibor: props.credit.wibor + interestRateChanges[index],
       commission: props.credit.commission
-    }).getScheduleShorterPeriod();
+    }).getSchedule();
   }
 }
 
@@ -184,7 +184,7 @@ function changeCalc(oldValue, newValue) {
             v-if="row.creditInterest10years.value"
             class="text-xs font-semibold"
             :class="Number(row.creditInterest10years.change) < 0 ? 'text-red-700' : 'text-green-700'"
-          >{{ formattedToPLN.format(row.creditCapital.change) }}
+          >{{ formattedToPLN.format(-row.creditInterest10years.change) }}
             <span class="p-1 rounded-lg text-xs ml-2"
                   :class="Number(row.creditInterest10years.change) < 0 ? 'bg-red-200' : 'bg-green-200'">
             {{ Math.round((row.creditInterest10years.change / defaultResult.creditInterest10years) * 100) }}%
