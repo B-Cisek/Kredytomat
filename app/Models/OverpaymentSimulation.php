@@ -11,6 +11,7 @@ class OverpaymentSimulation extends Model
     use HasFactory;
 
     protected $guarded = [];
+    public $timestamps = false;
 
     public function user(): BelongsTo
     {

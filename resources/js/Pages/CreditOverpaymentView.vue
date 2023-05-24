@@ -29,7 +29,6 @@ const scrollToResult = () => {
 
 const overpayments = ref([]);
 const overpaymentsStorage = ref(localStorage.getItem("overpayment-values"));
-console.log(overpaymentsStorage);
 const overpaymentType = ref(localStorage.getItem("overpayment-type") ?? "period");
 const schedule = ref([]);
 const formattedSchedule = ref([]);
@@ -73,7 +72,7 @@ const decreasingInstallment = () => {
     return useDecreasinginstallments({
       date: new Date(2023, 0),
       ...formData.value
-    }, overpayments.value, []).getScheduleShorterPeriod();
+    }, overpayments.value ?? [], []).getScheduleShorterPeriod();
   } else {
     baseCreditSchedule.value = useDecreasinginstallments({
       date: new Date(2023, 0),
@@ -83,7 +82,7 @@ const decreasingInstallment = () => {
     return useDecreasinginstallments({
       date: new Date(2023, 0),
       ...formData.value
-    }, overpayments.value, []).getScheduleSmallerInstallment();
+    }, overpayments.value ?? [], []).getScheduleSmallerInstallment();
   }
 }
 
@@ -98,7 +97,7 @@ const equalInstallment = () => {
     return useEqualInstallments({
       date: new Date(2023, 0),
       ...formData.value
-    }, overpayments.value, []).getScheduleShorterPeriod();
+    }, overpayments.value ?? [], []).getScheduleShorterPeriod();
   } else {
     baseCreditSchedule.value = useEqualInstallments({
       date: new Date(2023, 0),
@@ -108,7 +107,7 @@ const equalInstallment = () => {
     return useEqualInstallments({
       date: new Date(2023, 0),
       ...formData.value
-    }, overpayments.value, []).getScheduleSmallerInstallment();
+    }, overpayments.value ?? [], []).getScheduleSmallerInstallment();
   }
 }
 

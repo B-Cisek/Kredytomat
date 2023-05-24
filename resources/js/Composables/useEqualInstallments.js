@@ -19,6 +19,7 @@ export function useEqualInstallments(
     const {toDecimal} = useHelpers();
 
     let firstDateFromOverpayment = new Date(1999,0);
+
     if (overpayment[0]) {
         firstDateFromOverpayment = new Date(overpayment[0].start.year, overpayment[0].start.month);
     }

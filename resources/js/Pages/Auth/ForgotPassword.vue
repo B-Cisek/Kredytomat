@@ -23,12 +23,15 @@ const submit = () => {
   <GuestLayout>
     <Head title="Zapomniałeś hasła?" />
 
-    <h1 class="text-xl font-bold text-center mb-10 tracking-wide">
-      WYŚLIJ LINK DO RESETOWANIA HASŁA
+    <h1 class="text-xl font-bold text-center tracking-wide">
+      WYŚLIJ LINK
     </h1>
-    <div class="mb-4 text-sm text-gray-600">
+    <h1 class="text-xl font-bold text-center mb-10 tracking-wide">
+      DO RESETOWANIA HASŁA
+    </h1>
+    <div class="mb-4 text-sm text-gray-600 text-center">
       <p>Zapomniałeś hasła? Nie ma problemu.</p>
-      <p>Podaj nam swój adres e-mail, a my wyślemy Ci link do resetowania hasła.</p>
+      <p>Podaj swój adres e-mail, a my wyślemy Ci link do resetowania hasła.</p>
     </div>
 
     <div v-if="status" class="mb-4 font-medium text-sm text-green-600">

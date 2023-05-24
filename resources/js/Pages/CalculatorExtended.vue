@@ -113,7 +113,7 @@ const getResult = async () => {
       margin: formData.value.margin,
       wibor: formData.value.wibor,
       commission: formData.value.commission
-    }, [], [], fees.value.fixed, fees.value.changing).getSchedule();
+    }, [], [], fees.value.fixed ?? [], fees.value.changing ?? []).getSchedule();
   } else {
     schedule.value = useDecreasinginstallments({
       date: new Date(2023, 0),
@@ -122,7 +122,7 @@ const getResult = async () => {
       margin: formData.value.margin,
       wibor: formData.value.wibor,
       commission: formData.value.commission
-    }, [], [], fees.value.fixed, fees.value.changing).getSchedule();
+    }, [], [], fees.value.fixed ?? [], fees.value.changing ?? []).getSchedule();
   }
 
   interestPartArray.value = getInterestPartArray(schedule.value);
