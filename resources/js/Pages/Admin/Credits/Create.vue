@@ -16,6 +16,7 @@ const form = useForm({
   commission: "",
   wibor_id: "",
   bank_id: "",
+  details: ""
 });
 
 defineProps({
@@ -152,6 +153,13 @@ const store = () => {
                 <InputError class="mt-2" :message="form.errors.bank_id" />
               </div>
             </div>
+          </div>
+          <div class="mt-3">
+            <InputLabel for="details" value="Szczegóły oferty np. (Ubezpieczenie niskiego wkładu: 0,00 zł,)" />
+            <textarea
+              v-model="form.details"
+              class="w-full h-fit rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </textarea>
           </div>
           <PrimaryButton class="mt-3 w-full" type="submit ">Dodaj</PrimaryButton>
         </form>

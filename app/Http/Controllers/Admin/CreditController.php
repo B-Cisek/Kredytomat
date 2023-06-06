@@ -37,6 +37,7 @@ class CreditController extends Controller
     {
         $attributes = $request->validated();
         $attributes['slug'] = $attributes['credit_name'];
+        $attributes['details'] = $this->formatDetails($attributes['details']);
 
         Credit::create($attributes);
 
@@ -46,6 +47,22 @@ class CreditController extends Controller
                 'alert_type' => AlertType::SUCCESS,
                 'alert_message' => 'Kredyt poprawnie dodany!'
             ]);
+    }
+
+    private function formatDetails(string $details): string
+    {
+        $result = [];
+        $lines = explode(';', $details);
+
+        foreach ($lines as $line) {
+            $line = str_replace('\n', '', $line);
+            $detail = explode(':', $line);
+            $key = trim($detail[0]);
+            $value = trim($detail[1]);
+            $result[$key] = $value;
+        }
+
+        return json_encode($result);
     }
 
     public function edit(Credit $credit): Response

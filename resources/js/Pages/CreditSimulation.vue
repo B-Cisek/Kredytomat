@@ -92,8 +92,10 @@ const downloadPdf = async () => {
 
   const element = document.getElementById('pdf-export');
 
+  const filename = `symulacja-kredytowa-${props.creditSimulation.id}.pdf`;
+
   const options = {
-    filename: "symulacja-kredytowa.pdf",
+    filename: filename,
     margin: 0,
     jsPDF: {
       orientation: 'landscape',
@@ -163,6 +165,19 @@ const remove = () => {
 
 const confirmationModalOpen = ref(false);
 
+const openCalculator = () => {
+  Inertia.get(route('calculator.extended', {
+    amount_of_credit: props.creditSimulation.amount_of_credit,
+    period: props.creditSimulation.period,
+    margin: props.creditSimulation.margin,
+    commission: props.creditSimulation.commission,
+    wibor: props.creditSimulation.wibor.value,
+    type_of_installment: props.creditSimulation.type_of_installment,
+    changing_fees: encodeURIComponent(props.creditSimulation.changing_fees),
+    fixed_fees: encodeURIComponent(props.creditSimulation.fixed_fees)
+  }));
+}
+
 
 </script>
 
@@ -190,7 +205,7 @@ const confirmationModalOpen = ref(false);
                           d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.451a.75.75 0 111.061 1.06l-3.45 3.451a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z"
                           clip-rule="evenodd"/>
                   </svg>
-                  <span class="ml-2 w-0 flex-1 truncate">symulacja-kredytowa.pdf</span>
+                  <span class="ml-2 w-0 flex-1 truncate">symulacja-kredytowa-{{ creditSimulation.id }}.pdf</span>
                 </div>
                 <div class="ml-4 flex-shrink-0">
                   <button
@@ -211,7 +226,7 @@ const confirmationModalOpen = ref(false);
             </div>
           </div>
           <div class="flex gap-3 ml-3">
-            <button class="hover:opacity-75">
+            <button @click="openCalculator" class="hover:opacity-75">
               <svg xmlns="http://www.w3.org/2000/svg" width="46px" height="46px">
                 <path fill="#7cb342" d="M24 3A21 21 0 1 0 24 45A21 21 0 1 0 24 3Z"/>
                 <path fill="#dcedc8"

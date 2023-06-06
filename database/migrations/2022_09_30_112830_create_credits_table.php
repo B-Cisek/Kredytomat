@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('period_to');
             $table->decimal('margin',4,2);
             $table->decimal('commission',4,2);
+            $table->json('details')->nullable();
             $table->foreignId('bank_id')->constrained()->cascadeOnDelete();
             $table->foreignId('wibor_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

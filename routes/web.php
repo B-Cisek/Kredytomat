@@ -16,6 +16,7 @@ use App\Http\Controllers\RrsoCalculatorController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\UserSimulationsController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -60,6 +61,10 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('profil.overpayment.show');
     Route::post('zapisz-kalkulacje-nadplaty', [OverpaymentSimulationsController::class, 'save'])
         ->name('profil.overpayment.save');
+    Route::delete(
+        uri: 'symulacja-nadplaty-kredytu/{overpaymentSimulation}',
+        action: [OverpaymentSimulationsController::class, 'destroy']
+    )->name('profil.overpayment.destroy');
 });
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
@@ -69,5 +74,9 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 
+
+Route::get('test', function () {
+    return Inertia::render('Test');
+});
 require __DIR__ . '/auth.php';
 

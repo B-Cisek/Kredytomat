@@ -11,14 +11,13 @@ const props = defineProps({
   overpaymentSimulation: Object
 });
 
-console.log(props.overpaymentSimulation);
 const downloadPdf = () => {
 
 }
 
 const remove = () => {
   confirmationModalOpen.value = false;
-  //Inertia.delete(route('profil.credit.destroy', props.creditSimulation));
+  Inertia.delete(route('profil.overpayment.destroy', props.overpaymentSimulation));
 }
 
 const confirmationModalOpen = ref(false);

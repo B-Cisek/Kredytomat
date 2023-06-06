@@ -68,4 +68,16 @@ class OverpaymentSimulationsController extends Controller
             'alert_message' => 'Zapisano symulacje nadpłaty!'
         ]);
     }
+
+    public function destroy(OverpaymentSimulation $overpaymentSimulation): RedirectResponse
+    {
+        OverpaymentSimulation::destroy($overpaymentSimulation->id);
+
+        return redirect()
+            ->route('profil.overpayment.index')
+            ->with([
+                'alert_type' => AlertType::SUCCESS,
+                'alert_message' => 'Symulacja usunięta!'
+            ]);
+    }
 }

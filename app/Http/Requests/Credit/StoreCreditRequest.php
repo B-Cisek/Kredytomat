@@ -33,7 +33,8 @@ class StoreCreditRequest extends FormRequest
             'margin' => ['required'],
             'commission' => ['required'],
             'wibor_id' => ['required', Rule::exists('wibors','id')],
-            'bank_id' => ['required', Rule::exists('banks','id')]
+            'bank_id' => ['required', Rule::exists('banks','id')],
+            'details' => ['string']
         ];
     }
 }

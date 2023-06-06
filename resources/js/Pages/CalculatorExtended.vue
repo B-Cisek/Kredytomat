@@ -31,7 +31,10 @@ const {
 Chart.register(...registerables);
 
 const auth = computed(() => usePage().props.value.auth);
-const props = defineProps({wiborList: Object});
+const props = defineProps({
+  wiborList: Object,
+  defaultData: Object
+});
 const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
 const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
 const fees = ref({
@@ -58,7 +61,7 @@ const scrollToResult = () => {
 const schedule = ref([])
 
 const formData = ref({
-  amountOfCredit: Number(localStorage.getItem("extended-amountOfCredit") ?? 300000),
+  amountOfCredit: localStorage.getItem("extended-amountOfCredit") ?? 300000,
   period: Number(localStorage.getItem("extended-period") ?? 25),
   margin: Number(localStorage.getItem("extended-margin") ?? 2),
   commission: Number(localStorage.getItem("extended-commission") ?? 0),
@@ -195,9 +198,21 @@ let options = {
   }
 };
 
+const overwriteData = () => {
+  formData.value.amountOfCredit = props.defaultData.amountOfCredit ?? formData.value.amountOfCredit;
+  formData.value.commission = props.defaultData.commission ?? formData.value.commission;
+  formData.value.margin = props.defaultData.margin ?? formData.value.margin;
+  formData.value.period = props.defaultData.period ?? formData.value.period;
+  formData.value.typeOfInstallment = props.defaultData.typeOfInstallment ?? formData.value.typeOfInstallment;
+  formData.value.wibor = props.defaultData.wibor ?? formData.value.wibor;
+  fees.value.fixed = JSON.parse(decodeURIComponent(props.defaultData.fixedFees)) ?? fees.value.fixed;
+  fees.value.changing = JSON.parse(decodeURIComponent(props.defaultData.changingFees)) ?? fees.value.changing;
+}
+
 onMounted(() => {
   fees.value.fixed = JSON.parse(fixedFeeStorage.value);
   fees.value.changing = JSON.parse(changingFeeStorage.value);
+  overwriteData();
 });
 
 
