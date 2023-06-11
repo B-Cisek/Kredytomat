@@ -133,7 +133,7 @@ const getResult = async () => {
   totalCost.value = totalCreditCost(creditResult);
 
   costCostDiff.value = totalCreditCost(baseCreditSchedule.value) - totalCreditCost(schedule.value);
-
+  console.table(schedule.value)
   await nextTick(() => scrollToResult());
 }
 

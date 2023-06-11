@@ -126,11 +126,11 @@ const store = () => {
                 />
                 <InputError class="mt-2" :message="form.errors.commission" />
               </div>
-              <div class="mt-3">
+              <div class="mt-2">
                 <InputLabel for="wibor" value="WIBOR" />
                 <select
                   v-model="form.wibor_id"
-                  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
                 >
                   <option selected disabled value="">Wybierz WIBOR</option>
                   <option v-for="wibor in wibors" :value="wibor.id">
@@ -139,11 +139,11 @@ const store = () => {
                 </select>
                 <InputError class="mt-2" :message="form.errors.wibor_id" />
               </div>
-              <div class="mt-3">
+              <div class="mt-2">
                 <InputLabel for="bank" value="Bank" />
                 <select
                   v-model="form.bank_id"
-                  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
                 >
                   <option selected disabled value="">Wybierz bank</option>
                   <option v-for="bank in banks" :value="bank.id">
@@ -155,11 +155,12 @@ const store = () => {
             </div>
           </div>
           <div class="mt-3">
-            <InputLabel for="details" value="Szczegóły oferty np. (Ubezpieczenie niskiego wkładu: 0,00 zł,)" />
+            <InputLabel for="details" value="Szczegóły oferty np. (Ubezpieczenie niskiego wkładu: 0,00 zł;)" />
             <textarea
               v-model="form.details"
-              class="w-full h-fit rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              class="mt-1 w-full h-[150px] resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
             </textarea>
+            <InputError class="mt-2" :message="form.errors.details" />
           </div>
           <PrimaryButton class="mt-3 w-full" type="submit ">Dodaj</PrimaryButton>
         </form>

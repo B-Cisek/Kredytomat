@@ -3,10 +3,11 @@ import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
-import { Link } from "@inertiajs/inertia-vue3";
-import { useForm } from "@inertiajs/inertia-vue3";
+import {Link} from "@inertiajs/inertia-vue3";
+import {useForm} from "@inertiajs/inertia-vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import { Inertia } from "@inertiajs/inertia";
+import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
+import {ref} from "vue";
 
 const props = defineProps({
   user: Object,
@@ -17,10 +18,10 @@ const form = useForm({
   email: props.user.email,
 });
 
-const destroy = (id) => {
-  if (confirm("Czy chcesz usunąć użytkownika?")) {
-    Inertia.delete(route("admin.users.destroy", id));
-  }
+const confirmationModalOpen = ref(false);
+
+const destroy = id => {
+  form.delete(route("admin.users.destroy", id));
 };
 
 const update = () => {
@@ -28,7 +29,8 @@ const update = () => {
 };
 
 // TODO: Send link to reset password
-const resetPassword = () => {};
+const resetPassword = () => {
+};
 </script>
 
 <template>
@@ -38,17 +40,25 @@ const resetPassword = () => {};
         >Dashboard >
       </Link>
       <Link :href="route('admin.users.index')" class="hover:text-indigo-700"
-        >Użytkownicy >
+      >Użytkownicy >
       </Link>
       <span class="font-light">Edycja użytkownika</span>
     </template>
 
     <template #default>
+      <ConfirmationModal
+        v-if="confirmationModalOpen"
+        @close="confirmationModalOpen = false"
+        @submit="destroy(user.id)"
+        :title="'Usuwanie użytkownika: ' + user.name"
+        description="Czy napewno chcesz usunąć użytkownika?"
+        confirm-button-text="Usuń"
+      />
       <div class="w-full bg-white p-5 shadow-md sm:rounded-lg">
-        <div>
+        <div class="flex justify-between items-center">
           <h1 class="font-bold text-2xl">{{ user.name }}</h1>
-          <div class="flex-col font-medium mt-5">
-            <div class="mb-3">
+          <div class="flex gap-10">
+            <div>
               <p class="font-normal">Stworzony:</p>
               <h1 class="font-semibold">{{ user.created_at }}</h1>
             </div>
@@ -79,7 +89,7 @@ const resetPassword = () => {};
                     : 'mt-1 block w-full'
                 "
               />
-              <InputError class="mt-2" :message="form.errors.name" />
+              <InputError class="mt-2" :message="form.errors.name"/>
             </div>
             <div>
               <InputLabel
@@ -99,11 +109,11 @@ const resetPassword = () => {};
                 required
                 autocomplete="email"
               />
-              <InputError class="mt-2" :message="form.errors.email" />
+              <InputError class="mt-2" :message="form.errors.email"/>
             </div>
           </div>
           <div class="flex mt-4 justify-between">
-            <PrimaryButton type="submit ">Zmień</PrimaryButton>
+            <PrimaryButton type="submit ">Aktualizuj</PrimaryButton>
             <div>
               <Link
                 class="inline-flex items-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150"
@@ -111,10 +121,10 @@ const resetPassword = () => {};
                 Resetuj hasło
               </Link>
               <PrimaryButton
-                @click="destroy(user.id)"
+                @click="confirmationModalOpen = true"
                 type="button"
                 class="bg-red-700 ml-2"
-                >Usuń
+              >Usuń użytkownika
               </PrimaryButton>
             </div>
           </div>

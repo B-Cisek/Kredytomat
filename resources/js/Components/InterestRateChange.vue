@@ -21,7 +21,7 @@ const interestRateChanges = [
 ];
 
 const scheduleCalculate = (index) => {
-  if (props.credit.typeOfInstallment === "rowne") {
+  if (props.credit.typeOfInstallment === "equal") {
     return useEqualInstallments({
       date: new Date(2023, 0),
       amountOfCredit: props.credit.amountOfCredit,

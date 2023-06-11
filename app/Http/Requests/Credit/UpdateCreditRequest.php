@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Credit;
 
+use App\Rules\DetailsValidationRule;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,7 +23,7 @@ class UpdateCreditRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'credit_name' => ['required'],
@@ -33,7 +34,8 @@ class UpdateCreditRequest extends FormRequest
             'margin' => ['required'],
             'commission' => ['required'],
             'wibor_id' => ['required'],
-            'bank_id' => ['required', Rule::exists('banks','id')]
+            'bank_id' => ['required', Rule::exists('banks','id')],
+            'details' => [new DetailsValidationRule]
         ];
     }
 }

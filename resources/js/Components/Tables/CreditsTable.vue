@@ -51,8 +51,6 @@ watch(checkedAll, (value) => {
           </th>
           <th scope="col" class="py-3">Nazwa kredytu</th>
           <th scope="col" class="py-3">Bank</th>
-          <th scope="col" class="py-3">Kwota</th>
-          <th scope="col" class="py-3">Okres</th>
           <th scope="col" class="py-3">Marża</th>
           <th scope="col" class="py-3">Prowizja</th>
           <th scope="col" class="py-3">WIBOR</th>
@@ -84,8 +82,6 @@ watch(checkedAll, (value) => {
           <td>
             {{ credit.bank.bank_name }}
           </td>
-          <td>{{ credit.amount_from }} - {{ credit.amount_to }}</td>
-          <td>{{ credit.period_from }} - {{ credit.period_to }}</td>
           <td>
             {{ credit.margin }}
           </td>
@@ -93,7 +89,7 @@ watch(checkedAll, (value) => {
             {{ credit.commission }}
           </td>
           <td>
-            {{ credit.wibor }}
+            {{ credit.wibor.value }}
           </td>
           <td>
             {{ credit.updated_at }}

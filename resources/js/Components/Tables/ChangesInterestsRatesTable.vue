@@ -3,6 +3,8 @@ import {useHelpers} from "@/Composables/useHelpers";
 import {useEqualInstallments} from "@/Composables/useEqualInstallments";
 import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
 import {onMounted, ref} from "vue";
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 
 const {
   totalCreditCost,
@@ -83,8 +85,8 @@ function calc() {
 }
 
 function scheduleCalculate(index) {
-  if (props.credit.typeOfInstallment === "rowne") {
-    return useEqualInstallments({
+  if (props.credit.typeOfInstallment === "equal") {
+    return useEqualInstallmentsV2({
       date: new Date(2023, 0),
       amountOfCredit: props.credit.amountOfCredit,
       period: props.credit.period,
@@ -94,8 +96,8 @@ function scheduleCalculate(index) {
     }).getSchedule();
   }
 
-  if (props.credit.typeOfInstallment === "malejace") {
-    return useDecreasinginstallments({
+  if (props.credit.typeOfInstallment === "decreasing") {
+    return useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       amountOfCredit: props.credit.amountOfCredit,
       period: props.credit.period,

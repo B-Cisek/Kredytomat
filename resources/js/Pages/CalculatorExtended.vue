@@ -18,6 +18,11 @@ import {usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
+import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
+import InterestRateChanges from "@/Components/InputsList/InterestRateChanges.vue";
+
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 
 const {
   formattedToPLN,
@@ -31,12 +36,16 @@ const {
 Chart.register(...registerables);
 
 const auth = computed(() => usePage().props.value.auth);
+
 const props = defineProps({
   wiborList: Object,
   defaultData: Object
 });
+
 const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
 const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
+const changingInterestRate = ref(localStorage.getItem("extended-interestRate"));
+
 const fees = ref({
   fixed: [],
   changing: []
@@ -61,13 +70,17 @@ const scrollToResult = () => {
 const schedule = ref([])
 
 const formData = ref({
-  amountOfCredit: localStorage.getItem("extended-amountOfCredit") ?? 300000,
+  date: new Date(2023, 0),
+  amountOfCredit: Number(localStorage.getItem("extended-amountOfCredit")) ?? 300000,
   period: Number(localStorage.getItem("extended-period") ?? 25),
   margin: Number(localStorage.getItem("extended-margin") ?? 2),
   commission: Number(localStorage.getItem("extended-commission") ?? 0),
   wibor: Number(localStorage.getItem("extended-wibor")),
-  typeOfInstallment: localStorage.getItem("extended-typeOfInstallment") ?? "rowne"
+  typeOfInstallment: localStorage.getItem("extended-typeOfInstallment") ?? "equal",
+  commissionType: "percent"
 });
+
+console.log(formData.value)
 
 watch(formData.value, (newValue, oldValue) => {
   localStorage.setItem("extended-amountOfCredit", newValue.amountOfCredit.toString());
@@ -108,44 +121,41 @@ const getResult = async () => {
     return;
   }
 
-  if (formData.value.typeOfInstallment === "rowne") {
-    schedule.value = useEqualInstallments({
-      date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
-    }, [], [], fees.value.fixed ?? [], fees.value.changing ?? []).getSchedule();
+  if (formData.value.typeOfInstallment === "equal") {
+    schedule.value = useEqualInstallmentsV2(
+      formData.value,
+      [],
+      interestRateChanges.value,
+      fees.value.fixed,
+      fees.value.changing).getSchedule();
   } else {
-    schedule.value = useDecreasinginstallments({
-      date: new Date(2023, 0),
-      amountOfCredit: formData.value.amountOfCredit,
-      period: formData.value.period,
-      margin: formData.value.margin,
-      wibor: formData.value.wibor,
-      commission: formData.value.commission
-    }, [], [], fees.value.fixed ?? [], fees.value.changing ?? []).getSchedule();
+    schedule.value = useDecreasingInstallmentsV2(
+      formData.value,
+      [],
+      interestRateChanges.value,
+      fees.value.fixed,
+      fees.value.changing).getSchedule();
   }
 
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
-  //console.table(schedule.value)
-
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
     label.push(i);
   }
+
   chartData.value.datasets[0].data = interestPartArray.value;
   let combinedData = [];
   for (let i = 0; i < schedule.value.length; i++) {
     combinedData.push(schedule.value[i][2] + schedule.value[i][3]);
   }
+
   chartData.value.datasets[1].data = combinedData;
   chartData.value.labels = label;
 
   console.table(schedule.value);
+  console.log(formData.value.commission)
   getProperWibor();
   await nextTick(() => scrollToResult())
 }
@@ -212,6 +222,7 @@ const overwriteData = () => {
 onMounted(() => {
   fees.value.fixed = JSON.parse(fixedFeeStorage.value);
   fees.value.changing = JSON.parse(changingFeeStorage.value);
+  interestRateChanges.value = JSON.parse(changingInterestRate.value);
   overwriteData();
 });
 
@@ -227,6 +238,17 @@ const saveSimulation = () => {
     fixed_fees: JSON.stringify(fees.value.fixed),
     changing_fees: JSON.stringify(fees.value.changing),
   }, {preserveScroll: true});
+}
+
+
+const getSelectedTypeForCommission = value => {
+  formData.value.commissionType = value;
+}
+const interestRateChanges = ref();
+
+const getInterestRateChange = value => {
+  interestRateChanges.value = value;
+  localStorage.setItem("extended-interestRate", JSON.stringify(interestRateChanges.value));
 }
 </script>
 
@@ -277,15 +299,10 @@ const saveSimulation = () => {
             />
           </div>
           <div class="flex-1">
-            <RangeWithInput
-              v-model="formData.commission"
-              input-type-label="%"
+            <RangeWithInputSelect
               heading="Prowizja"
-              :min="0.00"
-              :max="15"
-              :step="0.01"
-              label-left="0%"
-              label-right="15%"
+              v-model="formData.commission"
+              @selected-type="getSelectedTypeForCommission"
             />
           </div>
         </div>
@@ -315,11 +332,19 @@ const saveSimulation = () => {
                 v-model="formData.typeOfInstallment"
               >
                 <option disabled :value="null" selected>Wybierz</option>
-                <option value="rowne">Równe</option>
-                <option value="malejace">Malejące</option>
+                <option value="equal">Równe</option>
+                <option value="decreasing">Malejące</option>
               </select>
             </div>
           </div>
+        </div>
+        <div>
+          <InterestRateChanges
+            @input-list="getInterestRateChange"
+            title="Zmiany oprocentowania"
+            placeholder="Oprocentowanie [%]"
+            :data="changingInterestRate"
+          />
         </div>
         <div>
           <FeesInputsList
@@ -388,7 +413,7 @@ const saveSimulation = () => {
                 <div>
                   <p class="mt-1">Rodzaj raty:</p>
                   <span class="text-xl font-semibold">{{
-                      formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące'
+                      formData.typeOfInstallment === 'equal' ? 'Równe' : 'Malejące'
                     }}</span>
                 </div>
                 <div>
@@ -423,7 +448,7 @@ const saveSimulation = () => {
           <CapitalRepaymentSimulation :schedule="schedule"/>
         </Collapse>
 
-        <Collapse v-if="formData.typeOfInstallment === 'rowne'" title="Roczny wzrost obciążeń z tytułu kredytu"
+        <Collapse v-if="formData.typeOfInstallment === 'equal'" title="Roczny wzrost obciążeń z tytułu kredytu"
                   :collapsed="true">
           <InterestRateChange :credit="formData" :schedule="schedule"/>
         </Collapse>

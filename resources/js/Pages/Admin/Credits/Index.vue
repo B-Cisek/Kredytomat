@@ -3,7 +3,6 @@ import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
 import Alert from "@/Components/Alert.vue";
 import NavLink from "@/Components/NavLink.vue";
 import CreditsTable from "@/Components/Tables/CreditsTable.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import { defineProps } from "vue";

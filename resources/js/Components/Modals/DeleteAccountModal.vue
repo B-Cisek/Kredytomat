@@ -42,7 +42,7 @@ const deleteAccount = () => {
             <div class="px-6 py-4">
               <div class="text-lg font-medium text-gray-900">Usuń konto</div>
               <div class="mt-4 text-sm text-gray-600">
-                Czy na pewno chcesz usunąć swoje konto? Kiedy twoje konto jest
+                Czy na pewno chcesz usunąć swoje konto? Kiedy twoje konto zostanie
                 usunięte, wszystkie jego zasoby i dane zostaną trwale usunięte. Wprowadź hasło, aby potwierdzić
                 chce trwale usunąć swoje konto.
                 <div class="mt-4">
@@ -80,4 +80,3 @@ const deleteAccount = () => {
     </div>
   </div>
 </template>
-

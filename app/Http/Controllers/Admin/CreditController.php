@@ -17,7 +17,7 @@ class CreditController extends Controller
 {
     public function index(): Response
     {
-        $credits = Credit::with('bank')
+        $credits = Credit::with('bank', 'wibor')
             ->paginate(10);
 
         return Inertia::render('Admin/Credits/Index', [
@@ -49,12 +49,16 @@ class CreditController extends Controller
             ]);
     }
 
-    private function formatDetails(string $details): string
+    private function formatDetails(string|null $details): string
     {
         $result = [];
         $lines = explode(';', $details);
 
+
         foreach ($lines as $line) {
+            if (empty($line)) {
+                continue;
+            }
             $line = str_replace('\n', '', $line);
             $detail = explode(':', $line);
             $key = trim($detail[0]);
@@ -77,6 +81,7 @@ class CreditController extends Controller
     public function update(UpdateCreditRequest $request, Credit $credit): RedirectResponse
     {
         $attributes = $request->validated();
+        $attributes['details'] = $this->formatDetails($attributes['details']);
 
         $credit->update($attributes);
 
@@ -84,7 +89,7 @@ class CreditController extends Controller
             ->route('admin.credits.index')
             ->with([
                 'alert_type' => AlertType::INFO,
-                'alert_message' => 'Kredyt zaktualizowany!'
+                'alert_message' => __('dashboard.credit.updated')
             ]);
     }
 

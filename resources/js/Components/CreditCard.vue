@@ -8,23 +8,21 @@ const props = defineProps({
 
 const showed = ref([]);
 
-const add = (index) => {
+const add = index => {
   if (showed.value.includes(index)) {
     showed.value = showed.value.filter((v) => v !== index);
   } else {
     showed.value.push(index);
   }
-  console.log(showed.value);
 };
 
-const formatToPLN = (amount) => {
+const formatToPLN = amount => {
   return new Intl.NumberFormat("pl-PL", {
     style: "currency",
     currency: "PLN",
     maximumFractionDigits: 0,
   }).format(amount);
 };
-
 </script>
 
 <template>
@@ -65,7 +63,7 @@ const formatToPLN = (amount) => {
           <span class="text-gray-500">Marża</span>
           <p class="font-semibold">{{ credit.margin }}%</p>
         </div>
-        <div class="">
+        <div class="sm:block hidden">
           <span class="text-gray-500">RRSO</span>
           <p class="font-semibold">9,33%</p>
         </div>
@@ -99,23 +97,12 @@ const formatToPLN = (amount) => {
         </svg>
       </button>
     </div>
-    <div class="bg-white mt-7" v-show="showed.includes(index)">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
+    <div class="bg-white mt-1" v-show="showed.includes(index)">
+      <div class="w-full">
+        <p v-for="(detail, index) in JSON.parse(credit.details)" class="border-b border-gray py-2 px-2">
+          {{ index }}: {{ detail }}
+        </p>
+      </div>
     </div>
-    <!-- TODO: rozwijane szczegóły -->
   </section>
 </template>

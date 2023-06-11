@@ -355,11 +355,10 @@ const handleToggleProfile = () => {
                     aria-labelledby="user-menu-button"
                     tabindex="-1"
                   >
-                    <!-- Active: "bg-gray-100", Not Active: "" -->
-
                     <Link
                       :href="route('profil')"
                       class="block px-4 py-2 text-sm text-gray-700"
+                      :class="[$page.component === 'Profile' ? 'bg-gray-100' : '']"
                     >Twój Profil
                     </Link>
 
@@ -367,6 +366,7 @@ const handleToggleProfile = () => {
                       v-if="loggedIn"
                       :href="route('profil.saved-simulations')"
                       class="block px-4 py-2 text-sm text-gray-700"
+                      :class="[$page.component === 'UserSimulations' ? 'bg-gray-100' : '']"
                     >Twoje kalkulacje
                     </Link>
 
@@ -374,6 +374,7 @@ const handleToggleProfile = () => {
                       v-if="isAdmin"
                       :href="route('admin.dashboard')"
                       class="block px-4 py-2 text-sm text-gray-700"
+                      :class="[$page.component === 'Admin/AdminDashboard' ? 'bg-gray-100' : '']"
                     >Dashboard
                     </Link>
 
@@ -441,62 +442,49 @@ const handleToggleProfile = () => {
           <div class="flex-shrink-0">
             <img
               class="h-10 w-10 rounded-full"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
+              src="https://img.icons8.com/fluency/96/null/user-male-circle.png"
+              alt="profile"
             />
           </div>
           <div class="ml-3">
-            <div class="text-base font-medium leading-none text-white">Tom Cook</div>
+            <div class="text-base font-medium leading-none text-white">{{ auth.user.name }}</div>
             <div class="text-sm font-medium leading-none text-gray-400">
-              tom@example.com
+              {{ auth.user.email }}
             </div>
           </div>
-          <button
-            type="button"
-            class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-          >
-            <span class="sr-only">View notifications</span>
-            <!-- Heroicon name: outline/bell -->
-            <svg
-              class="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="mt-3 space-y-1 px-2">
-          <a
-            href="#"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-          >
-            Your Profile</a
-          >
-
-          <a
-            href="#"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-          >
-            Settings</a
-          >
-
           <Link
             :href="route('logout')"
             method="POST"
-            class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+            class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 "
             as="button"
           >
-            Wyloguj się
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+              <path fill-rule="evenodd"
+                    d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6zm5.03 4.72a.75.75 0 010 1.06l-1.72 1.72h10.94a.75.75 0 010 1.5H10.81l1.72 1.72a.75.75 0 11-1.06 1.06l-3-3a.75.75 0 010-1.06l3-3a.75.75 0 011.06 0z"
+                    clip-rule="evenodd"/>
+            </svg>
           </Link>
+        </div>
+        <div class="mt-3 space-y-1 px-2">
+          <NavLink
+            class="block"
+            :href="route('profil')"
+            :active="$page.component === 'Profile'"
+          >Twój Profil
+          </NavLink>
+          <NavLink
+            class="block"
+            :href="route('profil.saved-simulations')"
+            :active="$page.component === 'UserSimulations'"
+          >Twoje Kalkulacje
+          </NavLink>
+          <NavLink
+            v-if="isAdmin"
+            class="block"
+            :href="route('admin.dashboard')"
+            :active="$page.component === 'Dashboard'"
+          >Dashboard
+          </NavLink>
         </div>
       </div>
     </div>

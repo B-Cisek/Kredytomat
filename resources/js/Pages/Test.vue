@@ -1,28 +1,49 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import RangeWithInputV2 from "@/Components/RangeWithInputV2.vue";
-import {ref, watch} from "vue";
+import {reactive} from "vue";
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import {useHelpers} from "@/Composables/useHelpers";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 
-const prowizja = ref(0);
+const newInterestRate = [
+  {value: 5, date: {year: 2023, month: 2}},
+  {value: 6, date: {year: 2024, month: 11}}
+];
+
+const credit = reactive({
+  date: new Date(2023,0),
+  amountOfCredit: 300000,
+  period: 25,
+  margin: 1,
+  commission: 0,
+  wibor: 7,
+  typeOfInstallment: "decreasing"
+});
+
+
+let result = [];
+
+result = useDecreasingInstallmentsV2(
+  credit,
+  [],
+  newInterestRate
+).getSchedule();
+
+
+console.table(result)
+
+
+
 
 </script>
 
 <template>
 <Layout>
   <template v-slot:header>
-    Test - {{prowizja}}
+    dsadas
   </template>
   <template v-slot:default>
-    <RangeWithInputV2
-      v-model="prowizja"
-      input-type-label="PLN"
-      heading="Test"
-      :min="0.1"
-      :max="10"
-      :step="0.1"
-      label-left="test"
-      label-right="test"
-    />
+    dsad
   </template>
 </Layout>
 </template>
