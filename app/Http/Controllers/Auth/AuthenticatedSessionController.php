@@ -52,7 +52,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect(RouteServiceProvider::HOME)->with([
+        return redirect(RouteServiceProvider::LOGIN)->with([
             'alert_type' => AlertType::SUCCESS,
             'alert_message' => 'Poprawnie wylogowano!'
         ]);

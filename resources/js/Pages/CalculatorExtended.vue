@@ -67,7 +67,8 @@ const scrollToResult = () => {
   results.value.scrollIntoView({behavior: "smooth"});
 }
 
-const schedule = ref([])
+const defaultSchedule = ref([]);
+const schedule = ref([]);
 
 const formData = ref({
   date: new Date(2023, 0),
@@ -79,8 +80,6 @@ const formData = ref({
   typeOfInstallment: localStorage.getItem("extended-typeOfInstallment") ?? "equal",
   commissionType: "percent"
 });
-
-console.log(formData.value)
 
 watch(formData.value, (newValue, oldValue) => {
   localStorage.setItem("extended-amountOfCredit", newValue.amountOfCredit.toString());
@@ -128,6 +127,13 @@ const getResult = async () => {
       interestRateChanges.value,
       fees.value.fixed,
       fees.value.changing).getSchedule();
+
+    defaultSchedule.value = useEqualInstallmentsV2(
+      formData.value,
+      [],
+      [],
+      [],
+      []).getSchedule();
   } else {
     schedule.value = useDecreasingInstallmentsV2(
       formData.value,
@@ -135,7 +141,16 @@ const getResult = async () => {
       interestRateChanges.value,
       fees.value.fixed,
       fees.value.changing).getSchedule();
+
+    defaultSchedule.value = useDecreasingInstallmentsV2(
+      formData.value,
+      [],
+      [],
+      [],
+      []).getSchedule();
   }
+
+  console.table(schedule.value)
 
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
@@ -154,8 +169,6 @@ const getResult = async () => {
   chartData.value.datasets[1].data = combinedData;
   chartData.value.labels = label;
 
-  console.table(schedule.value);
-  console.log(formData.value.commission)
   getProperWibor();
   await nextTick(() => scrollToResult())
 }
@@ -210,8 +223,8 @@ let options = {
 
 const overwriteData = () => {
   formData.value.amountOfCredit = props.defaultData.amountOfCredit ?? formData.value.amountOfCredit;
-  formData.value.commission = props.defaultData.commission ?? formData.value.commission;
-  formData.value.margin = props.defaultData.margin ?? formData.value.margin;
+  formData.value.commission = Number(props.defaultData.commission) ?? formData.value.commission;
+  formData.value.margin = Number(props.defaultData.margin) ?? formData.value.margin;
   formData.value.period = props.defaultData.period ?? formData.value.period;
   formData.value.typeOfInstallment = props.defaultData.typeOfInstallment ?? formData.value.typeOfInstallment;
   formData.value.wibor = props.defaultData.wibor ?? formData.value.wibor;
@@ -233,17 +246,25 @@ const saveSimulation = () => {
     period: formData.value.period,
     margin: formData.value.margin,
     commission: formData.value.commission,
+    commission_type: formData.value.commissionType,
     type_of_installment: formData.value.typeOfInstallment,
     wibor_id: formData.value.wibor,
     fixed_fees: JSON.stringify(fees.value.fixed),
     changing_fees: JSON.stringify(fees.value.changing),
+    interest_changes: JSON.stringify(interestRateChanges.value)
   }, {preserveScroll: true});
 }
 
 
-const getSelectedTypeForCommission = value => {
+const setCommissionType = value => {
+  formData.value.commission = 0;
   formData.value.commissionType = value;
 }
+
+const setCommissionValue = value => {
+  formData.value.commission = value;
+}
+
 const interestRateChanges = ref();
 
 const getInterestRateChange = value => {
@@ -301,8 +322,8 @@ const getInterestRateChange = value => {
           <div class="flex-1">
             <RangeWithInputSelect
               heading="Prowizja"
-              v-model="formData.commission"
-              @selected-type="getSelectedTypeForCommission"
+              @selected-type="setCommissionType"
+              @commission-value="setCommissionValue"
             />
           </div>
         </div>
@@ -432,7 +453,7 @@ const getInterestRateChange = value => {
             </div>
             <div class="flex-1">
               <ResultBox
-                :schedule="schedule"
+                :schedule="defaultSchedule"
                 :amount-of-credit="formData.amountOfCredit"
                 :commission="formData.commission"
               />
@@ -445,16 +466,16 @@ const getInterestRateChange = value => {
         </Collapse>
 
         <Collapse title="Symulacja spłaty kapitału" :collapsed="true">
-          <CapitalRepaymentSimulation :schedule="schedule"/>
+          <CapitalRepaymentSimulation :schedule="defaultSchedule"/>
         </Collapse>
 
         <Collapse v-if="formData.typeOfInstallment === 'equal'" title="Roczny wzrost obciążeń z tytułu kredytu"
                   :collapsed="true">
-          <InterestRateChange :credit="formData" :schedule="schedule"/>
+          <InterestRateChange :credit="formData" :schedule="defaultSchedule"/>
         </Collapse>
 
         <Collapse title="Symulacja zmiany raty dla zmian stóp procentowych" :collapsed="true">
-          <ChangesInterestsRatesTable :schedule="schedule" :credit="formData"/>
+          <ChangesInterestsRatesTable :schedule="defaultSchedule" :credit="formData"/>
         </Collapse>
 
         <Collapse title="Harmonogram spłaty kredytu" :collapsed="true">

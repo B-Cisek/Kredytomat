@@ -1,40 +1,19 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {reactive} from "vue";
-import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
-import {useHelpers} from "@/Composables/useHelpers";
-import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
+import {ref} from "vue";
 
-const newInterestRate = [
-  {value: 5, date: {year: 2023, month: 2}},
-  {value: 6, date: {year: 2024, month: 11}}
-];
+const commission = ref(0);
+const commissionType = ref("percent");
 
-const credit = reactive({
-  date: new Date(2023,0),
-  amountOfCredit: 300000,
-  period: 25,
-  margin: 1,
-  commission: 0,
-  wibor: 7,
-  typeOfInstallment: "decreasing"
-});
+const setCommissionType = value => {
+  commission.value = 0;
+  commissionType.value = value;
+}
 
-
-let result = [];
-
-result = useDecreasingInstallmentsV2(
-  credit,
-  [],
-  newInterestRate
-).getSchedule();
-
-
-console.table(result)
-
-
-
-
+const setCommissionValue = value => {
+  commission.value = value;
+}
 </script>
 
 <template>
@@ -43,7 +22,11 @@ console.table(result)
     dsadas
   </template>
   <template v-slot:default>
-    dsad
+    <RangeWithInputSelect
+      heading="Prowizja"
+      @selected-type="setCommissionType"
+      @commission-value="setCommissionValue"
+    />
   </template>
 </Layout>
 </template>

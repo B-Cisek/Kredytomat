@@ -12,6 +12,9 @@ import OverpaymentInputsList from "@/Components/InputsList/OverpaymentInputsList
 import Collapse from "@/Components/Collapse.vue";
 import {usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 
 const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
 
@@ -41,7 +44,8 @@ const formData = ref({
   margin: Number(localStorage.getItem("overpayment-margin") ?? 2),
   commission: Number(localStorage.getItem("overpayment-commission") ?? 0),
   wibor: Number(localStorage.getItem("overpayment-wibor")),
-  typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "rowne"
+  typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "rowne",
+  commissionType: "percent"
 });
 
 watch(formData.value, (newValue, oldValue) => {
@@ -64,22 +68,22 @@ const rules = {
 
 const decreasingInstallment = () => {
   if (overpaymentType.value === "period") {
-    baseCreditSchedule.value = useDecreasinginstallments({
+    baseCreditSchedule.value = useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
     }, [], []).getScheduleShorterPeriod()
 
-    return useDecreasinginstallments({
+    return useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
     }, overpayments.value ?? [], []).getScheduleShorterPeriod();
   } else {
-    baseCreditSchedule.value = useDecreasinginstallments({
+    baseCreditSchedule.value = useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
     }, [], []).getScheduleSmallerInstallment();
 
-    return useDecreasinginstallments({
+    return useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
     }, overpayments.value ?? [], []).getScheduleSmallerInstallment();
@@ -88,26 +92,25 @@ const decreasingInstallment = () => {
 
 const equalInstallment = () => {
   if (overpaymentType.value === "period") {
-    baseCreditSchedule.value = useEqualInstallments({
+    baseCreditSchedule.value = useEqualInstallmentsV2({
         date: new Date(2023, 0),
         ...formData.value
-      }, [], []
-    ).getScheduleShorterPeriod();
+      }, []).getScheduleShorterPeriod();
 
-    return useEqualInstallments({
+    return useEqualInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
     }, overpayments.value ?? [], []).getScheduleShorterPeriod();
   } else {
-    baseCreditSchedule.value = useEqualInstallments({
+    baseCreditSchedule.value = useEqualInstallmentsV2({
       date: new Date(2023, 0),
      ...formData.value
     }, [], []).getScheduleSmallerInstallment();
 
-    return useEqualInstallments({
+    return useEqualInstallmentsV2({
       date: new Date(2023, 0),
       ...formData.value
-    }, overpayments.value ?? [], []).getScheduleSmallerInstallment();
+    }, overpayments.value ?? []).getScheduleSmallerInstallment();
   }
 }
 
@@ -162,13 +165,21 @@ const saveSimulation = () => {
   }, {preserveScroll: true});
 }
 
+const setCommissionType = value => {
+  formData.value.commission = 0;
+  formData.value.commissionType = value;
+}
+
+const setCommissionValue = value => {
+  formData.value.commission = value;
+}
 
 </script>
 
 <template>
   <Layout>
     <template v-slot:header>
-      Kalulator nadpłaty kredytu
+      Kalkulator nadpłaty kredytu
     </template>
     <template v-slot:default>
       <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
@@ -212,15 +223,10 @@ const saveSimulation = () => {
             />
           </div>
           <div class="flex-1">
-            <RangeWithInput
-              v-model="formData.commission"
-              input-type-label="%"
+            <RangeWithInputSelect
               heading="Prowizja"
-              :min="0.00"
-              :max="15"
-              :step="0.01"
-              label-left="0,01%"
-              label-right="15%"
+              @selected-type="setCommissionType"
+              @commission-value="setCommissionValue"
             />
           </div>
         </div>

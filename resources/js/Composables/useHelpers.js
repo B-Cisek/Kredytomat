@@ -25,14 +25,6 @@ export function useHelpers() {
         maximumFractionDigits: 2,
     });
 
-    function kosztKredytu(harmonogram) {
-        let szumaKoszt = 0.00;
-        for (let index = 0; index < harmonogram.length; index++) {
-            szumaKoszt += harmonogram[index][1];
-        }
-        return szumaKoszt;
-    }
-
     function totalCreditCost(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
@@ -135,13 +127,11 @@ export function useHelpers() {
         toDecimal,
         totalCreditCost,
         formattedToPLN,
-        totalOverpayments,
         formattedToCurrency,
-        kosztKredytu,
         getCapitalPartArray,
         getInterestPartArray,
         getPaidInterestToIndex,
         getPaidCapitalToIndex,
-        getCapitalToPayFromIndex
+        getCapitalToPayFromIndex,
     }
 }

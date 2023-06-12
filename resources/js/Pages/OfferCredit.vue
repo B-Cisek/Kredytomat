@@ -9,6 +9,7 @@ const props = defineProps({
   credit: Object
 });
 
+
 let details = ref(null);
 
 onMounted(() => details.value = JSON.parse(props.credit.details));
@@ -63,7 +64,9 @@ onMounted(() => details.value = JSON.parse(props.credit.details));
 
 
             <div class="bg-white px-4 py-5 ">
-              <Link :href="route('calculator.extended', {margin: 3.33})" class="text-sm font-medium text-blue-500 text-right block">Użyj danych tego kredytu w kalkulatorze</Link>
+              <Link :href="route('calculator.extended', {margin: credit.margin, wibor: credit.wibor.value, commission: credit.commission})"
+                    class="text-sm font-medium text-blue-500 text-right block"
+              >Użyj danych tego kredytu w kalkulatorze</Link>
             </div>
           </dl>
         </div>

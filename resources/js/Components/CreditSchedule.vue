@@ -19,6 +19,7 @@ const props = defineProps({
         <th scope="col" class="py-3">Część kapitałowa</th>
         <th scope="col" class="py-3">Część odsetkowa</th>
         <th scope="col" class="py-3 px-6">Rata całkowita</th>
+        <th scope="col" class="py-3 px-6">Oprocentowanie</th>
         <th scope="col" class="py-3 px-6">Opłaty</th>
         <th scope="col" class="py-3 px-6">Kapitał po spłacie</th>
       </tr>
@@ -36,6 +37,7 @@ const props = defineProps({
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>{{ formattedToPLN.format(sche[2]) }}</td>
         <td>{{ formattedToPLN.format(sche[4] + sche[8] + sche[9]) }}</td>
+        <td>{{ sche[7] }}%</td>
         <td>{{ formattedToPLN.format(sche[8] + sche[9]) }}</td>
         <td>{{ formattedToPLN.format(sche[5]) }}</td>
       </tr>

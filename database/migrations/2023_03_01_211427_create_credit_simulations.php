@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('wibor_id')->constrained();
             $table->text('fixed_fees')->nullable();
             $table->text('changing_fees')->nullable();
+            $table->text('interest_changes')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->timestamp('created_at')->useCurrent();
         });

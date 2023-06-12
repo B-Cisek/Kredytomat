@@ -1,36 +1,37 @@
 <script setup>
-import {nextTick, ref} from "vue";
+import {nextTick, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import {useRatyMalejace} from "@/Composables/useRatyMalejace";
-import {useRatyStale} from "@/Composables/useRatyStale";
 import Chart from "@/Components/Chart.vue";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
+import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 
-const {getPierwszaRata, getHarmonogram: getHarmonogramMalejace} = useRatyMalejace();
-const {getRataStala, getHarmonogram: getHarmonogramStale} = useRatyStale();
-const {toDecimal, formattedToPLN, kosztKredytu} = useHelpers();
+const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
 
 /** Form inputs */
 const amountOfCredit = ref(250000);
 const period = ref(25);
 const rate = ref(7);
 const commission = ref(0);
-
+const commissionType = ref("percent");
 const commissionResult = ref(0);
 
 const commissionCalculation = () => {
-  commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
+  if (commissionType.value === "percent") {
+    commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
+  } else {
+    commissionResult.value = commission.value;
+  }
 }
 
 /** Equal Installment */
 const equalInstallment = ref(null);
 const equalInstallmentCost = ref(0);
-const equalInstallmentToBePaid = ref(0);
 
 /** Decreasing Installment */
 const firstDecreasingInstallment = ref(null);
 const decreasingInstallmentCost = ref(0);
-const decreasingInstallmentToBePaid = ref(0);
 
 const results = ref(null);
 
@@ -38,24 +39,46 @@ const scrollToResult = () => {
   results.value.scrollIntoView({behavior: "smooth"});
 }
 
+
 const calc = async () => {
-  let harmonogramRatyStale = getHarmonogramStale(amountOfCredit.value, period.value, rate.value);
-  let harmonogramRatyMalejace = getHarmonogramMalejace(amountOfCredit.value, period.value, rate.value);
+  let fixedInstallmentsSchedule = useEqualInstallmentsV2({
+    date: new Date(),
+    amountOfCredit: amountOfCredit.value,
+    period: period.value,
+    margin: 0,
+    wibor: rate.value,
+    commission: commission.value
+  }).getSchedule();
+
+  let decreasingInstallmentSchedule = useDecreasingInstallmentsV2({
+    date: new Date(),
+    amountOfCredit: amountOfCredit.value,
+    period: period.value,
+    margin: 0,
+    wibor: rate.value,
+    commission: commission.value
+  }).getSchedule();
+
   commissionCalculation();
 
   // Installments
-  firstDecreasingInstallment.value = getPierwszaRata(amountOfCredit.value, period.value, rate.value);
-  equalInstallment.value = getRataStala(amountOfCredit.value, period.value, rate.value);
+  firstDecreasingInstallment.value = decreasingInstallmentSchedule[0][4];
+  equalInstallment.value = fixedInstallmentsSchedule[0][4];
 
   // Installments cost
-  equalInstallmentCost.value = kosztKredytu(harmonogramRatyStale);
-  decreasingInstallmentCost.value = kosztKredytu(harmonogramRatyMalejace);
+  equalInstallmentCost.value = totalCreditCost(fixedInstallmentsSchedule) + commissionResult.value;
+  decreasingInstallmentCost.value = totalCreditCost(decreasingInstallmentSchedule) + commissionResult.value;
 
-  // The total amount to be repaid
-  equalInstallmentToBePaid.value = Number(amountOfCredit.value) + equalInstallmentCost.value + commissionResult.value;
-  decreasingInstallmentToBePaid.value =
-    Number(amountOfCredit.value) + decreasingInstallmentCost.value + commissionResult.value;
   await nextTick(() => scrollToResult())
+}
+
+const setCommissionType = value => {
+  commission.value = 0;
+  commissionType.value = value;
+}
+
+const setCommissionValue = value => {
+  commission.value = value;
 }
 
 const dataRatyStale = {
@@ -134,15 +157,10 @@ const dataRatyMalejace = {
         />
       </div>
       <div class="flex-1">
-        <RangeWithInput
-          v-model="commission"
-          input-type-label="%"
+        <RangeWithInputSelect
           heading="Prowizja"
-          :min="0.00"
-          :max="15"
-          :step="0.01"
-          label-left="0%"
-          label-right="15%"
+          @selected-type="setCommissionType"
+          @commission-value="setCommissionValue"
         />
       </div>
     </div>
@@ -169,7 +187,7 @@ const dataRatyMalejace = {
           <div class="flex justify-between mt-2">
             <p class="mb-5">Całkowita kwota do spłaty</p>
             <p class="font-bold text-lg">
-              {{ formattedToPLN.format(equalInstallmentCost + amountOfCredit) }}
+              {{ formattedToPLN.format(equalInstallmentCost) }}
             </p>
           </div>
         </div>
@@ -196,7 +214,7 @@ const dataRatyMalejace = {
           </div>
           <div class="flex justify-between mt-2">
             <p class="mb-5">Całkowita kwota do spłaty</p>
-            <p class="text-lg font-bold">{{ formattedToPLN.format(decreasingInstallmentCost + amountOfCredit) }}</p>
+            <p class="text-lg font-bold">{{ formattedToPLN.format(decreasingInstallmentCost) }}</p>
           </div>
         </div>
         <div class="flex justify-center items-center mt-8">

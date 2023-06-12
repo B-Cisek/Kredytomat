@@ -96,7 +96,8 @@ export function useEqualInstallmentsV2(
 
     function getNewInstallment(capitalToPay, index, currentWibor) {
         let mn = credit.period * 12;
-        let interest  = getCreditInterestPerYear(currentWibor);
+        let interest  =
+            toDecimal(parseFloat(getCreditInterest(credit.margin, currentWibor)) / 12);
         let newInstallment =
             capitalToPay * interest * (interest + 1) ** (mn - index) / (((interest + 1) ** (mn - index)) - 1);
 
@@ -138,6 +139,13 @@ export function useEqualInstallmentsV2(
     function getFirstDateFromFixedFees(fixedFees) {
         if (Array.isArray(fixedFees) && fixedFees.length > 0) {
             return new Date(fixedFees[0].start.year, fixedFees[0].start.month);
+        }
+        return  new Date(1999,0);
+    }
+
+    function getFirstDateFromOverpayments(overpayments) {
+        if (Array.isArray(overpayments) && overpayments.length > 0) {
+            return new Date(overpayments[0].start.year, overpayments[0].start.month);
         }
         return  new Date(1999,0);
     }
@@ -262,7 +270,155 @@ export function useEqualInstallmentsV2(
         return creditSchedule;
     }
 
+    function getScheduleShorterPeriod() {
+        let currentInterest = getCreditInterest(credit.margin, credit.wibor);
+        let amountOfCredit = parseFloat(credit.amountOfCredit);
+        let installmentTotal = getInstallment(credit.wibor, credit.margin);
+        let interestPart = getInterestPart(currentInterest, amountOfCredit);
+        let capitalPart = getCapitalPart(installmentTotal, interestPart);
+        let capitalAfterPay = getCapitalAfterPay(amountOfCredit, capitalPart);
+
+        let creditSchedule = [
+            [
+                credit.date,
+                amountOfCredit,
+                interestPart,
+                capitalPart,
+                installmentTotal,
+                capitalAfterPay,
+                getFirstDateFromOverpayments(overpayment).getTime() === credit.date.getTime()
+                    ? overpayment[0].overpayment
+                    : 0,
+                credit.wibor
+            ],
+        ];
+
+        for (let index = 1; index < credit.period * 12; index++) {
+            let lastRow = creditSchedule.at(-1);
+            let lastOverpayment = 0;
+            let capitalToPay = lastRow[5] - lastRow[6];
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
+            let currentDate = getNextMonth(lastRow[0]);
+            let currentWibor = lastRow[7];
+            let onceOverpayment = 0;
+
+            overpayment.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    onceOverpayment = value.overpayment;
+                }
+            });
+
+            let current = [
+                currentDate,
+                capitalToPay,
+                getInterestPart(lastCreditInterest, capitalToPay),
+                getCapitalPart(getInstallment(currentWibor, credit.margin), getInterestPart(lastCreditInterest, capitalToPay)),
+                getInstallment(currentWibor, credit.margin),
+                getCapitalAfterPay(capitalToPay, getCapitalPart(getInstallment(currentWibor, credit.margin), getInterestPart(lastCreditInterest, capitalToPay))),
+                onceOverpayment !== 0 ? onceOverpayment : lastOverpayment,
+                currentWibor
+            ];
+
+            // jezeli rata calkowita jest mniejsza od kapitalu do splaty
+            if (current[4] > current[1]) {
+                current[4] = current[1] + current[2]; // rata calkowita
+                current[3] = current[4] - current[2]; // czesc kapitalowa
+                current[5] = current[1] - current[3]; // kapital po splacie
+            }
+
+            creditSchedule.push(current);
+            if (current[5] <= 0) break;
+            onceOverpayment = 0;
+        }
+
+        return creditSchedule;
+    }
+
+    function getScheduleSmallerInstallment() {
+        let currentInterest = getCreditInterest(credit.margin, credit.wibor);
+        let amountOfCredit = parseFloat(credit.amountOfCredit);
+        let installmentTotal = getInstallment(credit.wibor, credit.margin);
+        let interestPart = getInterestPart(currentInterest, amountOfCredit);
+        let capitalPart = getCapitalPart(installmentTotal, interestPart);
+        let capitalAfterPay = getCapitalAfterPay(amountOfCredit, capitalPart);
+
+        let creditSchedule = [
+            [
+                credit.date,
+                amountOfCredit,
+                interestPart,
+                capitalPart,
+                installmentTotal,
+                capitalAfterPay,
+                getFirstDateFromOverpayments(overpayment).getTime() === credit.date.getTime()
+                    ? overpayment[0].overpayment
+                    : 0,
+                credit.wibor
+            ],
+        ];
+
+        for (let index = 1; index < credit.period * 12; index++) {
+            let lastRow = creditSchedule.at(-1);
+            let lastOverpayment = lastRow[6];
+            let capitalToPay = lastRow[5] - lastRow[6];
+            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
+            let currentDate = getNextMonth(lastRow[0]);
+            let currentWibor = lastRow[7];
+            let onceOverpayment = 0;
+            let lastCapitalBeforePay = lastRow[5] - lastOverpayment;
+            let newInstallmentTotal = lastRow[4];
+
+            overpayment.forEach(value => {
+                let startDate = new Date(value.start.year, value.start.month);
+                let endDate = new Date(value.end.year, value.end.month);
+                let currentDate = getNextMonth(lastRow[0]);
+
+                if (isDateInRange(currentDate, startDate, endDate)) {
+                    onceOverpayment = value.overpayment;
+                }
+            });
+
+            let current = [];
+
+            if (lastOverpayment === 0) {
+                current = [
+                    currentDate,
+                    capitalToPay,
+                    getInterestPart(lastCreditInterest, capitalToPay),
+                    getCapitalPart(newInstallmentTotal, getInterestPart(lastCreditInterest, capitalToPay)),
+                    newInstallmentTotal,
+                    getCapitalAfterPay(capitalToPay, getCapitalPart(newInstallmentTotal, getInterestPart(lastCreditInterest, capitalToPay))),
+                    onceOverpayment,
+                    currentWibor
+                ];
+            } else {
+                newInstallmentTotal = getNewInstallment(lastCapitalBeforePay, index, currentWibor);
+                current = [
+                    currentDate,
+                    capitalToPay,
+                    getInterestPart(lastCreditInterest, capitalToPay),
+                    getCapitalPart(newInstallmentTotal, getInterestPart(lastCreditInterest, capitalToPay)),
+                    newInstallmentTotal,
+                    getCapitalAfterPay(capitalToPay, getCapitalPart(newInstallmentTotal, getInterestPart(lastCreditInterest, capitalToPay))),
+                    onceOverpayment,
+                    currentWibor
+                ];
+            }
+
+            creditSchedule.push(current);
+            onceOverpayment = 0;
+        }
+
+        return creditSchedule;
+    }
+
     return {
-        getSchedule
+        getSchedule,
+        getScheduleShorterPeriod,
+        getScheduleSmallerInstallment
     }
 }
