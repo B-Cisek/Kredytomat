@@ -2,6 +2,7 @@
 import RowLink from "@/Components/RowLink.vue"
 import {defineProps} from "vue"
 import {Link} from "@inertiajs/inertia-vue3"
+import {PaperAirplaneIcon} from "@heroicons/vue/24/outline";
 
 defineProps({
     banks: Object
@@ -57,12 +58,9 @@ defineProps({
                 <td class="">
                     <img :src="bank.logo_path" alt="logo" width="120">
                 </td>
-                <td class="flex items-center py-4 px-6 space-x-3">
+                <td class="text-center">
                     <Link :href="route('admin.banks.edit', bank.id)">
-                        <svg class="block w-6 h-6 fill-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <polygon
-                                points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"/>
-                        </svg>
+                      <PaperAirplaneIcon class="h-6 w-6 text-gray-500" />
                     </Link>
                 </td>
             </tr>

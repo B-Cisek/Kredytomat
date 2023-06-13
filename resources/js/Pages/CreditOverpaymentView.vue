@@ -315,7 +315,7 @@ const setCommissionValue = value => {
               <div>
                 <p class="mt-1">Rodzaj raty:</p>
                 <span class="text-xl font-semibold">
-                  {{ formData.typeOfInstallment === 'rowne' ? 'Równe' : 'Malejące' }}</span>
+                  {{ formData.typeOfInstallment === 'equal' ? 'Równe' : 'Malejące' }}</span>
               </div>
               <div>
                 <p class="mt-1">WIBOR:</p>

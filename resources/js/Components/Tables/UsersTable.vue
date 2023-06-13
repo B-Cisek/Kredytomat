@@ -1,6 +1,7 @@
 <script setup>
 import {defineProps, ref} from "vue";
 import RowLink from "@/Components/RowLink.vue";
+import { PaperAirplaneIcon } from "@heroicons/vue/24/outline";
 
 defineProps({
   users: Object,
@@ -29,7 +30,7 @@ const usersMassDelete = ref([]);
           <th scope="col" class="py-3">Email</th>
           <th scope="col" class="py-3">Konto utworzone</th>
           <th scope="col" class="py-3">Ostatnia zmiana</th>
-          <th scope="col" class="py-3 px-6">Akcje</th>
+          <th scope="col" class="py-3 text-center">Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -60,17 +61,9 @@ const usersMassDelete = ref([]);
           <td>
             {{ user.updated_at }}
           </td>
-          <td class="flex items-center space-x-3">
+          <td class="text-center">
             <RowLink :href="route('admin.users.edit', user.id)">
-              <svg
-                class="block w-6 h-6 fill-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <polygon
-                  points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"
-                />
-              </svg>
+              <PaperAirplaneIcon class="h-6 w-6 text-gray-500" />
             </RowLink>
           </td>
         </tr>

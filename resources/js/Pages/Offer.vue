@@ -19,7 +19,6 @@ const props = defineProps({
           <div
             v-for="bank in props.banks"
             :key="bank.id"
-            class=""
           >
             <Link :href="route('offer.show', bank.slug)">
               <div class="bg-gray-200 w-full text-center rounded-lg">

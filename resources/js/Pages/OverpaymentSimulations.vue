@@ -80,7 +80,7 @@ const props = defineProps({
                   </td>
                   <td
                     class="text-center text-dark font-medium text-base py-1 px-2 bg-[#F3F6FF] border-b border-l border-[#E8E8E8]">
-                    {{ credit.type_of_installment === 'rowne' ? 'Równe' : 'Malejące' }}
+                    {{ credit.type_of_installment === 'equal' ? 'Równe' : 'Malejące' }}
                   </td>
                   <td
                     class="text-center text-dark font-medium text-base py-2 px-2 bg-white border-b border-r border-[#E8E8E8]">

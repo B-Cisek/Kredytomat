@@ -10,13 +10,14 @@ const props = defineProps({
   credits: Object
 });
 
+console.log(props.credits)
 const filterOpen = ref(false);
 </script>
 
 <template>
   <Head title="Oferta"/>
   <Layout>
-    <template v-slot:header>Oferta Banków</template>
+    <template v-slot:header>Oferta banku: <span>{{credits[0].bank.bank_name ?? ''}}</span></template>
     <template v-slot:default>
       <section class="w-full flex flex-col gap-3">
         <div class="text-right">
@@ -108,7 +109,7 @@ const filterOpen = ref(false);
 
         </div>
         <div
-          class="rounded-lg shadow-2xl border border-gray-200 bg-white p-5 hover:bg-gray-200"
+          class="rounded-lg hover:border-gray-300 hover:shadow-inner border border-gray-200 bg-white p-5"
           v-for="(credit, index) in props.credits"
           :key="credit.id"
         >

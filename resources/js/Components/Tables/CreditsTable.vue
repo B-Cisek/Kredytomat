@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from "@inertiajs/inertia-vue3";
 import { ref, watch } from "vue";
+import {PaperAirplaneIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   credits: Object,
@@ -55,7 +56,7 @@ watch(checkedAll, (value) => {
           <th scope="col" class="py-3">Prowizja</th>
           <th scope="col" class="py-3">WIBOR</th>
           <th scope="col" class="py-3">Ostatnia zmiana</th>
-          <th scope="col" class="py-3 px-6">Akcje</th>
+          <th scope="col" class="py-3 text-center pr-2">Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -94,17 +95,9 @@ watch(checkedAll, (value) => {
           <td>
             {{ credit.updated_at }}
           </td>
-          <td class="flex items-center py-4 px-6 space-x-3">
+          <td class="text-center">
             <Link :href="route('admin.credits.edit', credit.id)">
-              <svg
-                class="block w-6 h-6 fill-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <polygon
-                  points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"
-                />
-              </svg>
+              <PaperAirplaneIcon class="h-6 w-6 text-gray-500" />
             </Link>
           </td>
         </tr>

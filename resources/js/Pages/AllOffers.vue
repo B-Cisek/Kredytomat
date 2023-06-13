@@ -24,7 +24,9 @@ console.log(props.creditCount)
     <template v-slot:default>
       <section class="w-full flex flex-col gap-3">
         <div class="flex justify-between items-center">
-          <h1 class="font-semibold text-gray-600 ml-1">Ilość ofert: <span class="text-semibold">{{ props.creditCount }}</span></h1>
+          <h1 class="font-semibold text-gray-600 ml-1">Ilość ofert: <span class="text-semibold">{{
+              props.creditCount
+            }}</span></h1>
           <div class="relative inline-block text-left">
             <div>
               <button
@@ -113,7 +115,7 @@ console.log(props.creditCount)
 
         </div>
         <div
-          class="rounded-lg shadow-2xl border border-gray-200 bg-white p-5 hover:bg-gray-200"
+          class="rounded-lg hover:border-gray-300 hover:shadow-inner border border-gray-200 bg-white p-5"
           v-for="(credit, index) in props.credits"
           :key="credit.id"
         >

@@ -281,7 +281,7 @@ const openCalculator = () => {
                   <div>
                     <p class="mt-1">Rodzaj raty:</p>
                     <span class="text-xl font-semibold">{{
-                        props.creditSimulation.type_of_installment === 'rowne' ? 'Równe' : 'Malejące'
+                        props.creditSimulation.type_of_installment === 'equal' ? 'Równe' : 'Malejące'
                       }}</span>
                   </div>
                   <div>
@@ -314,7 +314,7 @@ const openCalculator = () => {
             </div>
           </div>
           <div
-            v-if="credit.typeOfInstallment === 'rowne'"
+            v-if="credit.typeOfInstallment === 'equal'"
             class="border-t-2 html2pdf__page-break">
             <div class="flex items-center justify-between cursor-pointer p-5 w-full">
               <h1 class="font-semibold text-xl">Roczny wzrost obciążeń z tytułu kredytu</h1>

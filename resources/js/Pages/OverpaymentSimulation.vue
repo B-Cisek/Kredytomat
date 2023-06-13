@@ -99,7 +99,7 @@ const confirmationModalOpen = ref(false);
               <div>
                 <p class="mt-1">Rodzaj raty:</p>
                 <span class="text-xl font-semibold">
-                  {{ overpaymentSimulation.type_of_installment === 'rowne' ? 'Równe' : 'Malejące' }}</span>
+                  {{ overpaymentSimulation.type_of_installment === 'equal' ? 'Równe' : 'Malejące' }}</span>
               </div>
               <div>
                 <p class="mt-1">WIBOR:</p>

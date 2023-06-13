@@ -1,6 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import {Link} from "@inertiajs/inertia-vue3";
+import {ChevronUpIcon, ChevronDownIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   credits: Object,
@@ -48,7 +49,7 @@ const formatToPLN = amount => {
           />
         </div>
       </div>
-      <div class="flex w-full justify-around px-10 flex-wrap my-5 lg:my-0">
+      <div class="flex flex-col md:flex-row w-full justify-around px-10 my-5 lg:my-0">
         <div>
           <span class="text-gray-500">Okres</span>
           <p class="font-semibold text-lg">
@@ -82,25 +83,16 @@ const formatToPLN = amount => {
     </div>
     <div class="w-full border-t py-1 flex justify-center">
       <button class="flex justify-center items-center gap-1" @click="add(index)">
-        <span>Szczegóły</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        <span class="text-gray-500">Szczegóły</span>
+        <ChevronUpIcon v-show="showed.includes(index)" class="h-5 w-5 text-gray-500"/>
+        <ChevronDownIcon v-show="!showed.includes(index)" class="h-5 w-5 text-gray-500"/>
       </button>
     </div>
     <div class="bg-white mt-1" v-show="showed.includes(index)">
       <div class="w-full">
-        <p v-for="(detail, index) in JSON.parse(credit.details)" class="border-b border-gray py-2 px-2">
-          {{ index }}: {{ detail }}
+        <p v-for="(detail, index) in JSON.parse(credit.details)" class="border-b border-gray py-2 px-2 last:border-b-0">
+          <span>{{ index }}:</span>
+          <span class="font-semibold">{{ detail }}</span>
         </p>
       </div>
     </div>
