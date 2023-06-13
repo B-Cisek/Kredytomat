@@ -6,14 +6,15 @@ import RangeWithInput from "@/Components/RangeWithInput.vue";
 import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import useLocalStorage from "@/Composables/useLocalStorage";
 
 const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
 
 /** Form inputs */
-const amountOfCredit = ref(250000);
-const period = ref(25);
-const rate = ref(7);
-const commission = ref(0);
+const amountOfCredit = useLocalStorage(250000, 'calculator-amountOfCredit');
+const period = useLocalStorage(25, 'calculator-period');
+const rate = useLocalStorage(7, 'calculator-rate');
+const commission = useLocalStorage(0, 'calculator-commission');
 const commissionType = ref("percent");
 const commissionResult = ref(0);
 

@@ -224,7 +224,7 @@ let options = {
 const overwriteData = () => {
   formData.value.amountOfCredit = props.defaultData.amountOfCredit ?? formData.value.amountOfCredit;
   formData.value.commission = Number(props.defaultData.commission) ?? formData.value.commission;
-  formData.value.margin = Number(props.defaultData.margin) ?? formData.value.margin;
+  formData.value.margin = props.defaultData.margin ?? formData.value.margin;
   formData.value.period = props.defaultData.period ?? formData.value.period;
   formData.value.typeOfInstallment = props.defaultData.typeOfInstallment ?? formData.value.typeOfInstallment;
   formData.value.wibor = props.defaultData.wibor ?? formData.value.wibor;

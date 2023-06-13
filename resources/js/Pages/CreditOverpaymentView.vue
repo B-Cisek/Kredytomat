@@ -37,6 +37,8 @@ const schedule = ref([]);
 const formattedSchedule = ref([]);
 const baseCreditSchedule = ref([]);
 const costCostDiff = ref(null);
+const monthsLess = ref(0);
+const costLessPercent = ref(0);
 
 const formData = ref({
   amountOfCredit: Number(localStorage.getItem("overpayment-amountOfCredit") ?? 300000),
@@ -135,7 +137,10 @@ const getResult = async () => {
   formattedSchedule.value = formatHarmonogram(creditResult);
   totalCost.value = totalCreditCost(creditResult);
 
-  costCostDiff.value = totalCreditCost(baseCreditSchedule.value) - totalCreditCost(schedule.value);
+  costCostDiff.value = totalCreditInterest(baseCreditSchedule.value) - totalCreditInterest(schedule.value);
+  monthsLess.value = baseCreditSchedule.value.length - schedule.value.length;
+  costLessPercent.value = 100 - ((totalCreditInterest(schedule.value) / totalCreditInterest(baseCreditSchedule.value)) * 100);
+
   console.table(schedule.value)
   await nextTick(() => scrollToResult());
 }
@@ -350,7 +355,7 @@ const setCommissionValue = value => {
           </div>
         </Collapse>
 
-        <Collapse class="mt-5 relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
+        <Collapse class="relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
           <div
             v-if="auth.loggedIn"
             class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
@@ -361,22 +366,22 @@ const setCommissionValue = value => {
           </div>
 
           <div class="flex justify-center gap-10">
-              <div class="flex-col flex p-10">
+              <div class="flex-col flex p-5">
                 <label>Oszczędność na całym kredycie</label>
                 <span class="text-2xl font-semibold">{{ formattedToPLN.format(costCostDiff)}}</span>
               </div>
-              <div class="flex-col flex p-10">
-                <label>Miesięczna oszczędność</label>
-                <span class="text-2xl font-semibold">159,08 PLN</span>
+              <div class="flex-col flex p-5">
+                <label>Skrócenie okresu kredytowania o:</label>
+                <span class="text-2xl font-semibold">{{monthsLess}} miesięcy</span>
               </div>
 
-              <div class="flex-col flex p-10">
-                <label>Roczna oszczędność</label>
-                <span class="text-2xl font-semibold">1 451,04 PLN</span>
+              <div class="flex-col flex p-5">
+                <label>Zmniejszenie kosztów o:</label>
+                <span class="text-2xl font-semibold">{{ costLessPercent.toFixed(2) }}%</span>
               </div>
-              <div class="flex-col flex p-10">
+              <div class="flex-col flex p-5">
                 <label>Roczna oszczędność</label>
-                <span class="text-2xl font-semibold">1 451,04 PLN</span>
+                <span class="text-2xl font-semibold">---- PLN</span>
               </div>
             </div>
         </Collapse>
