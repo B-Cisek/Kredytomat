@@ -42,23 +42,19 @@ const props = defineProps({
   defaultData: Object
 });
 
-const fixedFeeStorage = ref(localStorage.getItem("extended-fixedFees"));
-const changingFeeStorage = ref(localStorage.getItem("extended-changingFees"));
-const changingInterestRate = ref(localStorage.getItem("extended-interestRate"));
-
 const fees = ref({
   fixed: [],
   changing: []
 });
 
+const interestRateChanges = ref([]);
+
 const getFixedFees = (value) => {
   fees.value.fixed = value;
-  localStorage.setItem("extended-fixedFees", JSON.stringify(fees.value.fixed));
 }
 
 const getChangingFees = (value) => {
   fees.value.changing = value;
-  localStorage.setItem("extended-changingFees", JSON.stringify(fees.value.changing));
 }
 
 const results = ref(null);
@@ -72,22 +68,13 @@ const schedule = ref([]);
 
 const formData = ref({
   date: new Date(2023, 0),
-  amountOfCredit: Number(localStorage.getItem("extended-amountOfCredit")) ?? 300000,
-  period: Number(localStorage.getItem("extended-period") ?? 25),
-  margin: Number(localStorage.getItem("extended-margin") ?? 2),
-  commission: Number(localStorage.getItem("extended-commission") ?? 0),
-  wibor: Number(localStorage.getItem("extended-wibor")),
-  typeOfInstallment: localStorage.getItem("extended-typeOfInstallment") ?? "equal",
+  amountOfCredit: 300000,
+  period: 25,
+  margin: 2,
+  commission: 0,
+  wibor: Number(props.wiborList[0].value),
+  typeOfInstallment: "equal",
   commissionType: "percent"
-});
-
-watch(formData.value, (newValue, oldValue) => {
-  localStorage.setItem("extended-amountOfCredit", newValue.amountOfCredit.toString());
-  localStorage.setItem("extended-period", newValue.period.toString());
-  localStorage.setItem("extended-margin", newValue.margin.toString());
-  localStorage.setItem("extended-commission", newValue.commission.toString());
-  localStorage.setItem("extended-wibor", newValue.wibor.toString());
-  localStorage.setItem("extended-typeOfInstallment", newValue.typeOfInstallment.toString());
 });
 
 const rules = {
@@ -233,9 +220,6 @@ const overwriteData = () => {
 }
 
 onMounted(() => {
-  fees.value.fixed = JSON.parse(fixedFeeStorage.value);
-  fees.value.changing = JSON.parse(changingFeeStorage.value);
-  interestRateChanges.value = JSON.parse(changingInterestRate.value);
   overwriteData();
 });
 
@@ -264,8 +248,6 @@ const setCommissionType = value => {
 const setCommissionValue = value => {
   formData.value.commission = value;
 }
-
-const interestRateChanges = ref();
 
 const getInterestRateChange = value => {
   interestRateChanges.value = value;
@@ -364,7 +346,7 @@ const getInterestRateChange = value => {
             @input-list="getInterestRateChange"
             title="Zmiany oprocentowania"
             placeholder="Oprocentowanie [%]"
-            :data="changingInterestRate"
+            :data="interestRateChanges"
           />
         </div>
         <div>
@@ -372,7 +354,7 @@ const getInterestRateChange = value => {
             @input-list="getFixedFees"
             title="Opłaty stałe:"
             placeholder="Kwota [PLN]"
-            :data="fixedFeeStorage"
+            :data="fees.fixed"
           />
         </div>
         <div>
@@ -380,7 +362,7 @@ const getInterestRateChange = value => {
             @input-list="getChangingFees"
             title="Opłaty zmienne:"
             placeholder="[%]"
-            :data="changingFeeStorage"
+            :data="fees.changing"
           />
         </div>
         <button @click="getResult" class="btn btn-primary text-white w-full">

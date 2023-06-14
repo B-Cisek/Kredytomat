@@ -7,11 +7,11 @@ import {ref, watch} from "vue";
 const props = defineProps({
   title: String,
   placeholder: String,
-  data: String
+  data: Object
 });
 
 const emit = defineEmits(["inputList"]);
-const list = ref(JSON.parse(props.data) ?? []);
+const list = ref(props.data);
 const date = new Date();
 
 const add = () => {

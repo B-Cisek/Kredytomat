@@ -45,7 +45,7 @@ const formData = ref({
   period: Number(localStorage.getItem("overpayment-period") ?? 25),
   margin: Number(localStorage.getItem("overpayment-margin") ?? 2),
   commission: Number(localStorage.getItem("overpayment-commission") ?? 0),
-  wibor: Number(localStorage.getItem("overpayment-wibor")),
+  wibor: Number(localStorage.getItem("overpayment-wibor") ?? Number(props.wiborList[0].value)),
   typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "rowne",
   commissionType: "percent"
 });

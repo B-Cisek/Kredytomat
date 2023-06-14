@@ -31,9 +31,9 @@ defineProps({
           {{ $page.props.flash.alert_message }}
         </Alert>
         <!--     FILTERS      -->
-        <NavLink :href="route('admin.credits.create')" class="bg-green-600 text-white">
+        <Link :href="route('admin.banks.create')" class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700">
           Dodaj kredyt
-        </NavLink>
+        </Link>
       </section>
       <section>
         <CreditsTable :credits="credits" />

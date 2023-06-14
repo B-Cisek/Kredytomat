@@ -2,7 +2,7 @@
 import {ref, watch} from "vue";
 
 const props = defineProps({
-  heading: String
+  heading: String,
 });
 
 const min = ref(0);

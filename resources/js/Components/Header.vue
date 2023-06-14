@@ -419,6 +419,27 @@ const handleToggleProfile = () => {
         >
           O Kredycie
         </NavLink>
+        <NavLink
+          class="block"
+          :href="route('calculator.installment')"
+          :active="$page.component === 'Calculator'"
+        >
+          Kalkulator raty
+        </NavLink>
+        <NavLink
+          class="block"
+          :href="route('calculator.extended')"
+          :active="$page.component === 'CalculatorExtended'"
+        >
+          Kalkulator rozszerzony
+        </NavLink>
+        <NavLink
+          class="block"
+          :href="route('calculator.overpayment')"
+          :active="$page.component === 'CreditOverpaymentView'"
+        >
+          Kalkulator nadpłaty kredytu
+        </NavLink>
       </div>
       <div v-if="!loggedIn" class="space-y-6 py-6 px-5 border-t border-gray-700">
         <div>
