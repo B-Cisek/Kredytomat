@@ -31,7 +31,7 @@ defineProps({
           {{ $page.props.flash.alert_message }}
         </Alert>
         <!--     FILTERS      -->
-        <Link :href="route('admin.banks.create')" class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700">
+        <Link :href="route('admin.credits.create')" class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700">
           Dodaj kredyt
         </Link>
       </section>
