@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutCreditController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CreditController;
+use App\Http\Controllers\Admin\SendResetPasswordLink;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CreditSimulationsController;
 use App\Http\Controllers\ExtendedCalculatorController;
@@ -69,6 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users', UserController::class)->except(['show']);
+    Route::get('users/reset-password', SendResetPasswordLink::class)->name('users.reset-password');
     Route::resource('credits', CreditController::class)->except(['show']);
     Route::resource('banks', BankController::class)->except(['show']);
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');

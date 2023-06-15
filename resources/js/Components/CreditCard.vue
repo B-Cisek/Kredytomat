@@ -91,7 +91,7 @@ const formatToPLN = amount => {
     <div class="bg-white mt-1" v-show="showed.includes(index)">
       <div class="w-full">
         <p v-for="(detail, index) in JSON.parse(credit.details)" class="border-b border-gray py-2 px-2 last:border-b-0">
-          <span>{{ index }}:</span>
+          <span>{{ index }}: </span>
           <span class="font-semibold">{{ detail }}</span>
         </p>
       </div>

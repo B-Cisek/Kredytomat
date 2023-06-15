@@ -8,6 +8,7 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import {ref} from "vue";
+import {Inertia} from "@inertiajs/inertia";
 
 const props = defineProps({
   user: Object,
@@ -28,8 +29,8 @@ const update = () => {
   form.put(route("admin.users.update", props.user.id));
 };
 
-// TODO: Send link to reset password
 const resetPassword = () => {
+  Inertia.get(route('admin.users.reset-password'), {email: props.user.email});
 };
 </script>
 
@@ -115,11 +116,12 @@ const resetPassword = () => {
           <div class="flex mt-4 justify-between">
             <PrimaryButton type="submit ">Aktualizuj</PrimaryButton>
             <div>
-              <Link
-                class="inline-flex items-center px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150"
-              >
-                Resetuj hasło
-              </Link>
+              <PrimaryButton
+                @click="resetPassword"
+                type="button"
+                class="bg-indigo-700 ml-2"
+              >Resetuj hasło
+              </PrimaryButton>
               <PrimaryButton
                 @click="confirmationModalOpen = true"
                 type="button"
