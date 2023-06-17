@@ -45,16 +45,25 @@ const fees = ref({
   fixed: [],
   changing: []
 });
+const fixedFeesStorage = ref(localStorage.getItem("calculator-extended-fixed-fees"));
+const changingFeesStorage = ref(localStorage.getItem("calculator-extended-changing-fees"));
 
 const interestRateChangesStorage = ref(localStorage.getItem("calculator-extended-interest-rate-changes"));
 const interestRateChanges = ref([]);
 
 const getFixedFees = (value) => {
   fees.value.fixed = value;
+  localStorage.setItem("calculator-extended-fixed-fees", JSON.stringify(fees.value.fixed));
 }
 
 const getChangingFees = (value) => {
   fees.value.changing = value;
+  localStorage.setItem("calculator-extended-changing-fees", JSON.stringify(fees.value.changing));
+}
+
+const getInterestRateChange = value => {
+  interestRateChanges.value = value;
+  localStorage.setItem("calculator-extended-interest-rate-changes", JSON.stringify(interestRateChanges.value));
 }
 
 const results = ref(null);
@@ -68,9 +77,9 @@ const schedule = ref([]);
 
 const formData = useLocalStorage({
   date: new Date(2023, 0),
-  amountOfCredit: 300000,
-  period: 25,
-  margin: 2,
+  amountOfCredit: Number(300000),
+  period: Number(25),
+  margin: Number(2),
   commission: 0,
   wibor: Number(props.wiborList[0].value),
   typeOfInstallment: "equal",
@@ -85,6 +94,10 @@ const max = useLocalStorage(formData.value.commissionType === "percent" ? 7 : 10
 const step = useLocalStorage(formData.value.commissionType === "percent" ? 0.1 : 1, 'calculator-extended-step');
 
 onMounted(() => {
+  interestRateChanges.value = JSON.parse(interestRateChangesStorage.value) ?? [];
+  fees.value.fixed = JSON.parse(fixedFeesStorage.value) ?? [];
+  fees.value.changing = JSON.parse(changingFeesStorage.value) ?? [];
+
   watch(commissionType, (newFormData, oldFormData) => {
     if (newFormData !== oldFormData) {
       if (newFormData === 'percent') {
@@ -170,7 +183,6 @@ const getResult = async () => {
       []).getSchedule();
   }
 
-  console.table(schedule.value)
 
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
@@ -270,11 +282,6 @@ const saveSimulation = () => {
     changing_fees: JSON.stringify(fees.value.changing),
     interest_changes: JSON.stringify(interestRateChanges.value)
   }, {preserveScroll: true});
-}
-
-const getInterestRateChange = value => {
-  interestRateChanges.value = value;
-  localStorage.setItem("calculator-extended-interest-rate-changes", JSON.stringify(interestRateChanges.value));
 }
 </script>
 
@@ -398,7 +405,7 @@ const getInterestRateChange = value => {
             @input-list="getInterestRateChange"
             title="Zmiany oprocentowania"
             placeholder="Oprocentowanie [%]"
-            :data="interestRateChanges"
+            :data="interestRateChangesStorage"
           />
         </div>
         <div>
@@ -406,7 +413,7 @@ const getInterestRateChange = value => {
             @input-list="getFixedFees"
             title="Opłaty stałe:"
             placeholder="Kwota [PLN]"
-            :data="fees.fixed"
+            :data="fixedFeesStorage"
           />
         </div>
         <div>
@@ -414,7 +421,7 @@ const getInterestRateChange = value => {
             @input-list="getChangingFees"
             title="Opłaty zmienne:"
             placeholder="[%]"
-            :data="fees.changing"
+            :data="changingFeesStorage"
           />
         </div>
         <button @click="getResult" class="btn btn-primary text-white w-full">
@@ -489,7 +496,7 @@ const getInterestRateChange = value => {
               <ResultBox
                 :schedule="defaultSchedule"
                 :amount-of-credit="formData.amountOfCredit"
-                :commission="formData.commission"
+                :commission="Number(formData.commission)"
                 :commission-type="formData.commissionType"
               />
             </div>

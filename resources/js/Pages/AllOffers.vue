@@ -12,10 +12,6 @@ const props = defineProps({
   credits: Object,
   creditCount: Number
 });
-
-console.log(props.creditCount)
-
-
 </script>
 
 <template>

@@ -34,11 +34,19 @@ class OverpaymentSimulationsController extends Controller
             'period' => 'required|numeric',
             'margin' => 'required|numeric',
             'commission' => 'required|numeric',
+            'commission_type' => 'string',
             'type_of_installment' => 'required|string',
             'overpayment_type' => 'string|required',
             'wibor_id' => 'required|numeric',
             'overpayments' => 'json'
         ]);
+
+        if ($validated['commission_type'] === 'number') {
+            $validated['commission'] =
+                round(($validated['commission'] / $validated['amount_of_credit']) * 100, 2);
+        }
+
+        unset($validated['commission_type']);
 
         $wibor = Wibor::where('value', $validated['wibor_id'])->first();
 

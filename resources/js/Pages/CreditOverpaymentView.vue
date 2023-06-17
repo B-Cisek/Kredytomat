@@ -17,6 +17,7 @@ import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
+import useLocalStorage from "@/Composables/useLocalStorage";
 
 const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN, getInterestPartArray} = useHelpers();
 
@@ -44,15 +45,24 @@ const costCostDiff = ref(null);
 const monthsLess = ref(0);
 const costLessPercent = ref(0);
 
+const commission = useLocalStorage(0, 'calculator-overpayment-commission');
+const commissionType = useLocalStorage('percent', 'calculator-overpayment-commission-type');
+
 const formData = ref({
   amountOfCredit: Number(localStorage.getItem("overpayment-amountOfCredit") ?? 300000),
   period: Number(localStorage.getItem("overpayment-period") ?? 25),
   margin: Number(localStorage.getItem("overpayment-margin") ?? 2),
   commission: Number(localStorage.getItem("overpayment-commission") ?? 0),
   wibor: Number(localStorage.getItem("overpayment-wibor") ?? Number(props.wiborList[0].value)),
-  typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "rowne",
-  commissionType: "percent"
+  typeOfInstallment: localStorage.getItem("overpayment-typeOfInstallment") ?? "equal",
+  commissionType: JSON.parse(localStorage.getItem("calculator-overpayment-commission-type")) ?? "percent"
 });
+
+
+const min = ref(0);
+const max = useLocalStorage(formData.value.commissionType === "percent" ? 7 : 10000, 'calculator-overpayment-max');
+const step = useLocalStorage(formData.value.commissionType === "percent" ? 0.1 : 1, 'calculator-overpayment-step');
+
 
 watch(formData.value, (newValue, oldValue) => {
   localStorage.setItem("overpayment-amountOfCredit", newValue.amountOfCredit.toString());
@@ -60,6 +70,7 @@ watch(formData.value, (newValue, oldValue) => {
   localStorage.setItem("overpayment-margin", newValue.margin.toString());
   localStorage.setItem("overpayment-commission", newValue.commission.toString());
   localStorage.setItem("overpayment-wibor", newValue.wibor.toString());
+  localStorage.setItem("overpayment-typeOfInstallment", newValue.typeOfInstallment.toString());
   localStorage.setItem("overpayment-typeOfInstallment", newValue.typeOfInstallment.toString());
 });
 
@@ -133,8 +144,8 @@ const getResult = async () => {
 
   let creditResult;
 
-  if (formData.value.typeOfInstallment === "rowne") creditResult = equalInstallment();
-  if (formData.value.typeOfInstallment === "malejace") creditResult = decreasingInstallment();
+  if (formData.value.typeOfInstallment === "equal") creditResult = equalInstallment();
+  if (formData.value.typeOfInstallment === "decreasing") creditResult = decreasingInstallment();
 
 
   schedule.value = creditResult;
@@ -168,7 +179,31 @@ const getType = (value) => {
   localStorage.setItem("overpayment-type", value);
 }
 
-onMounted(() => overpayments.value = JSON.parse(overpaymentsStorage.value));
+onMounted(() => {
+  overpayments.value = JSON.parse(overpaymentsStorage.value);
+
+  watch(commissionType, (newFormData, oldFormData) => {
+    if (newFormData !== oldFormData) {
+      if (newFormData === 'percent') {
+        max.value = 7;
+        step.value = 0.1;
+        formData.value.commissionType = 'percent';
+        commission.value = ((commission.value / formData.value.amountOfCredit) * 100).toFixed(2);
+      }
+
+      if (newFormData === 'number') {
+        max.value = 10000;
+        step.value = 1;
+        formData.value.commissionType = 'number';
+        commission.value = (commission.value * formData.value.amountOfCredit) / 100;
+      }
+    }
+  });
+});
+
+watch(commission, newValue => {
+  formData.value.commission = newValue;
+});
 
 const saveSimulation = () => {
   Inertia.post(route('profil.overpayment.save'), {
@@ -176,6 +211,7 @@ const saveSimulation = () => {
     period: formData.value.period,
     margin: formData.value.margin,
     commission: formData.value.commission,
+    commission_type: formData.value.commissionType,
     type_of_installment: formData.value.typeOfInstallment,
     wibor_id: formData.value.wibor,
     overpayment_type: overpaymentType.value,
@@ -277,7 +313,7 @@ let options = {
             />
           </div>
         </div>
-        <div class="lg:flex gap-x-16 mt-7">
+        <div class="lg:flex gap-x-16">
           <div class="flex-1">
             <RangeWithInput
               v-model="formData.margin"
@@ -291,14 +327,43 @@ let options = {
             />
           </div>
           <div class="flex-1">
-            <RangeWithInputSelect
-              heading="Prowizja"
-              @selected-type="setCommissionType"
-              @commission-value="setCommissionValue"
-            />
+            <div>
+              <div class="flex mb-3 items-center justify-between">
+
+                <h3 class="font-semibold text-black">Prowizja</h3>
+
+                <div class="relative">
+                  <input
+                    v-model="commission"
+                    type="number"
+                    class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[180px]"
+                  />
+                  <select
+                    v-model="commissionType"
+                    class="appearance-none cursor-pointer absolute right-0 w-25 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white">
+                    <option selected value="number">PLN</option>
+                    <option value="percent">%</option>
+                  </select>
+                </div>
+              </div>
+
+              <input
+                v-model.number="commission"
+                type="range"
+                :min="min"
+                :max="max"
+                :step="step"
+                class="range range-primary bg-[#d1d3d9]"
+              />
+
+              <label class="label">
+                <span class="label-text-alt text-black">{{ min }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+                <span class="label-text-alt text-black">{{ max }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+              </label>
+            </div>
           </div>
         </div>
-        <div class="lg:flex gap-x-16 mt-7">
+        <div class="lg:flex gap-x-16 mt-5 gap-4">
           <div class="flex-1">
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
@@ -331,8 +396,8 @@ let options = {
                 v-model="formData.typeOfInstallment"
               >
                 <option disabled :value="null" selected>Wybierz</option>
-                <option value="rowne">Równe</option>
-                <option value="malejace">Malejące</option>
+                <option value="equal">Równe</option>
+                <option value="decreasing">Malejące</option>
               </select>
             </div>
             <span

@@ -10,7 +10,6 @@ const props = defineProps({
   credits: Object
 });
 
-console.log(props.credits)
 const filterOpen = ref(false);
 </script>
 

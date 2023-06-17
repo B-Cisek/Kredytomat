@@ -285,9 +285,9 @@ const handleToggleProfile = () => {
                             />
                           </svg>
                           <div class="ml-4">
-                            <p class="text-base font-medium text-gray-900">Nadpłata kredytu</p>
+                            <p class="text-base font-medium text-gray-900">Kalkulator nadpłata kredytu</p>
                             <p class="mt-1 text-sm text-gray-500">
-                              Understand how we take your privacy seriously.
+                              Sprawdź jak nadpłata wpłynie na spłate kredytu.
                             </p>
                           </div>
                         </Link>
