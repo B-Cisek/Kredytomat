@@ -2,12 +2,18 @@
 import {onMounted, onUpdated, ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 
-const {formattedToPLN, totalCreditCost, totalCreditInterest, getCommissionValue} = useHelpers()
+const {
+  formattedToPLN,
+  totalCreditCost,
+  totalCreditInterest,
+  getCommissionValue
+} = useHelpers()
 
 const props = defineProps({
   schedule: Object,
   amountOfCredit: Number,
-  commission: Number
+  commission: Number,
+  commissionType: String
 });
 
 const capitalWidth = ref(null);
@@ -25,6 +31,14 @@ const result = () => {
   interestPart.value = props.schedule[0][2];
 
   totalCostOfCredit.value = totalCreditCost(props.schedule);
+
+  // add commission to totalCostOfCredit
+  if (props.commissionType === 'percent') {
+    totalCostOfCredit.value += getCommissionValue(props.commission, props.amountOfCredit)
+  } else {
+    totalCostOfCredit.value += props.commission;
+  }
+
   totalInterest.value = totalCreditInterest(props.schedule);
 
   let sum = capitalPart.value + interestPart.value;
@@ -35,9 +49,6 @@ const result = () => {
 onUpdated(() => result())
 
 onMounted(() => result())
-
-
-
 </script>
 
 <template>
@@ -60,7 +71,7 @@ onMounted(() => result())
       <h6 class="text-white">RATA ODSETKOWA: {{ Math.round(interestWidth) }}%</h6>
     </div>
     <div class="flex justify-between mt-2 gap-3">
-      <div class="bg-[#21A179] text-right rounded py-1 pr-2 min-w-min" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
+      <div class="bg-[#21A179] text-right rounded py-1 pr-2 min-w-fit px-1" :style="`width: ${(capitalWidth < 8 ? 20 : capitalWidth)}%`">
         <p class="text-center font-semibold text-white">{{ formattedToPLN.format(capitalPart) }}</p>
       </div>
       <div class="bg-[#DF2935] text-right rounded py-1 pr-2" :style="`width: ${interestWidth}%`">
@@ -75,7 +86,7 @@ onMounted(() => result())
       <div class="flex-1 text-end">
         <p class="text-white text-xl">Całkowity koszt kredytu</p>
         <p class="text-white text-2xl mt-1 font-semibold">
-          {{ formattedToPLN.format(totalCostOfCredit + getCommissionValue(commission, amountOfCredit)) }}
+          {{ formattedToPLN.format(totalCostOfCredit) }}
         </p>
       </div>
     </div>

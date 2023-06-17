@@ -20,17 +20,16 @@ import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRate
 import RangeWithInput from "@/Components/RangeWithInput.vue";
 import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 import InterestRateChanges from "@/Components/InputsList/InterestRateChanges.vue";
-
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import useLocalStorage from "@/Composables/useLocalStorage";
 
 const {
   formattedToPLN,
   getCapitalPartArray,
   getInterestPartArray,
   getTotalFixedFees,
-  getTotalChangingFees,
-  getCommissionValue
+  getTotalChangingFees
 } = useHelpers();
 
 Chart.register(...registerables);
@@ -47,6 +46,7 @@ const fees = ref({
   changing: []
 });
 
+const interestRateChangesStorage = ref(localStorage.getItem("calculator-extended-interest-rate-changes"));
 const interestRateChanges = ref([]);
 
 const getFixedFees = (value) => {
@@ -66,7 +66,7 @@ const scrollToResult = () => {
 const defaultSchedule = ref([]);
 const schedule = ref([]);
 
-const formData = ref({
+const formData = useLocalStorage({
   date: new Date(2023, 0),
   amountOfCredit: 300000,
   period: 25,
@@ -75,6 +75,37 @@ const formData = ref({
   wibor: Number(props.wiborList[0].value),
   typeOfInstallment: "equal",
   commissionType: "percent"
+}, 'calculator-extended-data');
+
+const commission = useLocalStorage(0, 'calculator-extended-commission');
+const commissionType = useLocalStorage('percent', 'calculator-extended-commission-type');
+
+const min = ref(0);
+const max = useLocalStorage(formData.value.commissionType === "percent" ? 7 : 10000, 'calculator-extended-max');
+const step = useLocalStorage(formData.value.commissionType === "percent" ? 0.1 : 1, 'calculator-extended-step');
+
+onMounted(() => {
+  watch(commissionType, (newFormData, oldFormData) => {
+    if (newFormData !== oldFormData) {
+      if (newFormData === 'percent') {
+        max.value = 7;
+        step.value = 0.1;
+        formData.value.commissionType = 'percent';
+        commission.value = ((commission.value / formData.value.amountOfCredit) * 100).toFixed(2);
+      }
+
+      if (newFormData === 'number') {
+        max.value = 10000;
+        step.value = 1;
+        formData.value.commissionType = 'number';
+        commission.value = (commission.value * formData.value.amountOfCredit) / 100;
+      }
+    }
+  });
+});
+
+watch(commission, newValue => {
+  formData.value.commission = newValue;
 });
 
 const rules = {
@@ -102,6 +133,8 @@ const capitalPartArray = ref(null);
 
 const getResult = async () => {
   const result = await v$.value.$validate();
+
+  formData.value.date = new Date(formData.value.date);
 
   if (!result) {
     return;
@@ -164,14 +197,14 @@ const chartData = ref({
   labels: [],
   datasets: [
     {
-      label: "RATA ODSETKOWA",
+      label: "Rata odsetkowa",
       fill: true,
       data: [],
       backgroundColor: '#DF2935',
 
     },
     {
-      label: "RATA KAPITAŁOWA",
+      label: "Rata kapitałowa",
       fill: true,
       data: [],
       backgroundColor: '#1cb027',
@@ -239,19 +272,9 @@ const saveSimulation = () => {
   }, {preserveScroll: true});
 }
 
-
-const setCommissionType = value => {
-  formData.value.commission = 0;
-  formData.value.commissionType = value;
-}
-
-const setCommissionValue = value => {
-  formData.value.commission = value;
-}
-
 const getInterestRateChange = value => {
   interestRateChanges.value = value;
-  localStorage.setItem("extended-interestRate", JSON.stringify(interestRateChanges.value));
+  localStorage.setItem("calculator-extended-interest-rate-changes", JSON.stringify(interestRateChanges.value));
 }
 </script>
 
@@ -261,7 +284,7 @@ const getInterestRateChange = value => {
     <template v-slot:header>Kalkulator rozszerzony</template>
 
     <template v-slot:default>
-      <section class="flex flex-col gap-8 w-full mx-auto rounded-lg shadow-md border border-gray-200 bg-white p-5">
+      <section class="flex flex-col lg:gap-8 gap-2 w-full mx-auto rounded-lg shadow-md border border-gray-200 bg-white p-5">
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
             <RangeWithInput
@@ -302,11 +325,40 @@ const getInterestRateChange = value => {
             />
           </div>
           <div class="flex-1">
-            <RangeWithInputSelect
-              heading="Prowizja"
-              @selected-type="setCommissionType"
-              @commission-value="setCommissionValue"
-            />
+            <div>
+              <div className="flex mb-3 items-center justify-between">
+
+                <h3 className="font-semibold text-black">Prowizja</h3>
+
+                <div className="relative">
+                  <input
+                    v-model="commission"
+                    type="number"
+                    class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[180px]"
+                  />
+                  <select
+                    v-model="commissionType"
+                    class="appearance-none cursor-pointer absolute right-0 w-25 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white">
+                    <option selected value="number">PLN</option>
+                    <option value="percent">%</option>
+                  </select>
+                </div>
+              </div>
+
+              <input
+                v-model.number="commission"
+                type="range"
+                :min="min"
+                :max="max"
+                :step="step"
+                class="range range-primary bg-[#d1d3d9]"
+              />
+
+              <label className="label">
+                <span className="label-text-alt text-black">{{ min }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+                <span className="label-text-alt text-black">{{ max }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+              </label>
+            </div>
           </div>
         </div>
         <div class="flex flex-col gap-4 lg:flex-row gap-x-16">
@@ -409,7 +461,7 @@ const getInterestRateChange = value => {
                 </div>
                 <div>
                   <p class="mt-1">Prowizja:</p>
-                  <span class="text-xl font-semibold">{{ formData.commission }}%</span>
+                  <span class="text-xl font-semibold">{{ formData.commission }} {{formData.commissionType === 'percent' ? '%' : 'zł'}}</span>
                 </div>
               </div>
               <div class="flex flex-col justify-between items-end text-right flex-1">
@@ -438,6 +490,7 @@ const getInterestRateChange = value => {
                 :schedule="defaultSchedule"
                 :amount-of-credit="formData.amountOfCredit"
                 :commission="formData.commission"
+                :commission-type="formData.commissionType"
               />
             </div>
           </div>

@@ -71,13 +71,13 @@ const chartData = ref({
   labels: labels,
   datasets: [
     {
-      label: 'Obecna rata',
+      label: 'Suma rat (rok)',
       data: [],
       backgroundColor: "#acbac9",
       stack: 'Stack 0',
     },
     {
-      label: 'Zmiana',
+      label: 'Zmiana (rok)',
       data: [],
       backgroundColor: "#00b55a",
       stack: 'Stack 0',

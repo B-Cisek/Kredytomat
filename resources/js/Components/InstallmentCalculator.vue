@@ -30,7 +30,7 @@ onMounted(() => {
     if (newValue === "number") {
       max.value = 10000;
       step.value = 1;
-      commission.value = (commission.value  / 100) * amountOfCredit.value;
+      commission.value = (commission.value / 100) * amountOfCredit.value;
       commissionType.value = "number";
     } else {
       max.value = 7;
