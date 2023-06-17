@@ -1,31 +1,29 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
-import {ref} from "vue";
+import TestSelectInput from "@/Components/TestSelectInput.vue";
+import {ref, watch} from "vue";
 
-const commission = ref(0);
-const commissionType = ref("percent");
+const amountOfCredit = ref(250000);
+const commission = ref(2000);
+const commissionType = ref("number");
 
-const setCommissionType = value => {
-  commission.value = 0;
-  commissionType.value = value;
-}
+setTimeout(() => {
+  commissionType.value = "percent";
+}, 3000)
 
-const setCommissionValue = value => {
-  commission.value = value;
-}
+
 </script>
 
 <template>
 <Layout>
   <template v-slot:header>
-    dsadas
+    Test
   </template>
   <template v-slot:default>
-    <RangeWithInputSelect
+    <TestSelectInput
+      v-model:commission="commission"
+      v-model:commission-type="commissionType"
       heading="Prowizja"
-      @selected-type="setCommissionType"
-      @commission-value="setCommissionValue"
     />
   </template>
 </Layout>

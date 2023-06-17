@@ -1,22 +1,45 @@
 <script setup>
-import {nextTick, ref, watch} from "vue";
+import {nextTick, onMounted, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import Chart from "@/Components/Chart.vue";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
-import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 import useLocalStorage from "@/Composables/useLocalStorage";
+import {PieChart} from "vue-chart-3";
+import {Chart, registerables} from "chart.js";
 
 const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
+
+Chart.register(...registerables);
 
 /** Form inputs */
 const amountOfCredit = useLocalStorage(250000, 'calculator-amountOfCredit');
 const period = useLocalStorage(25, 'calculator-period');
 const rate = useLocalStorage(7, 'calculator-rate');
 const commission = useLocalStorage(0, 'calculator-commission');
-const commissionType = ref("percent");
+const commissionType = useLocalStorage("percent", "calculator-commission-type");
 const commissionResult = ref(0);
+
+const min = ref(0);
+const max = useLocalStorage(commissionType.value === "percent" ? 7 : 10000, 'calculator-max');
+const step = useLocalStorage(commissionType.value === "percent" ? 0.1 : 1, 'calculator-step');
+
+
+onMounted(() => {
+  watch(commissionType, newValue => {
+    if (newValue === "number") {
+      max.value = 10000;
+      step.value = 1;
+      commission.value = (commission.value  / 100) * amountOfCredit.value;
+      commissionType.value = "number";
+    } else {
+      max.value = 7;
+      step.value = 0.1;
+      commission.value = Number(((commission.value / amountOfCredit.value) * 100).toFixed(2));
+      commissionType.value = "percent";
+    }
+  });
+});
 
 const commissionCalculation = () => {
   if (commissionType.value === "percent") {
@@ -92,16 +115,16 @@ const dataRatyStale = {
   ],
 };
 
-const options = {
+const options = ref({
   responsive: true,
   plugins: {
     legend: {
       position: 'top',
     },
   }
-};
+});
 
-const dataRatyMalejace = {
+const dataRatyMalejace = ref({
   labels: ['Kwota kredytu', `Odsetki`, `Prowizja banku`],
   datasets: [
     {
@@ -110,8 +133,7 @@ const dataRatyMalejace = {
       backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
     },
   ],
-};
-
+});
 </script>
 
 <template>
@@ -158,11 +180,40 @@ const dataRatyMalejace = {
         />
       </div>
       <div class="flex-1">
-        <RangeWithInputSelect
-          heading="Prowizja"
-          @selected-type="setCommissionType"
-          @commission-value="setCommissionValue"
-        />
+        <div>
+          <div className="flex mb-3 items-center justify-between">
+
+            <h3 className="font-semibold text-black">Prowizja</h3>
+
+            <div className="relative">
+              <input
+                v-model="commission"
+                type="number"
+                class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[180px]"
+              />
+              <select
+                v-model="commissionType"
+                class="appearance-none cursor-pointer absolute right-0 w-25 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white">
+                <option selected value="number">PLN</option>
+                <option value="percent">%</option>
+              </select>
+            </div>
+          </div>
+
+          <input
+            v-model.number="commission"
+            type="range"
+            :min="min"
+            :max="max"
+            :step="step"
+            class="range range-primary bg-[#d1d3d9]"
+          />
+
+          <label className="label">
+            <span className="label-text-alt text-black">{{ min }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+            <span className="label-text-alt text-black">{{ max }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
+          </label>
+        </div>
       </div>
     </div>
     <button @click="calc" class="btn btn-primary text-white">
@@ -170,9 +221,9 @@ const dataRatyMalejace = {
     </button>
   </section>
   <section
-    v-show="equalInstallment != null"
+    v-if="equalInstallment != null"
     ref="results"
-    class="w-full mx-auto p-5 mt-8 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
+    class="w-full mx-auto p-5 mt-5 flex flex-col rounded-lg shadow-2xl border border-gray-200 bg-white"
   >
     <h1 class="text-2xl font-semibold mb-10 text-gray-700">
       Wyniki obliczeń. Porównaj koszty kredytu
@@ -193,7 +244,7 @@ const dataRatyMalejace = {
           </div>
         </div>
         <div class="flex justify-center items-center mt-8">
-          <Chart :data="dataRatyStale" :options="options"/>
+          <PieChart :chartData="dataRatyStale" :options="options"/>
         </div>
       </div>
 
@@ -201,7 +252,8 @@ const dataRatyMalejace = {
       <div class="flex font-semibold items-center text-2xl text-[#e0e0e0] relative hidden lg:flex">
         <span id="divider-vertical">VS</span>
       </div>
-      <div class="w-full flex font-semibold items-center justify-center lg:hidden relative text-2xl text-[#e0e0e0] mt-5">
+      <div
+        class="w-full flex font-semibold items-center justify-center lg:hidden relative text-2xl text-[#e0e0e0] mt-5">
         <span class="w-full text-center" id="divider-horizontal">VS</span>
       </div>
       <!-- DIVIDERS END -->
@@ -219,7 +271,7 @@ const dataRatyMalejace = {
           </div>
         </div>
         <div class="flex justify-center items-center mt-8">
-          <Chart :data="dataRatyMalejace" :options="options"/>
+          <PieChart :chartData="dataRatyMalejace" :options="options"/>
         </div>
       </div>
     </div>

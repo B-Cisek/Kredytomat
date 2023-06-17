@@ -15,10 +15,14 @@ import {Inertia} from "@inertiajs/inertia";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
+import {LineChart} from "vue-chart-3";
+import {Chart, registerables} from "chart.js";
 
-const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN} = useHelpers();
+const {formatHarmonogram, totalCreditCost, totalCreditInterest, formattedToPLN, getInterestPartArray} = useHelpers();
 
 const auth = computed(() => usePage().props.value.auth);
+
+Chart.register(...registerables);
 
 const props = defineProps({
   wiborList: Object,
@@ -141,7 +145,16 @@ const getResult = async () => {
   monthsLess.value = baseCreditSchedule.value.length - schedule.value.length;
   costLessPercent.value = 100 - ((totalCreditInterest(schedule.value) / totalCreditInterest(baseCreditSchedule.value)) * 100);
 
-  console.table(schedule.value)
+
+  let label = [];
+  for (let i = 1; i <= schedule.value.length; i++) {
+    label.push(i);
+  }
+
+  chartData.value.labels = label;
+  chartData.value.datasets[0].data = getInterestPartArray(schedule.value);;
+  chartData.value.datasets[1].data = getInterestPartArray(baseCreditSchedule.value);;
+
   await nextTick(() => scrollToResult());
 }
 
@@ -178,6 +191,56 @@ const setCommissionType = value => {
 const setCommissionValue = value => {
   formData.value.commission = value;
 }
+
+
+const chartData = ref({
+  labels: [],
+  datasets: [
+    {
+      label: "Odsetki po nadpłacie",
+      fill: true,
+      data: [],
+      backgroundColor: 'rgba(28, 176, 39, 0.2)',
+      borderColor: '#1cb027'
+    },
+    {
+      label: "Odsetki bez nadpłaty",
+      fill: true,
+      data: [],
+      backgroundColor: 'rgba(223, 41, 53, 0.2)',
+      borderColor: '#DF2935'
+    },
+  ],
+});
+
+let options = {
+  elements: {
+    point: {
+      pointRadius: 0
+    }
+  },
+  plugins: {
+    title: {
+      display: false,
+      text: 'Stacked'
+    },
+  },
+  responsive: true,
+  interaction: {
+    intersect: false,
+  },
+  scales: {
+    x: {
+      stacked: true,
+    },
+    y: {
+      ticks: {
+        beginAtZero: true,
+        stacked: true
+      }
+    }
+  }
+};
 
 </script>
 
@@ -297,9 +360,20 @@ const setCommissionValue = value => {
       <section
         ref="results"
         v-if="formattedSchedule.length"
-        class="flex flex-col gap-y-2"
+        class="flex flex-col gap-y-2 mt-5"
       >
         <Collapse title="Dane" :collapsed="true">
+
+          <div
+            id="save-button"
+            v-if="auth.loggedIn"
+            class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
+            <button
+              @click="saveSimulation">
+              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
+            </button>
+          </div>
+
           <div class="bg-[#21a142] px-5 pt-5 rounded-t text-white flex">
             <div class="flex flex-col justify-between flex-1 gap-3">
               <div>
@@ -356,15 +430,6 @@ const setCommissionValue = value => {
         </Collapse>
 
         <Collapse class="relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
-          <div
-            v-if="auth.loggedIn"
-            class="w-12 h-12 absolute rounded-full -left-5 -top-5 grid place-items-center">
-            <button
-              @click="saveSimulation">
-              <img title="Zapisz obliczenia" src="https://img.icons8.com/plasticine/100/null/plus-2-math.png"/>
-            </button>
-          </div>
-
           <div class="flex justify-center gap-10">
               <div class="flex-col flex p-5">
                 <label>Oszczędność na całym kredycie</label>
@@ -386,6 +451,10 @@ const setCommissionValue = value => {
             </div>
         </Collapse>
 
+        <Collapse title="Wykres kosztu kredytu" :collapsed="true">
+          <LineChart class="h-[400px]" :chartData="chartData" :options="options"/>
+        </Collapse>
+
         <Collapse title="Harmonogram" :collapsed="true">
           <CreditScheduleOverpayment :schedule="formattedSchedule"/>
         </Collapse>
@@ -394,3 +463,13 @@ const setCommissionValue = value => {
     </template>
   </Layout>
 </template>
+
+<style scoped>
+#save-button:hover {
+  transform: scale(1.5);
+}
+
+#save-button {
+  transition: transform .2s;
+}
+</style>

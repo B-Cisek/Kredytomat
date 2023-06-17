@@ -3,16 +3,13 @@ import {computed, ref, watch} from "vue";
 
 const props = defineProps({
   heading: String,
+  selectedType: String,
   commission: {
     type: Number,
     required: true
   },
   commissionType: {
     type: String,
-    required: true
-  },
-  amountOfCredit: {
-    type: Number,
     required: true
   }
 });
@@ -21,7 +18,7 @@ const min = ref(0);
 const max = ref(props.commissionType === "percent" ? 7 : 10000);
 const step = ref(props.commissionType === "percent" ? 0.1 : 1);
 
-const emit = defineEmits(['update:commission', 'update:commissionType', 'update:amountOfCredit']);
+const emit = defineEmits(['update:commission', 'update:commissionType']);
 
 const commissionValue = computed({
   get() {
@@ -41,17 +38,7 @@ const commissionTypeValue = computed({
   }
 });
 
-const amountOfCreditValue = computed({
-  get() {
-    return props.amountOfCredit;
-  },
-  set(newValue) {
-    emit('update:amountOfCredit', newValue)
-  }
-});
-
 watch(commissionTypeValue, newValue => {
-  console.log(newValue)
   if (newValue === "number") {
     min.value = 0;
     max.value = 10000;
@@ -62,12 +49,11 @@ watch(commissionTypeValue, newValue => {
 });
 
 watch(commissionTypeValue, newValue => {
-  console.log(newValue)
   if (newValue === "percent") {
     min.value = 0;
     max.value = 7;
     step.value = 0.1;
-    commissionValue.value = Number(((commissionValue.value / 250000) * 100).toFixed(2));
+    commissionValue.value = (commissionValue.value / 250000) * 100;
     commissionTypeValue.value = "percent";
   }
 });
@@ -109,4 +95,3 @@ watch(commissionTypeValue, newValue => {
     </label>
   </div>
 </template>
-
