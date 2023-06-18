@@ -219,7 +219,7 @@ let options = {
   },
   responsive: true,
   interaction: {
-    intersect: false, 1
+    intersect: false,
   },
   scales: {
     x: {
