@@ -12,14 +12,16 @@ class ExtendedCalculatorController extends Controller
     public function __invoke(Request $request): Response
     {
         $data = [
-            'amountOfCredit' => $request->input('amount_of_credit'),
+            'amount_of_credit' => $request->input('amount_of_credit'),
             'period' => $request->input('period'),
             'margin' => $request->input('margin'),
             'commission' => $request->input('commission'),
+            'commission_type' => 'percent',
             'wibor' => $request->input('wibor'),
-            'typeOfInstallment' => $request->input('type_of_installment'),
-            'changingFees' => $request->input('changing_fees'),
-            'fixedFees' => $request->input('fixed_fees')
+            'type_of_installment' => $request->input('type_of_installment'),
+            'interest_changes' => $request->input('interest_changes'),
+            'changing_fees' => $request->input('changing_fees'),
+            'fixed_fees' => $request->input('fixed_fees')
         ];
 
         return Inertia::render('CalculatorExtended', [

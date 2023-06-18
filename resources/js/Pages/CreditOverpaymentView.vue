@@ -27,6 +27,7 @@ Chart.register(...registerables);
 
 const props = defineProps({
   wiborList: Object,
+  defaultData: Object
 });
 
 const results = ref(null);
@@ -110,9 +111,9 @@ const decreasingInstallment = () => {
 const equalInstallment = () => {
   if (overpaymentType.value === "period") {
     baseCreditSchedule.value = useEqualInstallmentsV2({
-        date: new Date(2023, 0),
-        ...formData.value
-      }, []).getScheduleShorterPeriod();
+      date: new Date(2023, 0),
+      ...formData.value
+    }, []).getScheduleShorterPeriod();
 
     return useEqualInstallmentsV2({
       date: new Date(2023, 0),
@@ -121,7 +122,7 @@ const equalInstallment = () => {
   } else {
     baseCreditSchedule.value = useEqualInstallmentsV2({
       date: new Date(2023, 0),
-     ...formData.value
+      ...formData.value
     }, [], []).getScheduleSmallerInstallment();
 
     return useEqualInstallmentsV2({
@@ -156,7 +157,6 @@ const getResult = async () => {
   monthsLess.value = baseCreditSchedule.value.length - schedule.value.length;
   costLessPercent.value = 100 - ((totalCreditInterest(schedule.value) / totalCreditInterest(baseCreditSchedule.value)) * 100);
 
-
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
     label.push(i);
@@ -179,8 +179,23 @@ const getType = (value) => {
   localStorage.setItem("overpayment-type", value);
 }
 
+const overwriteData = () => {
+  formData.value.amountOfCredit = Number(props.defaultData.amount_of_credit) || formData.value.amountOfCredit;
+  formData.value.period = Number(props.defaultData.period) || formData.value.period;
+  formData.value.margin = Number(props.defaultData.margin) || formData.value.margin;
+  commission.value = Number(props.defaultData.commission) || formData.value.commission;
+  commissionType.value = "percent";
+  formData.value.typeOfInstallment = props.defaultData.type_of_installment || formData.value.typeOfInstallment;
+  formData.value.wibor = Number(props.defaultData.wibor) || formData.value.wibor;
+  overpaymentType.value = props.defaultData.overpayment_type || overpaymentType.value;
+  if (props.defaultData.overpayments !== null) {
+    overpayments.value = JSON.parse(decodeURIComponent(props.defaultData.overpayments));
+  }
+}
+
 onMounted(() => {
   overpayments.value = JSON.parse(overpaymentsStorage.value);
+  overwriteData();
 
   watch(commissionType, (newFormData, oldFormData) => {
     if (newFormData !== oldFormData) {
@@ -218,16 +233,6 @@ const saveSimulation = () => {
     overpayments: JSON.stringify(overpayments.value),
   }, {preserveScroll: true});
 }
-
-const setCommissionType = value => {
-  formData.value.commission = 0;
-  formData.value.commissionType = value;
-}
-
-const setCommissionValue = value => {
-  formData.value.commission = value;
-}
-
 
 const chartData = ref({
   labels: [],
@@ -365,10 +370,10 @@ let options = {
         </div>
         <div class="lg:flex gap-x-16 mt-5 gap-4">
           <div class="flex-1">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-5 lg:mb-0">
               <label class="font-semibold text-black" for="wibor">WIBOR</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-[260px] w-[180px]"
                 :class="{'border-red-700': v$.wibor.$errors.length !== 0}"
                 v-model="formData.wibor"
               >
@@ -391,7 +396,7 @@ let options = {
             <div class="flex justify-between items-center">
               <label class="font-semibold text-black" for="wibor">Rodzaj rat</label>
               <select
-                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none w-[260px]"
+                class="select select-bordered max-w-xs border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-[260px] w-[180px]"
                 :class="{'border-red-700': v$.typeOfInstallment.$errors.length !== 0}"
                 v-model="formData.typeOfInstallment"
               >
@@ -467,7 +472,9 @@ let options = {
               </div>
               <div>
                 <p class="mt-1">Prowizja:</p>
-                <span class="text-xl font-semibold">{{ formData.commission }}%</span>
+                <span class="text-xl font-semibold">{{
+                    formData.commission
+                  }} {{ formData.commissionType === 'percent' ? '%' : 'zł' }}</span>
               </div>
             </div>
           </div>
@@ -495,25 +502,43 @@ let options = {
         </Collapse>
 
         <Collapse class="relative" title="Jaki skutek przyniesie nadpłata kredytu?" :collapsed="true">
-          <div class="flex justify-center gap-10">
-              <div class="flex-col flex p-5">
-                <label>Oszczędność na całym kredycie</label>
-                <span class="text-2xl font-semibold">{{ formattedToPLN.format(costCostDiff)}}</span>
-              </div>
-              <div class="flex-col flex p-5">
-                <label>Skrócenie okresu kredytowania o:</label>
-                <span class="text-2xl font-semibold">{{monthsLess}} miesięcy</span>
-              </div>
-
-              <div class="flex-col flex p-5">
-                <label>Zmniejszenie kosztów o:</label>
-                <span class="text-2xl font-semibold">{{ costLessPercent.toFixed(2) }}%</span>
-              </div>
-              <div class="flex-col flex p-5">
-                <label>Roczna oszczędność</label>
-                <span class="text-2xl font-semibold">---- PLN</span>
-              </div>
+          <div v-if="overpaymentType === 'period'" class="flex justify-between gap-10">
+            <div class="flex-col flex p-5">
+              <label>Liczba rat</label>
+              <span class="text-2xl font-semibold">{{schedule.length}}</span>
             </div>
+            <div class="flex-col flex p-5">
+              <label>Skrócenie okresu kredytowania o:</label>
+              <span class="text-2xl font-semibold">{{ monthsLess }} miesięcy</span>
+            </div>
+            <div class="flex-col flex p-5">
+              <label>Zmniejszenie kosztów o:</label>
+              <span class="text-2xl font-semibold">{{ costLessPercent.toFixed(2) }}%</span>
+            </div>
+            <div class="flex-col flex p-5">
+              <label>Oszczędność na całym kredycie</label>
+              <span class="text-2xl font-semibold">{{ formattedToPLN.format(costCostDiff) }}</span>
+            </div>
+          </div>
+
+          <div v-if="overpaymentType === 'installment'" class="flex justify-between gap-10">
+            <div class="flex-col flex p-5">
+              <label>Liczba rat</label>
+              <span class="text-2xl font-semibold">{{schedule.length}}</span>
+            </div>
+            <div class="flex-col flex p-5">
+              <label>Skrócenie okresu kredytowania o:</label>
+              <span class="text-2xl font-semibold">{{ monthsLess }} miesięcy</span>
+            </div>
+            <div class="flex-col flex p-5">
+              <label>Zmniejszenie kosztów o:</label>
+              <span class="text-2xl font-semibold">{{ costLessPercent.toFixed(2) }}%</span>
+            </div>
+            <div class="flex-col flex p-5">
+              <label>Oszczędność na całym kredycie</label>
+              <span class="text-2xl font-semibold">{{ formattedToPLN.format(costCostDiff) }}</span>
+            </div>
+          </div>
         </Collapse>
 
         <Collapse title="Wykres kosztu kredytu" :collapsed="true">

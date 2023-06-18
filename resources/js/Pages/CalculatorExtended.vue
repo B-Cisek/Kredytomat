@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {computed, nextTick, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onBeforeMount, onMounted, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
@@ -254,17 +254,25 @@ let options = {
 };
 
 const overwriteData = () => {
-  formData.value.amountOfCredit = props.defaultData.amountOfCredit ?? formData.value.amountOfCredit;
-  formData.value.commission = Number(props.defaultData.commission) ?? formData.value.commission;
-  formData.value.margin = props.defaultData.margin ?? formData.value.margin;
-  formData.value.period = props.defaultData.period ?? formData.value.period;
-  formData.value.typeOfInstallment = props.defaultData.typeOfInstallment ?? formData.value.typeOfInstallment;
-  formData.value.wibor = props.defaultData.wibor ?? formData.value.wibor;
-  fees.value.fixed = JSON.parse(decodeURIComponent(props.defaultData.fixedFees)) ?? fees.value.fixed;
-  fees.value.changing = JSON.parse(decodeURIComponent(props.defaultData.changingFees)) ?? fees.value.changing;
+  formData.value.amountOfCredit = Number(props.defaultData.amount_of_credit) || formData.value.amountOfCredit;
+  formData.value.period = Number(props.defaultData.period) || formData.value.period;
+  formData.value.margin = Number(props.defaultData.margin) || formData.value.margin;
+  commission.value = Number(props.defaultData.commission) || formData.value.commission;
+  commissionType.value = "percent";
+  formData.value.typeOfInstallment = props.defaultData.type_of_installment || formData.value.typeOfInstallment;
+  formData.value.wibor = Number(props.defaultData.wibor) || formData.value.wibor;
+  if (props.defaultData.interest_changes) {
+    interestRateChanges.value = JSON.parse(decodeURIComponent(props.defaultData.interest_changes));
+  }
+  if (props.defaultData.changing_fees) {
+    fees.value.changing = JSON.parse(decodeURIComponent(props.defaultData.changing_fees));
+  }
+  if (props.defaultData.fixed_fees) {
+    fees.value.fixed = JSON.parse(decodeURIComponent(props.defaultData.fixed_fees));
+  }
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   overwriteData();
 });
 

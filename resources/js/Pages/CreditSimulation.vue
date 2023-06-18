@@ -5,7 +5,7 @@ import {LineChart} from "vue-chart-3";
 import {useHelpers} from "@/Composables/useHelpers";
 import {useEqualInstallments} from "@/Composables/useEqualInstallments";
 import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, ref} from "vue";
 import {Chart, registerables} from "chart.js";
 import html2pdf from "html2pdf.js";
 import CreditSchedule from "@/Components/CreditSchedule.vue";
@@ -13,6 +13,8 @@ import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRate
 import {Inertia} from "@inertiajs/inertia";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
+import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
+import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 
 const {
   formattedToPLN,
@@ -25,6 +27,7 @@ const {
 const props = defineProps({
   creditSimulation: Object
 });
+
 
 const interestPartArray = ref(null);
 const capitalPartArray = ref(null);
@@ -41,8 +44,8 @@ const credit = ref({
 Chart.register(...registerables);
 
 const calculation = () => {
-  if (props.creditSimulation.type_of_installment === "rowne") {
-    schedule.value = useEqualInstallments({
+  if (props.creditSimulation.type_of_installment === "equal") {
+    schedule.value = useEqualInstallmentsV2({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.creditSimulation.amount_of_credit),
         period: Number(props.creditSimulation.period),
@@ -56,7 +59,7 @@ const calculation = () => {
       JSON.parse(props.creditSimulation.changing_fees)
     ).getSchedule();
   } else {
-    schedule.value = useDecreasinginstallments({
+    schedule.value = useDecreasingInstallmentsV2({
       date: new Date(2023, 0),
       amountOfCredit: Number(props.creditSimulation.amount_of_credit),
       period: Number(props.creditSimulation.period),
@@ -110,14 +113,14 @@ const chartData = ref({
   labels: [],
   datasets: [
     {
-      label: "RATA ODSETKOWA",
+      label: "Rata odsetkowa",
       fill: true,
       data: [],
       backgroundColor: '#DF2935',
 
     },
     {
-      label: "RATA KAPITAŁOWA",
+      label: "Rata kapitałowa",
       fill: true,
       data: [],
       backgroundColor: '#1cb027',
@@ -174,11 +177,10 @@ const openCalculator = () => {
     wibor: props.creditSimulation.wibor.value,
     type_of_installment: props.creditSimulation.type_of_installment,
     changing_fees: encodeURIComponent(props.creditSimulation.changing_fees),
-    fixed_fees: encodeURIComponent(props.creditSimulation.fixed_fees)
+    fixed_fees: encodeURIComponent(props.creditSimulation.fixed_fees),
+    interest_changes: encodeURIComponent(props.creditSimulation.interest_changes)
   }));
 }
-
-
 </script>
 
 <template>
@@ -236,7 +238,9 @@ const openCalculator = () => {
             </button>
             <button @click="confirmationModalOpen = true">
               <img class="h-[46px] hover:opacity-75"
-                   src="https://img.icons8.com/external-smashingstocks-circular-smashing-stocks/100/null/external-delete-webmobile-applications-smashingstocks-circular-smashing-stocks.png"/>
+                   src="https://img.icons8.com/external-smashingstocks-circular-smashing-stocks/100/null/external-delete-webmobile-applications-smashingstocks-circular-smashing-stocks.png"
+                   alt=""
+              />
             </button>
           </div>
         </div>
