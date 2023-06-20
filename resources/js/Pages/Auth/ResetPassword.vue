@@ -27,7 +27,7 @@ const submit = () => {
 
 <template>
   <GuestLayout>
-    <Head title="Reset Password"/>
+    <Head title="Resetowanie hasła"/>
 
     <form @submit.prevent="submit">
       <div>
@@ -45,7 +45,7 @@ const submit = () => {
       </div>
 
       <div class="mt-4">
-        <InputLabel for="password" value="Password"/>
+        <InputLabel for="password" value="Hasło"/>
         <TextInput
           id="password"
           type="password"
@@ -58,7 +58,7 @@ const submit = () => {
       </div>
 
       <div class="mt-4">
-        <InputLabel for="password_confirmation" value="Confirm Password"/>
+        <InputLabel for="password_confirmation" value="Potwierdź Hasło"/>
         <TextInput
           id="password_confirmation"
           type="password"

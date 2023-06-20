@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, onUpdated, ref} from "vue";
+import {onMounted, onUpdated, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 
 const {
@@ -46,9 +46,11 @@ const result = () => {
   interestWidth.value = (interestPart.value / sum * 1) * 100;
 }
 
-onUpdated(() => result())
+watch(props, () => {
+  result();
+}, {deep: true})
 
-onMounted(() => result())
+onMounted(() => result());
 </script>
 
 <template>
