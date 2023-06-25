@@ -189,15 +189,18 @@ export function useDecreasingInstallmentsV2(
             let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7], credit.commission);
             let onceOverpayment = 0;
 
-            overpayment.forEach(value => {
-                let startDate = new Date(value.start.year, value.start.month);
-                let endDate = new Date(value.end.year, value.end.month);
-                let currentDate = getNextMonth(lastRow[0]);
 
-                if (isDateInRange(currentDate, startDate, endDate)) {
-                    onceOverpayment = value.overpayment;
-                }
-            });
+            if (overpayment) {
+                overpayment.forEach(value => {
+                    let startDate = new Date(value.start.year, value.start.month);
+                    let endDate = new Date(value.end.year, value.end.month);
+                    let currentDate = getNextMonth(lastRow[0]);
+
+                    if (isDateInRange(currentDate, startDate, endDate)) {
+                        onceOverpayment = value.overpayment;
+                    }
+                });
+            }
 
             let current = [
                 currentDate,

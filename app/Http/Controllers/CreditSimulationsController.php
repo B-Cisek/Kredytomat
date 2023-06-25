@@ -15,7 +15,11 @@ class CreditSimulationsController extends Controller
 {
     public function index(): Response
     {
-        $creditSimulations = CreditSimulation::with('wibor')->paginate(10);
+        $userId = Auth::user()->id;
+
+        $creditSimulations = CreditSimulation::with('wibor')
+            ->where('user_id', $userId)
+            ->paginate(10);
 
         return Inertia::render('CreditSimulations', [
             'creditSimulations' => $creditSimulations

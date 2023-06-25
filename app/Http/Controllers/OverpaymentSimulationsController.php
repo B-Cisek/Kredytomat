@@ -15,9 +15,15 @@ class OverpaymentSimulationsController extends Controller
 {
     public function index(): Response
     {
-        $overpaymentSimulation = OverpaymentSimulation::with('wibor')->paginate(10);
+        $userId = Auth::user()->id;
 
-        return Inertia::render('OverpaymentSimulations', compact('overpaymentSimulation'));
+        $overpaymentSimulation = OverpaymentSimulation::with('wibor')
+            ->where('user_id', $userId)
+            ->paginate(10);
+
+        return Inertia::render(
+            'OverpaymentSimulations',
+            compact('overpaymentSimulation'));
     }
 
     public function show($overpaymentSimulation): Response
