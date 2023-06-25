@@ -38,7 +38,6 @@ class WiborSpider extends BasicSpider
 
     /**
      * @param Response $response
-     * @return Generator
      */
     public function parse(Response $response): Generator
     {
