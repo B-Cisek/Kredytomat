@@ -1,5 +1,5 @@
 <script setup>
-import { Link, useForm } from "@inertiajs/inertia-vue3";
+import {Head, Link, useForm} from "@inertiajs/inertia-vue3";
 import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
@@ -31,6 +31,7 @@ const update = () => {
 </script>
 
 <template>
+  <Head title="Edycja banku"/>
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"

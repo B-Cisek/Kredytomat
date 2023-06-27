@@ -104,4 +104,17 @@ class CreditController extends Controller
                 'alert_message' => 'Kredyt usunięty!'
             ]);
     }
+
+    public function massDestroy()
+    {
+        $ids = [1, 2, 3];
+        Credit::destroy($ids);
+
+        return redirect()
+            ->route('admin.credits.index')
+            ->with([
+                'alert_type' => AlertType::DANGER,
+                'alert_message' => 'Usunięto zaznaczone kredyty!'
+            ]);
+    }
 }

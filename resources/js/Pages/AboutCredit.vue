@@ -1,9 +1,11 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
 import Collapse from "@/Components/Collapse.vue";
+import {Head} from "@inertiajs/inertia-vue3";
 </script>
 
 <template>
+  <Head title="O kredycie"/>
   <Layout>
     <template v-slot:header>O Kredycie</template>
     <template v-slot:default>

@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {useForm, usePage} from "@inertiajs/inertia-vue3";
+import {Head, useForm, usePage} from "@inertiajs/inertia-vue3";
 import {computed, ref} from "vue";
 import DeleteAccountModal from "@/Components/Modals/DeleteAccountModal.vue";
 import {Inertia} from "@inertiajs/inertia";
@@ -36,6 +36,7 @@ const updatePassword = () => {
 </script>
 
 <template>
+  <Head title="Profil"/>
   <Layout>
     <template #header>Profil</template>
     <template #default>

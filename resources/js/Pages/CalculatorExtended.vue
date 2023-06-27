@@ -14,7 +14,7 @@ import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments
 import FeesInputsList from "@/Components/InputsList/FeesInputsList.vue";
 import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
-import {usePage} from "@inertiajs/inertia-vue3";
+import {Head, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
 import RangeWithInput from "@/Components/RangeWithInput.vue";
@@ -93,6 +93,50 @@ const min = ref(0);
 const max = useLocalStorage(formData.value.commissionType === "percent" ? 7 : 10000, 'calculator-extended-max');
 const step = useLocalStorage(formData.value.commissionType === "percent" ? 0.1 : 1, 'calculator-extended-step');
 
+
+const overrideData = () => {
+  if (usePage().props.value.ziggy.query.amount_of_credit !== undefined) {
+    formData.value.amountOfCredit = Number(usePage().props.value.ziggy.query.amount_of_credit);
+  }
+
+  if (usePage().props.value.ziggy.query.period !== undefined) {
+    formData.value.period = Number(usePage().props.value.ziggy.query.period);
+  }
+
+  if (usePage().props.value.ziggy.query.margin !== undefined) {
+    formData.value.margin = Number(usePage().props.value.ziggy.query.margin);
+  }
+
+  if (usePage().props.value.ziggy.query.commission !== undefined) {
+    commissionType.value = 'percent';
+    commission.value = Number(usePage().props.value.ziggy.query.commission);
+  }
+
+  if (usePage().props.value.ziggy.query.wibor !== undefined) {
+    formData.value.wibor = Number(usePage().props.value.ziggy.query.wibor);
+  }
+
+  if (usePage().props.value.ziggy.query.type_of_installment !== undefined) {
+    formData.value.typeOfInstallment = usePage().props.value.ziggy.query.type_of_installment;
+  }
+
+  if (usePage().props.value.ziggy.query.interest_changes !== undefined) {
+    interestRateChanges.value = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.interest_changes));
+  }
+
+  if (usePage().props.value.ziggy.query.changing_fees !== undefined) {
+    fees.value.fixed = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.changing_fees));
+  }
+
+  if (usePage().props.value.ziggy.query.changing_fees !== undefined) {
+    fees.value.changing = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.changing_fees));
+  }
+
+  if (usePage().props.value.ziggy.query.fixed_fees !== undefined) {
+    fees.value.fixed = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.fixed_fees));
+  }
+}
+
 onMounted(() => {
   interestRateChanges.value = JSON.parse(interestRateChangesStorage.value) ?? [];
   fees.value.fixed = JSON.parse(fixedFeesStorage.value) ?? [];
@@ -115,6 +159,8 @@ onMounted(() => {
       }
     }
   });
+
+  overrideData();
 });
 
 watch(commission, newValue => {
@@ -251,30 +297,8 @@ let options = {
       }
     }
   }
-};
-
-const overwriteData = () => {
-  formData.value.amountOfCredit = Number(props.defaultData.amount_of_credit) || formData.value.amountOfCredit;
-  formData.value.period = Number(props.defaultData.period) || formData.value.period;
-  formData.value.margin = Number(props.defaultData.margin) || formData.value.margin;
-  commission.value = Number(props.defaultData.commission) || formData.value.commission;
-  commissionType.value = "percent";
-  formData.value.typeOfInstallment = props.defaultData.type_of_installment || formData.value.typeOfInstallment;
-  formData.value.wibor = Number(props.defaultData.wibor) || formData.value.wibor;
-  if (props.defaultData.interest_changes) {
-    interestRateChanges.value = JSON.parse(decodeURIComponent(props.defaultData.interest_changes));
-  }
-  if (props.defaultData.changing_fees) {
-    fees.value.changing = JSON.parse(decodeURIComponent(props.defaultData.changing_fees));
-  }
-  if (props.defaultData.fixed_fees) {
-    fees.value.fixed = JSON.parse(decodeURIComponent(props.defaultData.fixed_fees));
-  }
 }
 
-onBeforeMount(() => {
-  overwriteData();
-});
 
 
 const saveSimulation = () => {
@@ -295,6 +319,7 @@ const saveSimulation = () => {
 
 
 <template>
+  <Head title="Kalkulator rozszerzony"/>
   <Layout>
     <template v-slot:header>Kalkulator rozszerzony</template>
 

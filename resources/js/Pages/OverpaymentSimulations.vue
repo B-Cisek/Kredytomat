@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {Link} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import {useHelpers} from "@/Composables/useHelpers";
 
 const {formattedToPLN} = useHelpers();
@@ -14,6 +14,7 @@ const props = defineProps({
 </script>
 
 <template>
+  <Head title="Kalkulacje nadpłaty kredytu"/>
   <Layout>
     <template v-slot:header>Kalkulacje nadpłaty kredytu</template>
     <template v-slot:default>

@@ -3,7 +3,7 @@ import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
-import {Link} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import {useForm} from "@inertiajs/inertia-vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
@@ -35,6 +35,7 @@ const resetPassword = () => {
 </script>
 
 <template>
+  <Head title="Edycja użytkownika"/>
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"

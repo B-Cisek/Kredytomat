@@ -2,7 +2,7 @@
 import Layout from "@/Layouts/Layout.vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {ref} from "vue";
-import {Link} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 
 const {formattedToPLN} = useHelpers();
 
@@ -15,6 +15,7 @@ const props = defineProps({
 </script>
 
 <template>
+  <Head title="Wszystkei oferty"/>
   <Layout>
     <template v-slot:header>Wszystkei oferty</template>
     <template v-slot:default>

@@ -2,7 +2,7 @@
 import Layout from "@/Layouts/Layout.vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {onMounted, ref} from "vue";
-import {Link} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 
 const {formattedToPLN} = useHelpers();
 
@@ -16,6 +16,7 @@ onMounted(() => details.value = JSON.parse(props.credit.details));
 </script>
 
 <template>
+  <Head title="Oferta"/>
   <Layout>
     <template v-slot:header>
       {{ credit.bank.bank_name }} - {{ credit.credit_name }}

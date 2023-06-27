@@ -1,6 +1,6 @@
 <script setup>
 import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import { Link, useForm } from "@inertiajs/inertia-vue3";
+import {Head, Link, useForm} from "@inertiajs/inertia-vue3";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -18,6 +18,7 @@ const store = () => {
 </script>
 
 <template>
+  <Head title="Nowy bank"/>
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"

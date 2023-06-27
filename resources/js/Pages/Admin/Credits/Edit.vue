@@ -1,6 +1,6 @@
 <script setup>
 import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import { Link, useForm } from "@inertiajs/inertia-vue3";
+import {Head, Link, useForm} from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
@@ -54,6 +54,7 @@ const destroy = id => {
 </script>
 
 <template>
+  <Head title="Edycja kredytu"/>
   <AdminDashboardLayout>
     <template #header>
       <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"

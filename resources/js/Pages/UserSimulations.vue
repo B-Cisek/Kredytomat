@@ -1,6 +1,7 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
 import Tile from "@/Components/Tile.vue";
+import {Head} from "@inertiajs/inertia-vue3";
 
 defineProps({
   creditSimulationCount: Number,
@@ -9,6 +10,7 @@ defineProps({
 </script>
 
 <template>
+  <Head title="Twoje symulacje"/>
   <Layout>
     <template v-slot:header>
       Zapisane symulacje

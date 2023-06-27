@@ -7,16 +7,8 @@ const props = defineProps({
   credits: Object,
 });
 
-// const emit = defineEmits(["checkedCredits", "showButton"]);
-
 const checked = ref([]);
 const checkedAll = ref(false);
-
-const selectAll = () => {
-  checkedAll.value = !checkedAll.value;
-  //   emit("checkedCredits", checked);
-  //   emit("showButton", true);
-};
 
 watch(checkedAll, (value) => {
   if (value) {
