@@ -163,8 +163,10 @@ const getResult = async () => {
   }
 
   chartData.value.labels = label;
-  chartData.value.datasets[0].data = getInterestPartArray(schedule.value);;
-  chartData.value.datasets[1].data = getInterestPartArray(baseCreditSchedule.value);;
+  chartData.value.datasets[0].data = getInterestPartArray(schedule.value);
+  ;
+  chartData.value.datasets[1].data = getInterestPartArray(baseCreditSchedule.value);
+  ;
 
   await nextTick(() => scrollToResult());
 }
@@ -179,46 +181,44 @@ const getType = (value) => {
   localStorage.setItem("overpayment-type", value);
 }
 
-const overwriteData = () => {
-  const overrideData = () => {
-    if (usePage().props.value.ziggy.query.amount_of_credit !== undefined) {
-      formData.value.amountOfCredit = Number(usePage().props.value.ziggy.query.amount_of_credit);
-    }
+const overrideData = () => {
+  if (usePage().props.value.ziggy.query.amount_of_credit !== undefined) {
+    formData.value.amountOfCredit = Number(usePage().props.value.ziggy.query.amount_of_credit);
+  }
 
-    if (usePage().props.value.ziggy.query.period !== undefined) {
-      formData.value.period = Number(usePage().props.value.ziggy.query.period);
-    }
+  if (usePage().props.value.ziggy.query.period !== undefined) {
+    formData.value.period = Number(usePage().props.value.ziggy.query.period);
+  }
 
-    if (usePage().props.value.ziggy.query.margin !== undefined) {
-      formData.value.margin = Number(usePage().props.value.ziggy.query.margin);
-    }
+  if (usePage().props.value.ziggy.query.margin !== undefined) {
+    formData.value.margin = Number(usePage().props.value.ziggy.query.margin);
+  }
 
-    if (usePage().props.value.ziggy.query.commission !== undefined) {
-      commissionType.value = 'percent';
-      commission.value = Number(usePage().props.value.ziggy.query.commission);
-    }
+  if (usePage().props.value.ziggy.query.commission !== undefined) {
+    commissionType.value = 'percent';
+    commission.value = Number(usePage().props.value.ziggy.query.commission);
+  }
 
-    if (usePage().props.value.ziggy.query.wibor !== undefined) {
-      formData.value.wibor = Number(usePage().props.value.ziggy.query.wibor);
-    }
+  if (usePage().props.value.ziggy.query.wibor !== undefined) {
+    formData.value.wibor = Number(usePage().props.value.ziggy.query.wibor);
+  }
 
-    if (usePage().props.value.ziggy.query.type_of_installment !== undefined) {
-      formData.value.typeOfInstallment = usePage().props.value.ziggy.query.type_of_installment;
-    }
+  if (usePage().props.value.ziggy.query.type_of_installment !== undefined) {
+    formData.value.typeOfInstallment = usePage().props.value.ziggy.query.type_of_installment;
+  }
 
-    if (usePage().props.value.ziggy.query.overpayment_type !== undefined) {
-      overpaymentType.value = usePage().props.value.ziggy.query.overpayment_type;
-    }
+  if (usePage().props.value.ziggy.query.overpayment_type !== undefined) {
+    overpaymentType.value = usePage().props.value.ziggy.query.overpayment_type;
+  }
 
-    if (usePage().props.value.ziggy.query.overpayments !== undefined) {
-      overpayments.value = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.overpayments));
-    }
+  if (usePage().props.value.ziggy.query.overpayments !== undefined) {
+    overpayments.value = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.overpayments));
   }
 }
 
 onMounted(() => {
   overpayments.value = JSON.parse(overpaymentsStorage.value);
-  overwriteData();
+  overrideData();
 
   watch(commissionType, (newFormData, oldFormData) => {
     if (newFormData !== oldFormData) {
@@ -529,7 +529,7 @@ let options = {
           <div v-if="overpaymentType === 'period'" class="flex justify-between gap-10">
             <div class="flex-col flex p-5">
               <label>Liczba rat</label>
-              <span class="text-2xl font-semibold">{{schedule.length}}</span>
+              <span class="text-2xl font-semibold">{{ schedule.length }}</span>
             </div>
             <div class="flex-col flex p-5">
               <label>Skrócenie okresu kredytowania o:</label>
@@ -548,7 +548,7 @@ let options = {
           <div v-if="overpaymentType === 'installment'" class="flex justify-between gap-10">
             <div class="flex-col flex p-5">
               <label>Liczba rat</label>
-              <span class="text-2xl font-semibold">{{schedule.length}}</span>
+              <span class="text-2xl font-semibold">{{ schedule.length }}</span>
             </div>
             <div class="flex-col flex p-5">
               <label>Skrócenie okresu kredytowania o:</label>
