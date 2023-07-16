@@ -24,6 +24,8 @@ import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 import useLocalStorage from "@/Composables/useLocalStorage";
 
+const propsPage = computed(() => usePage().props);
+
 const {
   formattedToPLN,
   getCapitalPartArray,
@@ -138,6 +140,12 @@ const overrideData = () => {
 }
 
 onMounted(() => {
+  const exist = props.wiborList.some(obj => obj.value == JSON.parse(localStorage.getItem('calculator-extended-data')).wibor)
+  if (!exist) {
+
+    formData.value.wibor = props.wiborList[0].value;
+  }
+
   interestRateChanges.value = JSON.parse(interestRateChangesStorage.value) ?? [];
   fees.value.fixed = JSON.parse(fixedFeesStorage.value) ?? [];
   fees.value.changing = JSON.parse(changingFeesStorage.value) ?? [];
@@ -191,13 +199,17 @@ const interestPartArray = ref(null);
 const capitalPartArray = ref(null);
 
 const getResult = async () => {
-  const result = await v$.value.$validate();
+  const result = v$.value.$validate();
 
   formData.value.date = new Date(formData.value.date);
 
   if (!result) {
+    propsPage.value.value.flash.alert_message = 'Niepoprawne dane!'
+    propsPage.value.value.flash.alert_type = 'danger'
     return;
   }
+
+  formData.value.wibor = Number(formData.value.wibor);
 
   if (formData.value.typeOfInstallment === "equal") {
     schedule.value = useEqualInstallmentsV2(
@@ -413,7 +425,7 @@ const saveSimulation = () => {
                 <option
                   v-for="wibor in props.wiborList"
                   :key="wibor.id"
-                  :value="Number(wibor.value)"
+                  :value="wibor.value"
                 >{{ wibor.type + ` (${wibor.value}%)` }}
                 </option>
               </select>
