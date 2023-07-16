@@ -359,7 +359,7 @@ const handleToggleProfile = () => {
                       :href="route('profil')"
                       class="block px-4 py-2 text-sm text-gray-700"
                       :class="[$page.component === 'Profile' ? 'bg-gray-100' : '']"
-                    >Twój Profil
+                    >Mój Profil
                     </Link>
 
                     <Link
@@ -367,7 +367,7 @@ const handleToggleProfile = () => {
                       :href="route('profil.saved-simulations')"
                       class="block px-4 py-2 text-sm text-gray-700"
                       :class="[$page.component === 'UserSimulations' ? 'bg-gray-100' : '']"
-                    >Twoje kalkulacje
+                    >Moje kalkulacje
                     </Link>
 
                     <Link
@@ -491,13 +491,13 @@ const handleToggleProfile = () => {
             class="block"
             :href="route('profil')"
             :active="$page.component === 'Profile'"
-          >Twój Profil
+          >Mój Profil
           </NavLink>
           <NavLink
             class="block"
             :href="route('profil.saved-simulations')"
             :active="$page.component === 'UserSimulations'"
-          >Twoje Kalkulacje
+          >Moje Kalkulacje
           </NavLink>
           <NavLink
             v-if="isAdmin"
