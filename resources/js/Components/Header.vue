@@ -154,6 +154,7 @@ const handleToggleProfile = () => {
                         <Link
                           :href="route('calculator.installment')"
                           class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
+                          :class="$page.component === 'Calculators/InstallmentCalculator' ? 'bg-gray-100' : ''"
                         >
                           <svg
                             class="h-6 w-6 flex-shrink-0 text-indigo-600"
@@ -180,6 +181,7 @@ const handleToggleProfile = () => {
                         <Link
                           :href="route('calculator.extended')"
                           class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
+                          :class="$page.component === 'Calculators/ExtendedCalculator' ? 'bg-gray-100' : ''"
                         >
                           <svg
                             class="h-6 w-6 flex-shrink-0 text-indigo-600"
@@ -207,6 +209,7 @@ const handleToggleProfile = () => {
                         <Link
                           :href="route('calculator.overpayment')"
                           class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-50"
+                          :class="$page.component === 'Calculators/OverpaymentCalculator' ? 'bg-gray-100' : ''"
                         >
                           <svg
                             class="h-6 w-6 flex-shrink-0 text-indigo-600"
@@ -310,7 +313,7 @@ const handleToggleProfile = () => {
                       v-if="isAdmin"
                       :href="route('admin.dashboard')"
                       class="block px-4 py-2 text-sm text-gray-700"
-                      :class="[$page.component === 'Admin/AdminDashboard' ? 'bg-gray-100' : '']"
+                      :class="[$page.component === 'Admin/Dashboard' ? 'bg-gray-100' : '']"
                     >Dashboard
                     </Link>
 
@@ -365,14 +368,14 @@ const handleToggleProfile = () => {
         <NavLink
           class="block"
           :href="route('calculator.extended')"
-          :active="$page.component === 'CalculatorExtended'"
+          :active="$page.component === 'Calculators/ExtendedCalculator'"
         >
           Kalkulator rozszerzony
         </NavLink>
         <NavLink
           class="block"
           :href="route('calculator.overpayment')"
-          :active="$page.component === 'CreditOverpaymentView'"
+          :active="$page.component === 'Calculators/OverpaymentCalculator'"
         >
           Kalkulator nadpłaty kredytu
         </NavLink>
@@ -413,6 +416,7 @@ const handleToggleProfile = () => {
             :href="route('logout')"
             method="POST"
             class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 "
+            as="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
               <path fill-rule="evenodd"
@@ -438,7 +442,7 @@ const handleToggleProfile = () => {
             v-if="isAdmin"
             class="block"
             :href="route('admin.dashboard')"
-            :active="$page.component === 'Admin/AdminDashboard'"
+            :active="$page.component === 'Admin/Dashboard'"
           >Dashboard
           </NavLink>
         </div>

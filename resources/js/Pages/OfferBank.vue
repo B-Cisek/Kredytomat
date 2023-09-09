@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link, usePage} from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import Layout from "@/Layouts/Layout.vue";
 import {ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
@@ -16,7 +16,7 @@ const filterOpen = ref(false);
 <template>
   <Head title="Oferta"/>
   <Layout>
-    <template v-slot:header>Oferta banku: <span>{{credits[0].bank.bank_name ?? ''}}</span></template>
+    <template v-slot:header>Oferta banku: <span>{{ credits[0].bank.bank_name ?? '' }}</span></template>
     <template v-slot:default>
       <section class="w-full flex flex-col gap-3">
         <div class="text-right">

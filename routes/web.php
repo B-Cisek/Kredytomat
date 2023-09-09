@@ -13,11 +13,9 @@ use App\Http\Controllers\InstallmentCalculatorController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OverpaymentCalculatorController;
 use App\Http\Controllers\OverpaymentSimulationsController;
-use App\Http\Controllers\RrsoCalculatorController;
 use App\Http\Controllers\ScheduleCalculator;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\UserSimulationsController;
-use App\Services\CreditCalculations\DecreasingInstallments;
 use App\Services\CreditCalculations\Enum\CommissionType;
 use App\Services\CreditCalculations\Enum\PeriodType;
 use Illuminate\Support\Facades\Route;
@@ -28,13 +26,10 @@ Route::get('oferta', [OfferController::class, 'index'])->name('offer');
 Route::get('oferta/wszystkie', [OfferController::class, 'showAll'])->name('offer.all');
 Route::get('oferta/{bank}', [OfferController::class, 'show'])->name('offer.show');
 Route::get('oferta/{bank}/{credit}', [OfferController::class, 'showCredit'])->name('offer.show.credit');
-
 Route::get('o-kredycie', AboutCreditController::class)->name('about-credit');
-
 Route::get('kalkulator-raty', InstallmentCalculatorController::class)->name('calculator.installment');
-Route::get('kalkulator-rrso', RrsoCalculatorController::class)->name('calculator.rrso');
 Route::get('kalkulator-rozszerzony', ExtendedCalculatorController::class)->name('calculator.extended');
-Route::get('kalkulator-nadplata-kredytu', OverpaymentCalculatorController::class)->name('calculator.overpayment');
+Route::get('kalkulator-nadplata', OverpaymentCalculatorController::class)->name('calculator.overpayment');
 
 Route::group(['middleware' => 'auth'], function () {
     /* Profile */
@@ -49,7 +44,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('twoje-symulacje', UserSimulationsController::class)
         ->name('profil.saved-simulations');
 
-
     Route::get('symulacje-kredytu', [CreditSimulationsController::class, 'index'])
         ->name('profil.credit.index');
     Route::get('symulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'show'])
@@ -57,18 +51,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('symulacje-kredytu/{creditSimulation}', [CreditSimulationsController::class, 'destroy'])
         ->name('profil.credit.destroy');
 
-
-
-    Route::get('profil/zapisane-kalkulacje-nadplaty-kredytu', [OverpaymentSimulationsController::class, 'index'])
+    Route::get('profil/zapisane-kalkulacje-nadplaty', [OverpaymentSimulationsController::class, 'index'])
         ->name('profil.overpayment.index');
-    Route::get('profil/zapisane-kalkulacje-nadplaty-kredytu/{overpaymentSimulation}', [OverpaymentSimulationsController::class, 'show'])
+    Route::get('profil/zapisane-kalkulacje-nadplaty/{overpaymentSimulation}', [OverpaymentSimulationsController::class, 'show'])
         ->name('profil.overpayment.show');
     Route::post('zapisz-kalkulacje-nadplaty', [OverpaymentSimulationsController::class, 'save'])
         ->name('profil.overpayment.save');
-    Route::delete(
-        uri: 'symulacja-nadplaty-kredytu/{overpaymentSimulation}',
-        action: [OverpaymentSimulationsController::class, 'destroy']
-    )->name('profil.overpayment.destroy');
+    Route::delete('symulacja-nadplaty-kredytu/{overpaymentSimulation}', [OverpaymentSimulationsController::class, 'destroy'])
+        ->name('profil.overpayment.destroy');
 });
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {

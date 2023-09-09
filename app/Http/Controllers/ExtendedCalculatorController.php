@@ -24,7 +24,7 @@ class ExtendedCalculatorController extends Controller
             'fixed_fees' => $request->input('fixed_fees')
         ];
 
-        return Inertia::render('CalculatorExtended', [
+        return Inertia::render('Calculators/ExtendedCalculator', [
             'wiborList' => Wibor::all(),
             'defaultData' => $data
         ]);

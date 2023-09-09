@@ -15,9 +15,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <Head title="Wszystkei oferty"/>
+  <Head title="Wszystkie oferty"/>
   <Layout>
-    <template v-slot:header>Wszystkei oferty</template>
+    <template v-slot:header>Wszystkie oferty</template>
     <template v-slot:default>
       <section class="w-full flex flex-col gap-3">
         <div class="flex justify-between items-center">

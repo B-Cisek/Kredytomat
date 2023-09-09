@@ -23,7 +23,7 @@ class OverpaymentCalculatorController extends Controller
             'overpayments' => $request->input('overpayments')
         ];
 
-        return Inertia::render('CreditOverpaymentView', [
+        return Inertia::render('Calculators/OverpaymentCalculator', [
             'wiborList' => Wibor::all(),
             'defaultData' => $data
         ]);

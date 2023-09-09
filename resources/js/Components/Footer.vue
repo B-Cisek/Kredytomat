@@ -21,7 +21,7 @@ import {Link} from "@inertiajs/inertia-vue3";
         <Link :href="route('about-credit')" class="mr-4 hover:underline md:mr-6">O kredycie</Link>
       </li>
       <li>
-        <Link :href="route('offer.all')" class="hover:underline">Wszystkei oferty</Link>
+        <Link :href="route('offer.all')" class="hover:underline">Wszystkie oferty</Link>
       </li>
     </ul>
   </footer>

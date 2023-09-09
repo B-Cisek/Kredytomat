@@ -3,7 +3,6 @@ import Layout from "@/Layouts/Layout.vue";
 import {Head, useForm, usePage} from "@inertiajs/inertia-vue3";
 import {computed, ref} from "vue";
 import DeleteAccountModal from "@/Components/Modals/DeleteAccountModal.vue";
-import {Inertia} from "@inertiajs/inertia";
 
 const auth = computed(() => usePage().props.value.auth.user);
 
@@ -44,7 +43,7 @@ const updatePassword = () => {
         <div class="md:col-span-1 flex justify-between">
           <div class="px-4 sm:px-0">
             <h3 class="text-lg font-medium text-gray-900">Informacje o Profilu</h3>
-            <p class="mt-1 text-sm text-gray-600">Zaktualizuj nazwe użytkownika i adres e-mail swojego konta.</p>
+            <p class="mt-1 text-sm text-gray-600">Zaktualizuj nazwę użytkownika i adres e-mail swojego konta.</p>
           </div>
           <div class="px-4 sm:px-0"></div>
         </div>
@@ -109,6 +108,9 @@ const updatePassword = () => {
             <div class="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
               <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-4">
+                  <!--    to rid of console warning     -->
+                  <input type="text" class="hidden" autocomplete="username">
+
                   <label class="block font-medium text-sm text-gray-700"
                          for="current_password"><span>Aktualne hasło</span>
                   </label>

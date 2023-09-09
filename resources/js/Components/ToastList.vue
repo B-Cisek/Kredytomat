@@ -23,7 +23,6 @@ watch(props, (newValue) => {
 function remove(index) {
   items.value.splice(index, 1);
 }
-
 </script>
 
 <template>
