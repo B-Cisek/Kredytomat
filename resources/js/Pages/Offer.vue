@@ -8,7 +8,6 @@ const props = defineProps({
 });
 </script>
 
-
 <template>
   <Head title="Oferta"/>
   <Layout>
@@ -24,10 +23,10 @@ const props = defineProps({
               <div class="bg-gray-200 w-full text-center rounded-lg">
                 <img
                   :src="bank.logo_path"
-                  alt="logo"
+                  alt="bank-logo"
                   class="h-[105px] w-full border rounded-t-lg"
                 >
-                <span class="py-2 block font-semibold text-ml">{{ bank.credits_count }} Ofert</span>
+                <span class="py-2 block font-semibold text-ml">Ofert: {{ bank.credits_count }}</span>
               </div>
             </Link>
           </div>
