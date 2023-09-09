@@ -66,7 +66,7 @@ const formatToPLN = amount => {
         </div>
         <div class="sm:block hidden">
           <span class="text-gray-500">RRSO</span>
-          <p class="font-semibold">9,33%</p>
+          <p class="font-semibold">8,33%</p>
         </div>
         <div class="">
           <span class="text-gray-500">Kwota do</span>

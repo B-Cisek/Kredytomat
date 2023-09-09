@@ -1,30 +1,18 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import TestSelectInput from "@/Components/TestSelectInput.vue";
-import {ref, watch} from "vue";
+import {ref} from "vue";
+import RangeInputPeriod from "@/Components/Inputs/RangeInputPeriod.vue";
 
-const amountOfCredit = ref(250000);
-const commission = ref(2000);
-const commissionType = ref("number");
-
-setTimeout(() => {
-  commissionType.value = "percent";
-}, 3000)
-
+const childComponentState = ref(20);
+const type = ref('year');
 
 </script>
 
 <template>
 <Layout>
-  <template v-slot:header>
-    Test
-  </template>
-  <template v-slot:default>
-    <TestSelectInput
-      v-model:commission="commission"
-      v-model:commission-type="commissionType"
-      heading="Prowizja"
-    />
-  </template>
+  <RangeInputPeriod
+    v-model="childComponentState"
+    v-model:type="type"
+  />
 </Layout>
 </template>

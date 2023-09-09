@@ -3,7 +3,7 @@ import Layout from "@/Layouts/Layout.vue";
 import {computed, nextTick, onMounted, ref, watch} from "vue";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
-import RangeWithInput from "@/Components/RangeWithInput.vue";
+import RangeWithInput from "@/Components/Inputs/RangeWithInput.vue";
 import {useEqualInstallments} from "@/Composables/useEqualInstallments"
 import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
 import {useHelpers} from "@/Composables/useHelpers";

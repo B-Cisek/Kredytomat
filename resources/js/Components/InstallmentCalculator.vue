@@ -1,7 +1,7 @@
 <script setup>
 import {nextTick, onMounted, ref, watch} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import RangeWithInput from "@/Components/RangeWithInput.vue";
+import RangeWithInput from "@/Components/Inputs/RangeWithInput.vue";
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
 import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
 import useLocalStorage from "@/Composables/useLocalStorage";

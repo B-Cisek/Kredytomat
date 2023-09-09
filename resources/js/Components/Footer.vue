@@ -15,7 +15,7 @@ import {Link} from "@inertiajs/inertia-vue3";
         <Link :href="route('home')" class="mr-4 hover:underline md:mr-6">Home</Link>
       </li>
       <li>
-        <Link :href="route('offer')" class="mr-4 hover:underline md:mr-6">Ofertay Banków</Link>
+        <Link :href="route('offer')" class="mr-4 hover:underline md:mr-6">Oferty Banków</Link>
       </li>
       <li>
         <Link :href="route('about-credit')" class="mr-4 hover:underline md:mr-6">O kredycie</Link>

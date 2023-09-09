@@ -15,7 +15,6 @@ const props = defineProps({
 
 <template>
   <div class="flex mb-3 items-center justify-between">
-
     <h3 class="font-semibold text-black">{{ heading }}</h3>
 
     <div class="relative">

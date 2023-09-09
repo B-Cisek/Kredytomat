@@ -9,6 +9,6 @@ class InstallmentCalculatorController extends Controller
 {
     public function __invoke(): Response
     {
-        return Inertia::render('Calculator');
+        return Inertia::render('Calculators/InstallmentCalculator');
     }
 }

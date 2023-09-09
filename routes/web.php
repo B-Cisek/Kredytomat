@@ -14,10 +14,13 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OverpaymentCalculatorController;
 use App\Http\Controllers\OverpaymentSimulationsController;
 use App\Http\Controllers\RrsoCalculatorController;
+use App\Http\Controllers\ScheduleCalculator;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\UserSimulationsController;
+use App\Services\CreditCalculations\DecreasingInstallments;
+use App\Services\CreditCalculations\Enum\CommissionType;
+use App\Services\CreditCalculations\Enum\PeriodType;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', HomeController::class)->name('home');
 
@@ -76,9 +79,118 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 
+Route::post('/harmonogram' , ScheduleCalculator::class)->name('get-schedule');
+
 
 Route::get('test', function () {
-    return Inertia::render('Test');
+    //return \Inertia\Inertia::render('Test');
+    $credit = new \App\Services\CreditCalculations\Credit(
+        400_000,
+        20,
+        PeriodType::YEAR,
+        5.66,
+        1,
+        0,
+        CommissionType::NUMBER
+    );
+
+    $interestsRateChanges = [
+        [
+            'date' => [
+                'month' => 1,
+                'year' => 2026
+            ],
+            'value' => 5
+        ]
+    ];
+
+//    $fixedFess = [
+//        [
+//            'date' => [
+//                'start' => [
+//                    'month' => 1,
+//                    'year' => 2024
+//                ],
+//                'end' => [
+//                    'month' => 12,
+//                    'year' => 2024
+//                ]
+//            ],
+//            'value' => 50
+//        ],
+//        [
+//            'date' => [
+//                'start' => [
+//                    'month' => 9,
+//                    'year' => 2023
+//                ],
+//                'end' => [
+//                    'month' => 9,
+//                    'year' => 2023
+//                ]
+//            ],
+//            'value' => 3
+//        ]
+//    ];
+//
+//    $changingFee = [
+//        [
+//            'date' => [
+//                'start' => [
+//                    'month' => 1,
+//                    'year' => 2024
+//                ],
+//                'end' => [
+//                    'month' => 12,
+//                    'year' => 2024
+//                ]
+//            ],
+//            'value' => 1
+//        ]
+//    ];
+
+    $overpayments = [
+        [
+            'date' => [
+                'start' => [
+                    'month' => 12,
+                    'year' => 2023
+                ],
+                'end' => [
+                    'month' => 12,
+                    'year' => 2023
+                ]
+            ],
+            'value' => 50_000
+        ],
+        [
+            'date' => [
+                'start' => [
+                    'month' => 12,
+                    'year' => 2025
+                ],
+                'end' => [
+                    'month' => 12,
+                    'year' => 2025
+                ]
+            ],
+            'value' => 35_500
+        ],
+    ];
+
+    $creditCalculation = \App\Services\CreditCalculations\CreditCalculationsFactory::createCreditCalculation(
+        \App\Services\CreditCalculations\Enum\TypeOfInstallment::DECREASING,
+        \Carbon\Carbon::create(2023,8),
+        $credit,
+        //interestsRateChanges: $interestsRateChanges
+        overpayments: $overpayments
+    );
+
+    $schedule = $creditCalculation->scheduleSmallerInstallment()->get();
+
+    dd(\App\Services\CreditCalculations\ScheduleFormatter::format($schedule)[array_key_last($schedule)]);
+
+
 });
 require __DIR__ . '/auth.php';
 

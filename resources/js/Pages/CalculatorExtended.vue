@@ -17,7 +17,7 @@ import InterestRateChange from "@/Components/InterestRateChange.vue";
 import {Head, usePage} from "@inertiajs/inertia-vue3";
 import {Inertia} from "@inertiajs/inertia";
 import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRatesTable.vue";
-import RangeWithInput from "@/Components/RangeWithInput.vue";
+import RangeWithInput from "@/Components/Inputs/RangeWithInput.vue";
 import RangeWithInputSelect from "@/Components/RangeWithInputSelect.vue";
 import InterestRateChanges from "@/Components/InputsList/InterestRateChanges.vue";
 import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";

@@ -11,6 +11,7 @@
         "laravel/framework": "^9.31.0",
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.7",
+        "nesbot/carbon": "^2.69",
         "roach-php/laravel": "^1.0",
         "tightenco/ziggy": "^1.0"
     },
