@@ -54,13 +54,6 @@ const handleToggleProfile = () => {
             aria-expanded="false"
           >
             <span class="sr-only">Open main menu</span>
-            <!--
-                          Icon when menu is closed.
-
-                          Heroicon name: outline/bars-3
-
-                          Menu open: "hidden", Menu closed: "block"
-                        -->
             <svg
               v-show="!toggleMobileMenuOn"
               class="block h-6 w-6"
@@ -77,13 +70,6 @@ const handleToggleProfile = () => {
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
               />
             </svg>
-            <!--
-                          Icon when menu is open.
-
-                          Heroicon name: outline/x-mark
-
-                          Menu open: "block", Menu closed: "hidden"
-                        -->
             <svg
               v-show="toggleMobileMenuOn"
               class="h-6 w-6"
@@ -111,7 +97,6 @@ const handleToggleProfile = () => {
           </div>
           <div class="hidden sm:ml-10 sm:block">
             <div class="flex space-x-4">
-              <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
               <NavLink :href="route('home')" :active="$page.component === 'Home'">
                 Home
               </NavLink>
@@ -128,7 +113,6 @@ const handleToggleProfile = () => {
               </NavLink>
 
               <div class="relative" ref="targetNavLinks">
-                <!-- Item active: "text-gray-900", Item inactive: "text-gray-500" -->
                 <button
                   @click="handleToggleOnNavLinks"
                   type="button"
@@ -136,11 +120,6 @@ const handleToggleProfile = () => {
                   aria-expanded="false"
                 >
                   <span>Kalkulatory</span>
-                  <!--
-                                      Heroicon name: mini/chevron-down
-
-                                      Item active: "text-gray-600", Item inactive: "text-gray-400"
-                                    -->
                   <svg
                     class="text-gray-300 ml-2 h-5 w-5 group-hover:text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -176,20 +155,14 @@ const handleToggleProfile = () => {
                           :href="route('calculator.installment')"
                           class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
                         >
-                          <!-- Heroicon name: outline/lifebuoy -->
-
                           <svg
                             class="h-6 w-6 flex-shrink-0 text-indigo-600"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            strokeWidth="{1.5}"
                             stroke="currentColor"
-                            className="w-6 h-6"
                           >
                             <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
                               d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
                             />
                           </svg>
@@ -204,36 +177,6 @@ const handleToggleProfile = () => {
                           </div>
                         </Link>
 
-<!--                        <Link-->
-<!--                          :href="route('calculator.rrso')"-->
-<!--                          class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"-->
-<!--                        >-->
-<!--                          <svg-->
-<!--                            class="h-6 w-6 flex-shrink-0 text-indigo-600"-->
-<!--                            xmlns="http://www.w3.org/2000/svg"-->
-<!--                            fill="none"-->
-<!--                            viewBox="0 0 24 24"-->
-<!--                            strokeWidth="{1.5}"-->
-<!--                            stroke="currentColor"-->
-<!--                            className="w-6 h-6"-->
-<!--                          >-->
-<!--                            <path-->
-<!--                              strokeLinecap="round"-->
-<!--                              strokeLinejoin="round"-->
-<!--                              d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"-->
-<!--                            />-->
-<!--                          </svg>-->
-
-<!--                          <div class="ml-4">-->
-<!--                            <p class="text-base font-medium text-gray-900">-->
-<!--                              Kalkulator RRSO-->
-<!--                            </p>-->
-<!--                            <p class="mt-1 text-sm text-gray-500">-->
-<!--                              Oblicz rzeczywistą roczną stopę procentową.-->
-<!--                            </p>-->
-<!--                          </div>-->
-<!--                        </Link>-->
-
                         <Link
                           :href="route('calculator.extended')"
                           class="-m-3 flex items-start rounded-lg p-3 hover:bg-gray-100"
@@ -243,13 +186,9 @@ const handleToggleProfile = () => {
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            strokeWidth="{1.5}"
                             stroke="currentColor"
-                            className="w-6 h-6"
                           >
                             <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
                               d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
                             />
                           </svg>
@@ -274,14 +213,10 @@ const handleToggleProfile = () => {
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="1.5"
                             stroke="currentColor"
-                            aria-hidden="true"
                           >
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                              d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z"
                             />
                           </svg>
                           <div class="ml-4">
@@ -304,7 +239,8 @@ const handleToggleProfile = () => {
           >
             <Link
               :href="route('login')"
-              class="whitespace-nowrap text-base font-medium text-white px-4 py-2 hover:bg-gray-700 rounded-lg"
+              class="hidden header:block whitespace-nowrap text-base font-medium text-white px-4 py-2 hover:bg-gray-700 rounded-lg"
+              :class="$page.component === 'Auth/Login' ? 'bg-gray-900' : ''"
             >
               Zaloguj się
             </Link>
@@ -422,7 +358,7 @@ const handleToggleProfile = () => {
         <NavLink
           class="block"
           :href="route('calculator.installment')"
-          :active="$page.component === 'Calculator'"
+          :active="$page.component === 'Calculators/InstallmentCalculator'"
         >
           Kalkulator raty
         </NavLink>
@@ -477,7 +413,6 @@ const handleToggleProfile = () => {
             :href="route('logout')"
             method="POST"
             class="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 "
-            as="button"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
               <path fill-rule="evenodd"
@@ -503,7 +438,7 @@ const handleToggleProfile = () => {
             v-if="isAdmin"
             class="block"
             :href="route('admin.dashboard')"
-            :active="$page.component === 'Dashboard'"
+            :active="$page.component === 'Admin/AdminDashboard'"
           >Dashboard
           </NavLink>
         </div>

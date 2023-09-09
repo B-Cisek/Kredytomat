@@ -14,6 +14,9 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
+            screens: {
+                'header': '860px',
+            },
         },
     },
 
