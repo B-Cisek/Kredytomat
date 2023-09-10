@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 
 const props = defineProps({
   type: String,
@@ -12,35 +12,54 @@ const props = defineProps({
 
 const emit = defineEmits(['update:type', 'update:modelValue'])
 
-const min = ref(5);
-const max = ref(35);
-const step = ref(1);
-const labelLeft = ref('lat');
-const labelRight = ref('lat');
+const min = ref(0);
+const max = ref(7);
+const step = ref(0.01);
+const labelLeft = ref('%');
+const labelRight = ref('%');
 
 const changeType = (val) => {
-  if (val === 'month') {
-    min.value = 12 * 5;
-    max.value = 12 * 35;
-    labelLeft.value = 'miesięcy';
-    labelRight.value = 'miesięcy';
-    emit('update:modelValue', 60)
+  if (val === 'number') {
+    min.value = 0;
+    max.value = 10000;
+    step.value = 100;
+    labelLeft.value = 'zł';
+    labelRight.value = 'zł';
+    emit('update:modelValue', 0)
   } else {
-    min.value = 5;
-    max.value = 35;
-    labelLeft.value = 'lat';
-    labelRight.value = 'lat';
-    emit('update:modelValue', 5)
+    min.value = 0;
+    max.value = 7;
+    step.value = 0.01;
+    labelLeft.value = '%';
+    labelRight.value = '%';
+    emit('update:modelValue', 0)
   }
 
   emit('update:type', val)
 }
+
+watch(props, (value) => {
+  if (value.type === 'number') {
+    min.value = 0;
+    max.value = 10000;
+    step.value = 100;
+    labelLeft.value = 'zł';
+    labelRight.value = 'zł';
+  } else {
+    min.value = 0;
+    max.value = 7;
+    step.value = 0.01;
+    labelLeft.value = '%';
+    labelRight.value = '%';
+  }
+})
+
 </script>
 
 <template>
   <div>
     <div class="flex mb-3 items-center justify-between">
-      <h3 class="font-semibold text-black">Okres</h3>
+      <h3 class="font-semibold text-black">Prowizja</h3>
 
       <div class="relative">
         <input
@@ -57,8 +76,8 @@ const changeType = (val) => {
           class="appearance-none cursor-pointer absolute right-0 w-25 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white"
           :class="error ? 'bg-red-700' : ''"
         >
-          <option selected value="year">LAT</option>
-          <option value="month">MSC</option>
+          <option selected value="percent">%</option>
+          <option value="number">PLN</option>
         </select>
       </div>
     </div>

@@ -28,7 +28,7 @@ export function useHelpers() {
     function totalCreditCost(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][3];
+            cost += schedule[i][4];
         }
         return cost + totalCreditInterest(schedule);
     }
@@ -36,7 +36,7 @@ export function useHelpers() {
     function totalCreditInterest(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][2];
+            cost += schedule[i][3];
         }
         return cost;
     }

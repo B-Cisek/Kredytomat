@@ -6,51 +6,25 @@ import {PieChart} from "vue-chart-3";
 import {useHelpers} from "@/Composables/useHelpers";
 import {Chart, registerables} from "chart.js";
 import useLocalStorage from "@/Composables/useLocalStorage";
-import {nextTick, onMounted, ref, watch} from "vue";
-import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
-import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
-import {Inertia} from "@inertiajs/inertia";
+import {nextTick, ref} from "vue";
+import RangeInputPeriod from "@/Components/Inputs/RangeInputPeriod.vue";
+import RangeInputCommission from "@/Components/Inputs/RangeInputCommission.vue";
+import Spinner from "@/Components/Spinner.vue";
+import {usePieChart} from "@/Composables/Charts/usePieChart";
+import useVuelidate from "@vuelidate/core";
+import {required, between, numeric, decimal} from "@vuelidate/validators";
 
 const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
 
 Chart.register(...registerables);
 
-/** Form inputs */
-const amountOfCredit = useLocalStorage(250000, 'calculator-amountOfCredit');
+/** Calculator inputs */
+const amountOfCredit = useLocalStorage(250000, 'calculator-amount-of-credit');
 const period = useLocalStorage(25, 'calculator-period');
+const periodType = useLocalStorage('year', 'calculator-period-type');
 const rate = useLocalStorage(7, 'calculator-rate');
 const commission = useLocalStorage(0, 'calculator-commission');
 const commissionType = useLocalStorage("percent", "calculator-commission-type");
-const commissionResult = ref(0);
-
-const min = ref(0);
-const max = useLocalStorage(commissionType.value === "percent" ? 7 : 10000, 'calculator-max');
-const step = useLocalStorage(commissionType.value === "percent" ? 0.1 : 1, 'calculator-step');
-
-
-onMounted(() => {
-  watch(commissionType, newValue => {
-    if (newValue === "number") {
-      max.value = 10000;
-      step.value = 1;
-      commission.value = (commission.value / 100) * amountOfCredit.value;
-      commissionType.value = "number";
-    } else {
-      max.value = 7;
-      step.value = 0.1;
-      commission.value = Number(((commission.value / amountOfCredit.value) * 100).toFixed(2));
-      commissionType.value = "percent";
-    }
-  });
-});
-
-const commissionCalculation = () => {
-  if (commissionType.value === "percent") {
-    commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
-  } else {
-    commissionResult.value = commission.value;
-  }
-}
 
 /** Equal Installment */
 const equalInstallment = ref(null);
@@ -60,109 +34,101 @@ const equalInstallmentCost = ref(0);
 const firstDecreasingInstallment = ref(null);
 const decreasingInstallmentCost = ref(0);
 
+const commissionResult = ref(0);
 const results = ref(null);
 
 const scrollToResult = () => {
-  results.value.scrollIntoView({behavior: "smooth"});
+  results.value.scrollIntoView({behavior: 'smooth'});
 }
+
+// TODO: it should be in component
+const calculateCommission = () => {
+  if (commissionType.value === 'number') {
+    commissionResult.value = commission.value;
+  } else {
+    commissionResult.value = amountOfCredit.value * toDecimal(commission.value);
+  }
+}
+
+const loading = ref(false);
+
+const getSchedule = async (type) => {
+  loading.value = true;
+
+  try {
+    let res = await axios.post(route('get-schedule'), {
+      TypeOfInstallment: type,
+      date: {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1
+      },
+      credit: {
+        amountOfCredit: amountOfCredit.value,
+        period: period.value,
+        periodType: periodType.value,
+        margin: rate.value,
+        wibor: 0,
+        commission: 0,
+        commissionType: 'percent'
+      }
+    })
+
+    loading.value = false;
+    return res;
+  } catch (error) {
+    loading.value = false;
+    console.error(error); // TODO: add message error to toast
+  }
+}
+
+// validation rules
+const rules = {
+  amountOfCredit: {required, numeric, between: between(50000, 2000000)},
+  period: {required, numeric, between: between(5, 420)},
+  rate: {required, numeric, between: between(0.01, 15)},
+  commission: {required, numeric, between: between(0, 10000)}
+}
+
+const v$ = useVuelidate(rules, {
+  amountOfCredit, period, rate, commission
+});
 
 
 const calc = async () => {
-  let fixedInstallmentsSchedule = useEqualInstallmentsV2({
-    date: new Date(),
-    amountOfCredit: amountOfCredit.value,
-    period: period.value,
-    margin: 0,
-    wibor: rate.value,
-    commission: commission.value
-  }).getSchedule();
+  const result = await v$.value.$validate();
+  if (!result) return;
 
-  let decreasingInstallmentSchedule = useDecreasingInstallmentsV2({
-    date: new Date(),
-    amountOfCredit: amountOfCredit.value,
-    period: period.value,
-    margin: 0,
-    wibor: rate.value,
-    commission: commission.value
-  }).getSchedule();
-
-  commissionCalculation();
+  let resDecreasingSchedule = await getSchedule('decreasing');
+  let resEqualSchedule = await getSchedule('equal');
+  let decreasingSchedule = resDecreasingSchedule.data.schedule;
+  let equalSchedule = resEqualSchedule.data.schedule;
 
   // Installments
-  firstDecreasingInstallment.value = decreasingInstallmentSchedule[0][4];
-  equalInstallment.value = fixedInstallmentsSchedule[0][4];
+  firstDecreasingInstallment.value = decreasingSchedule[0][5];
+  equalInstallment.value = equalSchedule[0][5];
+
+  calculateCommission();
 
   // Installments cost
-  equalInstallmentCost.value = totalCreditCost(fixedInstallmentsSchedule) + commissionResult.value;
-  decreasingInstallmentCost.value = totalCreditCost(decreasingInstallmentSchedule) + commissionResult.value;
+  const costEqual = totalCreditCost(equalSchedule) + commissionResult.value;
+  equalInstallmentCost.value = Math.round(costEqual * 100) / 100;
 
-  await nextTick(() => scrollToResult())
+  const costDecreasing = totalCreditCost(decreasingSchedule) + commissionResult.value;
+  decreasingInstallmentCost.value = Math.round(costDecreasing * 100) / 100;
+
+  await nextTick(() => scrollToResult());
 }
 
-const setCommissionType = value => {
-  commission.value = 0;
-  commissionType.value = value;
-}
-
-const setCommissionValue = value => {
-  commission.value = value;
-}
-
-const dataRatyStale = {
-  labels: ['Kwota kredytu', `Odsetki`, `Prowizja banku`],
-  datasets: [
-    {
-      data: [amountOfCredit, equalInstallmentCost, commissionResult],
-      backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
-    },
-  ],
-};
-
-const options = ref({
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-  }
-});
-
-const dataRatyMalejace = ref({
-  labels: ['Kwota kredytu', `Odsetki`, `Prowizja banku`],
-  datasets: [
-    {
-      label: 'dsadsa',
-      data: [amountOfCredit, decreasingInstallmentCost, commissionResult],
-      backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
-    },
-  ],
-});
-
-
-const test = () => {
-  axios.post(route('get-schedule'), {
-    TypeOfInstallment: 'decreasing',
-    date: new Date(2023, 7),
-    credit: {
-      amountOfCredit: 500000,
-      period: 20,
-      periodType: 'year',
-      margin: 1,
-      wibor: 6,
-      commission: 0,
-      commissionType: 'percent'
-    },
-    overpayments: [],
-    interestsRateChange: [],
-    fees: {
-      fixed: [],
-      changing: []
-    }
-  }).then(res => console.log(res.data));
-}
-
-test()
-
+const {
+  dataEqualInstallment,
+  options,
+  dataDecreasingInstallment
+} = usePieChart(
+  amountOfCredit,
+  equalInstallmentCost,
+  decreasingInstallmentCost,
+  commissionResult
+);
 </script>
 
 <template>
@@ -173,7 +139,7 @@ test()
 
     <template v-slot:default>
       <section
-        class="flex flex-col gap-10 w-full mx-auto rounded-lg shadow-2xl border border-gray-200 bg-white p-5"
+        class="flex flex-col lg:gap-10 w-full mx-auto rounded-lg shadow-2xl border border-gray-200 bg-white p-5"
       >
         <div class="lg:flex gap-x-16">
           <div class="flex-1">
@@ -186,18 +152,14 @@ test()
               :step="10000"
               label-left="50 000 zł"
               label-right="2 000 000 zł"
+              :error="v$.amountOfCredit.$error"
             />
           </div>
           <div class="flex-1">
-            <RangeWithInput
+            <RangeInputPeriod
               v-model="period"
-              input-type-label="LAT"
-              heading="Okres spłaty"
-              :min="5"
-              :max="35"
-              :step="1"
-              label-left="5 lat"
-              label-right="35 lat"
+              v-model:type="periodType"
+              :error="v$.period.$error"
             />
           </div>
         </div>
@@ -212,47 +174,20 @@ test()
               :step="0.01"
               label-left="0,01%"
               label-right="15%"
+              :error="v$.rate.$error"
             />
           </div>
           <div class="flex-1">
-            <div>
-              <div class="flex mb-3 items-center justify-between">
-
-                <h3 class="font-semibold text-black">Prowizja</h3>
-
-                <div class="relative">
-                  <input
-                    v-model="commission"
-                    type="number"
-                    class="border-2 border-gray-300 focus:border-indigo-700 focus:outline-none focus:shadow-none font-semibold input outline-none sm:w-full w-[180px]"
-                  />
-                  <select
-                    v-model="commissionType"
-                    class="appearance-none cursor-pointer absolute right-0 w-25 bg-indigo-700 h-full inline-flex items-center justify-center rounded-r-lg font-semibold text-white">
-                    <option selected value="number">PLN</option>
-                    <option value="percent">%</option>
-                  </select>
-                </div>
-              </div>
-
-              <input
-                v-model.number="commission"
-                type="range"
-                :min="min"
-                :max="max"
-                :step="step"
-                class="range range-primary bg-[#d1d3d9]"
-              />
-
-              <label class="label">
-                <span class="label-text-alt text-black">{{ min }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
-                <span class="label-text-alt text-black">{{ max }} {{ commissionType == 'percent' ? '%' : 'zł' }}</span>
-              </label>
-            </div>
+            <RangeInputCommission
+              v-model="commission"
+              v-model:type="commissionType"
+              :error="v$.commission.$error"
+            />
           </div>
         </div>
         <button @click="calc" class="btn btn-primary text-white">
-          Oblicz ratę i koszt
+          <Spinner v-if="loading"/>
+          {{ loading ? '' : 'Oblicz ratę i koszt' }}
         </button>
       </section>
       <section
@@ -279,11 +214,11 @@ test()
               </div>
             </div>
             <div class="flex justify-center items-center mt-8">
-              <PieChart :chartData="dataRatyStale" :options="options"/>
+              <PieChart :chartData="dataEqualInstallment" :options="options"/>
             </div>
           </div>
 
-          <!-- DIVIDERS START -->
+          <!-- DIVIDER START -->
           <div class="flex font-semibold items-center text-2xl text-[#e0e0e0] relative hidden lg:flex">
             <span id="divider-vertical">VS</span>
           </div>
@@ -291,7 +226,7 @@ test()
             class="w-full flex font-semibold items-center justify-center lg:hidden relative text-2xl text-[#e0e0e0] mt-5">
             <span class="w-full text-center" id="divider-horizontal">VS</span>
           </div>
-          <!-- DIVIDERS END -->
+          <!-- DIVIDER END -->
 
           <div class="lg:w-2/4 lg:ml-10">
             <div class="flex-col p-3">
@@ -308,7 +243,7 @@ test()
               </div>
             </div>
             <div class="flex justify-center items-center mt-8">
-              <PieChart :chartData="dataRatyMalejace" :options="options"/>
+              <PieChart :chartData="dataDecreasingInstallment" :options="options"/>
             </div>
           </div>
         </div>
@@ -316,3 +251,41 @@ test()
     </template>
   </Layout>
 </template>
+
+<style scoped>
+#divider-vertical:after {
+  content: "";
+  position: absolute;
+  border-left: 2px solid #e0e0e0;
+  height: 45%;
+  left: 15px;
+  bottom: 0;
+}
+
+#divider-vertical:before {
+  content: "";
+  position: absolute;
+  border-left: 2px solid #e0e0e0;
+  height: 45%;
+  top: 0;
+  left: 15px;
+}
+
+#divider-horizontal:after {
+  content: "";
+  position: absolute;
+  border-top: 2px solid #e0e0e0;
+  width: 40%;
+  top: 15px;
+  right: 5px;
+}
+
+#divider-horizontal:before {
+  content: "";
+  position: absolute;
+  border-bottom: 2px solid #e0e0e0;
+  width: 40%;
+  left: 5px;
+  top: 15px;
+}
+</style>

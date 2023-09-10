@@ -68,6 +68,7 @@ class DecreasingInstallmentsTest extends TestCase
 
         $schedule = ScheduleFormatter::format($decreasingInstallment->schedule()->get());
 
+        $this->assertEquals(31, $schedule[0][1]);
         $this->assertEquals(400000, $schedule[0][2]);
         $this->assertEquals(2262.58, $schedule[0][3]);
         $this->assertEquals(1666.67, $schedule[0][4]);
