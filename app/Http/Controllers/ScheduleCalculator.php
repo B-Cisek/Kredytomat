@@ -28,8 +28,8 @@ class ScheduleCalculator extends Controller
         );
 
         $creditCalculation = CreditCalculationsFactory::createCreditCalculation(
-            typeOfInstallment: TypeOfInstallment::getType($request->get('TypeOfInstallment')),
-            date: Carbon::create($request->get('date')['year'], $request->get('date')['month']),
+            typeOfInstallment: TypeOfInstallment::getType($request->get('typeOfInstallment')),
+            date: Carbon::create($request->get('date')['year'], $request->get('date')['month'] + 1),
             credit: $credit,
             interestsRateChanges: $request->get('interestsRateChange') ?? [],
             fixedFees: $request->get('fees')['fixed'] ?? [],

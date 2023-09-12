@@ -185,7 +185,7 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getInterestsRateChanges(Carbon $currentDate): float|null
     {
         foreach ($this->interestsRateChanges as $value) {
-            if ($value['date']['month'] === $currentDate->month && $value['date']['year'] === $currentDate->year) {
+            if (($value['date']['month'] + 1) === $currentDate->month && $value['date']['year'] === $currentDate->year) {
                 return $this->toDecimal($value['value']);
             }
         }
@@ -196,11 +196,11 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getFixedFees(Carbon $currentDate): float
     {
         foreach ($this->fixedFees as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['value'];
+                return $value['fee'];
             }
         }
 
@@ -210,11 +210,11 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getChangingFees(Carbon $currentDate, float $capitalToPay): float
     {
         foreach ($this->changingFees as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $this->calculateChangingFee($this->toDecimal($value['value']), $capitalToPay);
+                return $this->calculateChangingFee($value['fee'], $capitalToPay);
             }
         }
 
@@ -224,8 +224,8 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getOverpayment(Carbon $currentDate): float
     {
         foreach ($this->overpayments as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
                 return $value['value'];
@@ -301,11 +301,11 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getFirstFixedFee(Carbon $currentDate): float
     {
         foreach ($this->fixedFees as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['value'];
+                return $value['fee'];
             }
         }
 
@@ -315,11 +315,11 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getFirstChangingFee(Carbon $currentDate, float $capitalToPay): float
     {
         foreach ($this->changingFees as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $this->calculateChangingFee($this->toDecimal($value['value']), $capitalToPay);
+                return $this->calculateChangingFee($value['fee'], $capitalToPay);
             }
         }
 
@@ -329,8 +329,8 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getFirstOverpayment(Carbon $currentDate): float
     {
         foreach ($this->overpayments as $value) {
-            $startDate = Carbon::create($value['date']['start']['year'], $value['date']['start']['month']);
-            $endDate = Carbon::create($value['date']['end']['year'], $value['date']['end']['month']);
+            $startDate = Carbon::create($value['start']['year'], $value['start']['month'] + 1);
+            $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
                 return $value['value'];

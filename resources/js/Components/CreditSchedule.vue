@@ -33,13 +33,13 @@ const props = defineProps({
         <td class="font-medium text-gray-900 whitespace-nowrap p-3">
           {{ index + 1 }}
         </td>
-        <td>{{ formattedToPLN.format(sche[1]) }}</td>
-        <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>{{ formattedToPLN.format(sche[2]) }}</td>
-        <td>{{ formattedToPLN.format(sche[4] + sche[8] + sche[9]) }}</td>
-        <td>{{ sche[7] }}%</td>
+        <td>{{ formattedToPLN.format(sche[4]) }}</td>
+        <td>{{ formattedToPLN.format(sche[3]) }}</td>
+        <td>{{ formattedToPLN.format(sche[5] + sche[8] + sche[9]) }}</td>
+        <td>{{ (sche[7] * 100).toFixed(2) }}%</td>
         <td>{{ formattedToPLN.format(sche[8] + sche[9]) }}</td>
-        <td>{{ formattedToPLN.format(sche[5]) }}</td>
+        <td>{{ formattedToPLN.format(sche[6]) }}</td>
       </tr>
       </tbody>
     </table>

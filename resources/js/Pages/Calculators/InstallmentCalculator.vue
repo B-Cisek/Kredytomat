@@ -12,7 +12,7 @@ import RangeInputCommission from "@/Components/Inputs/RangeInputCommission.vue";
 import Spinner from "@/Components/Spinner.vue";
 import {usePieChart} from "@/Composables/Charts/usePieChart";
 import useVuelidate from "@vuelidate/core";
-import {required, between, numeric, decimal} from "@vuelidate/validators";
+import {required, between, numeric} from "@vuelidate/validators";
 
 const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
 
@@ -57,7 +57,7 @@ const getSchedule = async (type) => {
 
   try {
     let res = await axios.post(route('get-schedule'), {
-      TypeOfInstallment: type,
+      typeOfInstallment: type,
       date: {
         year: new Date().getFullYear(),
         month: new Date().getMonth() + 1

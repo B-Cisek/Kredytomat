@@ -28,7 +28,7 @@ export function useHelpers() {
     function totalCreditCost(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][4];
+            cost += schedule[i][5];
         }
         return cost + totalCreditInterest(schedule);
     }
@@ -36,7 +36,7 @@ export function useHelpers() {
     function totalCreditInterest(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][3];
+            cost += schedule[i][4];
         }
         return cost;
     }
@@ -52,7 +52,7 @@ export function useHelpers() {
     function getCapitalPartArray(schedule) {
         let arr = [];
         schedule.forEach((value) => {
-            arr.push(value[3]);
+            arr.push(value[4]);
         })
         return arr;
     }
@@ -60,7 +60,7 @@ export function useHelpers() {
     function getInterestPartArray(schedule) {
         let arr = [];
         schedule.forEach((value) => {
-            arr.push(value[2]);
+            arr.push(value[3]);
         })
         return arr;
     }
@@ -68,7 +68,7 @@ export function useHelpers() {
     function getPaidInterestToIndex(schedule, index) {
         let sum = 0;
         for (let i = 0; i < index; i++) {
-            sum += schedule[i][2];
+            sum += schedule[i][3];
         }
         return sum;
     }
@@ -76,7 +76,7 @@ export function useHelpers() {
     function getPaidCapitalToIndex(schedule, index) {
         let sum = 0;
         for (let i = 0; i < index; i++) {
-            sum += schedule[i][3];
+            sum += schedule[i][4];
         }
         return sum;
     }
@@ -84,7 +84,7 @@ export function useHelpers() {
     function getCapitalToPayFromIndex(schedule, index) {
         let sum = 0;
         for (let i = index; i < schedule.length; i++) {
-            sum += schedule[i][3];
+            sum += schedule[i][4];
         }
         return sum;
     }

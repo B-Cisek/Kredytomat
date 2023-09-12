@@ -13,13 +13,12 @@ trait CreditCalculationHelpers
         return $percent / 100;
     }
 
+    /**
+     * @param float $fee fee percent in decimal
+     */
     protected function calculateChangingFee(float $fee, float $capitalToPay): float
     {
-        $capitalToPay = $capitalToPay / 100;
-
-        $result = ($capitalToPay * $fee) / 100;
-
-        return $result * 100;
+        return ($capitalToPay * $fee) / 100;
     }
 
     protected function getDailyInterestRate(Carbon $date, float $interestRate): float

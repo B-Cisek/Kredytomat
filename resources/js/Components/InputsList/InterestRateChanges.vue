@@ -52,7 +52,7 @@ watch(list.value, () => {
       <div>
         <input
           v-model="input.value"
-          class="border-gray-200 h-10 rounded-md"
+          class="border-gray-200 h-[38px] w-[230px] rounded-md"
           type="number"
           :placeholder="props.placeholder"
         >

@@ -28,7 +28,7 @@ const deleteAccount = () => {
 
 
     <div class="fixed inset-0 z-10 overflow-y-auto">
-      <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
+      <div class="flex min-h-full items-end justify-center p-4 items-center sm:p-0">
         <Transition
           enter-to-class="opacity-100 translate-y-0 sm:scale-100"
           enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"

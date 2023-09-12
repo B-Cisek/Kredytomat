@@ -30,6 +30,22 @@ watch(list.value, () => {
   emit("inputList", list.value);
 });
 
+const updateEndDate = (value, index) => {
+  let end = list.value[index].end;
+
+  if (end.year < value.year) {
+    list.value[index].end = {
+      year: value.year,
+      month: value.month,
+    }
+  } else if (end.month < value.month) {
+    list.value[index].end = {
+      year: value.year,
+      month: value.month,
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -47,14 +63,26 @@ watch(list.value, () => {
     class="flex gap-2 mt-3 lg:flex-row flex-col"
   >
     <div class="flex gap-2">
-      <Datepicker v-model="input.start" month-picker locale="pl" auto-apply/>
-      <Datepicker v-model="input.end" month-picker locale="pl" auto-apply/>
+      <Datepicker
+          v-model="input.start"
+          month-picker
+          locale="pl"
+          auto-apply
+          @update:model-value="updateEndDate($event, index)"
+      />
+      <Datepicker
+          v-model="input.end"
+          month-picker
+          locale="pl"
+          auto-apply
+          :min-date="new Date(input.start.year, input.start.month)"
+      />
     </div>
     <div class="flex md:flex-row md:gap-2">
       <div>
         <input
           v-model="input.fee"
-          class="border-gray-200 h-10 rounded-md"
+          class="border-gray-200 h-[38px] w-[230px] rounded-md"
           type="number"
           :placeholder="props.placeholder"
         >

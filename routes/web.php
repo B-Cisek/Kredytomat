@@ -73,12 +73,12 @@ Route::post('/harmonogram' , ScheduleCalculator::class)->name('get-schedule');
 
 
 Route::get('test', function () {
-    //return \Inertia\Inertia::render('Test');
+
     $credit = new \App\Services\CreditCalculations\Credit(
-        400_000,
+        300_000,
         20,
         PeriodType::YEAR,
-        5.66,
+        6.66,
         1,
         0,
         CommissionType::NUMBER
@@ -169,14 +169,14 @@ Route::get('test', function () {
     ];
 
     $creditCalculation = \App\Services\CreditCalculations\CreditCalculationsFactory::createCreditCalculation(
-        \App\Services\CreditCalculations\Enum\TypeOfInstallment::DECREASING,
+        \App\Services\CreditCalculations\Enum\TypeOfInstallment::EQUAL,
         \Carbon\Carbon::create(2023,8),
         $credit,
         //interestsRateChanges: $interestsRateChanges
-        overpayments: $overpayments
+        //overpayments: $overpayments
     );
 
-    $schedule = $creditCalculation->scheduleSmallerInstallment()->get();
+    $schedule = $creditCalculation->schedule()->get();
 
     dd(\App\Services\CreditCalculations\ScheduleFormatter::format($schedule)[array_key_last($schedule)]);
 

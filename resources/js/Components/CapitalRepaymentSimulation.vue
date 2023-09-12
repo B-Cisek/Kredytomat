@@ -12,9 +12,9 @@ const capitalWidth = ref(0);
 const interestWidth = ref(0);
 
 const calculation = () => {
-  let sum = props.schedule[period.value][3] + props.schedule[period.value][2];
-  capitalWidth.value = (props.schedule[period.value][3] / sum * 1) * 100;
-  interestWidth.value = (props.schedule[period.value][2] / sum * 1) * 100;
+  let sum = props.schedule[period.value][4] + props.schedule[period.value][3];
+  capitalWidth.value = (props.schedule[period.value][4] / sum * 1) * 100;
+  interestWidth.value = (props.schedule[period.value][3] / sum * 1) * 100;
 }
 
 watch(period, () => {
@@ -77,7 +77,7 @@ onMounted(() => {
       <div class="flex justify-between">
         <div>
           <label class="text-white/80">Rata kredytu</label>
-          <h1 class="text-white font-semibold text-3xl">{{ formattedToPLN.format(props.schedule[period][4]) }}</h1>
+          <h1 class="text-white font-semibold text-3xl">{{ formattedToPLN.format(props.schedule[period][5]) }}</h1>
         </div>
         <div>
           <label class="text-white/80">Miesiąc spłaty</label>
@@ -97,11 +97,11 @@ onMounted(() => {
         <div class="flex justify-between mt-2 gap-3">
           <div class="bg-[#21A179] text-right rounded py-1 pr-2"
                :style="`width: ${(capitalWidth < 8) ? 8 : capitalWidth}%`">
-            <p class="text-center font-semibold text-white">{{ formattedToPLN.format(props.schedule[period][3]) }}</p>
+            <p class="text-center font-semibold text-white">{{ formattedToPLN.format(props.schedule[period][4]) }}</p>
           </div>
           <div class="bg-[#DF2935] text-right rounded py-1 pr-2"
                :style="`width: ${(interestWidth < 8) ? 8 : interestWidth}%`">
-            <p class="text-center font-semibold text-white">{{ formattedToPLN.format(props.schedule[period][2]) }}</p>
+            <p class="text-center font-semibold text-white">{{ formattedToPLN.format(props.schedule[period][3]) }}</p>
           </div>
         </div>
       </div>
