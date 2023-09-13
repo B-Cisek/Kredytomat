@@ -74,6 +74,7 @@ const rules = {
   periodType: {required},
   margin: {required, numeric, between: between(0, 15)},
   commission: {required, numeric, between: between(0, 10000)},
+  commissionType: {required},
   wibor: {required},
   typeOfInstallment: {required}
 }
@@ -139,12 +140,13 @@ const getResult = async () => {
   const result = await v$.value.$validate();
   if (!result) return;
 
-  const defaultRes = await getSchedule(formData.value.typeOfInstallment, formData);
+  const defaultRes = await getSchedule(formData);
   defaultSchedule.value = await defaultRes.data.schedule;
 
-  const res = await getSchedule(formData.value.typeOfInstallment, formData, interestRateChanges, fees);
+  const res = await getSchedule(formData, interestRateChanges, fees);
   schedule.value = await res.data.schedule;
 
+    console.table(schedule.value)
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 

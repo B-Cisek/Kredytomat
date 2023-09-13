@@ -4,8 +4,8 @@ import {useHelpers} from "@/Composables/useHelpers";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import {Inertia} from "@inertiajs/inertia";
 import {onMounted, ref} from "vue";
-import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
-import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import {useEqualInstallments} from "@/Composables/useEqualInstallments";
+import {useDecreasingInstallments} from "@/Composables/useDecreasingInstallments";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
 import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
@@ -28,7 +28,7 @@ const costLessPercent = ref(0);
 
 const decreasingInstallment = () => {
   if (props.overpaymentSimulation.overpayment_type === "period") {
-    schedule.value = useDecreasingInstallmentsV2({
+    schedule.value = useDecreasingInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -40,7 +40,7 @@ const decreasingInstallment = () => {
       [],
       []).getScheduleShorterPeriod();
 
-    baseCreditSchedule.value = useDecreasingInstallmentsV2({
+    baseCreditSchedule.value = useDecreasingInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -54,7 +54,7 @@ const decreasingInstallment = () => {
   }
 
   if (props.overpaymentSimulation.overpayment_type === "installment") {
-    schedule.value = useDecreasingInstallmentsV2({
+    schedule.value = useDecreasingInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -66,7 +66,7 @@ const decreasingInstallment = () => {
       [],
       []).getScheduleSmallerInstallment();
 
-    baseCreditSchedule.value = useDecreasingInstallmentsV2({
+    baseCreditSchedule.value = useDecreasingInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -82,7 +82,7 @@ const decreasingInstallment = () => {
 
 const equalInstallment = () => {
   if (props.overpaymentSimulation.overpayment_type === "period") {
-    schedule.value = useEqualInstallmentsV2({
+    schedule.value = useEqualInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -96,7 +96,7 @@ const equalInstallment = () => {
       []
     ).getScheduleShorterPeriod();
 
-    baseCreditSchedule.value = useEqualInstallmentsV2({
+    baseCreditSchedule.value = useEqualInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -112,7 +112,7 @@ const equalInstallment = () => {
   }
 
   if (props.overpaymentSimulation.overpayment_type === "installment") {
-    schedule.value = useEqualInstallmentsV2({
+    schedule.value = useEqualInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),
@@ -126,7 +126,7 @@ const equalInstallment = () => {
       []
     ).getScheduleSmallerInstallment();
 
-    baseCreditSchedule.value = useEqualInstallmentsV2({
+    baseCreditSchedule.value = useEqualInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
         period: Number(props.overpaymentSimulation.period),

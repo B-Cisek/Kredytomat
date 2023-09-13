@@ -29,10 +29,9 @@ Route::get('oferta/{bank}/{credit}', [OfferController::class, 'showCredit'])->na
 Route::get('o-kredycie', AboutCreditController::class)->name('about-credit');
 Route::get('kalkulator-raty', InstallmentCalculatorController::class)->name('calculator.installment');
 Route::get('kalkulator-rozszerzony', ExtendedCalculatorController::class)->name('calculator.extended');
-Route::get('kalkulator-nadplata', OverpaymentCalculatorController::class)->name('calculator.overpayment');
+Route::get('kalkulator-nadplaty', OverpaymentCalculatorController::class)->name('calculator.overpayment');
 
 Route::group(['middleware' => 'auth'], function () {
-    /* Profile */
     Route::get('profil' , [ProfileController::class, 'index'])->name('profil');
     Route::post('profil' , [ProfileController::class, 'profileUpdate'])->name('profil.update');
     Route::post('profil/zmiana-hasla' , [ProfileController::class, 'passwordUpdate'])->name('profil.password.update');
@@ -41,7 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('zapisz-symulacje', [CreditSimulationsController::class, 'save'])
         ->name('credit-simulation.save');
 
-    Route::get('twoje-symulacje', UserSimulationsController::class)
+    Route::get('moje-symulacje', UserSimulationsController::class)
         ->name('profil.saved-simulations');
 
     Route::get('symulacje-kredytu', [CreditSimulationsController::class, 'index'])
@@ -63,13 +62,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users', UserController::class)->except(['show']);
-    Route::get('users/reset-password', SendResetPasswordLink::class)->name('users.reset-password');
+    Route::get('uzytkownicy/resetowanie-hasla', SendResetPasswordLink::class)->name('users.reset-password');
     Route::resource('credits', CreditController::class)->except(['show']);
     Route::resource('banks', BankController::class)->except(['show']);
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 
-Route::post('/harmonogram' , ScheduleCalculator::class)->name('get-schedule');
+Route::post('harmonogram' , ScheduleCalculator::class)->name('get-schedule');
 
 
 Route::get('test', function () {
@@ -94,91 +93,47 @@ Route::get('test', function () {
         ]
     ];
 
-//    $fixedFess = [
+
+//    $overpayments = [
 //        [
 //            'date' => [
 //                'start' => [
-//                    'month' => 1,
-//                    'year' => 2024
+//                    'month' => 12,
+//                    'year' => 2023
 //                ],
 //                'end' => [
 //                    'month' => 12,
-//                    'year' => 2024
+//                    'year' => 2023
 //                ]
 //            ],
-//            'value' => 50
+//            'value' => 50_000
 //        ],
 //        [
 //            'date' => [
 //                'start' => [
-//                    'month' => 9,
-//                    'year' => 2023
-//                ],
-//                'end' => [
-//                    'month' => 9,
-//                    'year' => 2023
-//                ]
-//            ],
-//            'value' => 3
-//        ]
-//    ];
-//
-//    $changingFee = [
-//        [
-//            'date' => [
-//                'start' => [
-//                    'month' => 1,
-//                    'year' => 2024
+//                    'month' => 12,
+//                    'year' => 2025
 //                ],
 //                'end' => [
 //                    'month' => 12,
-//                    'year' => 2024
+//                    'year' => 2025
 //                ]
 //            ],
-//            'value' => 1
-//        ]
+//            'value' => 35_500
+//        ],
 //    ];
-
-    $overpayments = [
-        [
-            'date' => [
-                'start' => [
-                    'month' => 12,
-                    'year' => 2023
-                ],
-                'end' => [
-                    'month' => 12,
-                    'year' => 2023
-                ]
-            ],
-            'value' => 50_000
-        ],
-        [
-            'date' => [
-                'start' => [
-                    'month' => 12,
-                    'year' => 2025
-                ],
-                'end' => [
-                    'month' => 12,
-                    'year' => 2025
-                ]
-            ],
-            'value' => 35_500
-        ],
-    ];
 
     $creditCalculation = \App\Services\CreditCalculations\CreditCalculationsFactory::createCreditCalculation(
         \App\Services\CreditCalculations\Enum\TypeOfInstallment::EQUAL,
         \Carbon\Carbon::create(2023,8),
         $credit,
-        //interestsRateChanges: $interestsRateChanges
+        interestsRateChanges: $interestsRateChanges
         //overpayments: $overpayments
     );
 
     $schedule = $creditCalculation->schedule()->get();
 
-    dd(\App\Services\CreditCalculations\ScheduleFormatter::format($schedule)[array_key_last($schedule)]);
+    dd(\App\Services\CreditCalculations\ScheduleFormatter::format($schedule));
 
 
 });

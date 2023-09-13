@@ -1,6 +1,6 @@
 import {useHelpers} from "@/Composables/useHelpers";
 
-export function useDecreasingInstallmentsV2(
+export function useDecreasingInstallments(
     credit,
     overpayment = [],
     newInterestRate = [],

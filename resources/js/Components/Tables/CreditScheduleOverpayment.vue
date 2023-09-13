@@ -25,19 +25,21 @@ const props = defineProps({
       </thead>
       <tbody>
       <tr
-        v-for="(schedule, index) in props.schedule"
-        :key="index"
-        class="bg-white border-b hover:bg-gray-50 text-center"
+          v-for="(schedule, index) in props.schedule"
+          :key="index"
+          class="bg-white border-b hover:bg-gray-50 text-center"
       >
         <td class="font-medium text-gray-900 whitespace-nowrap p-3">
           {{ index + 1 }}
         </td>
-        <td >{{ formattedToPLN.format(schedule[1]) }}</td>
-        <td >{{ formattedToPLN.format(schedule[3]) }}</td>
-        <td >{{ formattedToPLN.format(schedule[2]) }}</td>
-        <td >{{ formattedToPLN.format(schedule[4]) }}</td>
-        <td >{{ formattedToPLN.format(schedule[5]) }}</td>
-        <td :class="schedule[6] != 0.00 ? 'text-green-700 font-bold' : ''">{{ formattedToPLN.format(schedule[6]) }}</td>
+        <td>{{ formattedToPLN.format(schedule[2]) }}</td>
+        <td>{{ formattedToPLN.format(schedule[4]) }}</td>
+        <td>{{ formattedToPLN.format(schedule[3]) }}</td>
+        <td>{{ formattedToPLN.format(schedule[5]) }}</td>
+        <td>{{ formattedToPLN.format(schedule[6]) }}</td>
+        <td :class="schedule[10] != 0.00 ? 'text-green-700 font-bold' : ''">
+          {{ formattedToPLN.format(schedule[10]) }}
+        </td>
       </tr>
       </tbody>
     </table>

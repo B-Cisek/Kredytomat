@@ -6,12 +6,14 @@ enum OverpaymentType: string
 {
     case INSTALLMENT = 'installment';
     case PERIOD = 'period';
+    case NONE = 'none';
 
-    public static function getType(string $name): self
+    public static function getType(?string $name): self
     {
         return match ($name) {
             self::INSTALLMENT->value => self::INSTALLMENT,
             self::PERIOD->value => self::PERIOD,
+            null => self::NONE
         };
     }
 }

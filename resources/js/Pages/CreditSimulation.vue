@@ -13,8 +13,8 @@ import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRate
 import {Inertia} from "@inertiajs/inertia";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
-import {useEqualInstallmentsV2} from "@/Composables/useEqualInstallmentsV2";
-import {useDecreasingInstallmentsV2} from "@/Composables/useDecreasingInstallmentsV2";
+import {useEqualInstallments} from "@/Composables/useEqualInstallments";
+import {useDecreasingInstallments} from "@/Composables/useDecreasingInstallments";
 
 const {
   formattedToPLN,
@@ -45,7 +45,7 @@ Chart.register(...registerables);
 
 const calculation = () => {
   if (props.creditSimulation.type_of_installment === "equal") {
-    schedule.value = useEqualInstallmentsV2({
+    schedule.value = useEqualInstallments({
         date: new Date(2023, 0),
         amountOfCredit: Number(props.creditSimulation.amount_of_credit),
         period: Number(props.creditSimulation.period),
@@ -59,7 +59,7 @@ const calculation = () => {
       JSON.parse(props.creditSimulation.changing_fees)
     ).getSchedule();
   } else {
-    schedule.value = useDecreasingInstallmentsV2({
+    schedule.value = useDecreasingInstallments({
       date: new Date(2023, 0),
       amountOfCredit: Number(props.creditSimulation.amount_of_credit),
       period: Number(props.creditSimulation.period),

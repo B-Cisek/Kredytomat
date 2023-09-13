@@ -25,8 +25,6 @@ const deleteAccount = () => {
     >
       <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
     </Transition>
-
-
     <div class="fixed inset-0 z-10 overflow-y-auto">
       <div class="flex min-h-full items-end justify-center p-4 items-center sm:p-0">
         <Transition

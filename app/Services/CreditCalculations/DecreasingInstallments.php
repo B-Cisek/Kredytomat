@@ -18,11 +18,13 @@ class DecreasingInstallments implements InstallmentsInterface
     public function __construct(
         private readonly Carbon $date,
         private readonly Credit $credit,
-        private readonly array $overpayments = [],
-        private readonly array $interestsRateChanges = [],
-        private readonly array $fixedFees = [],
-        private readonly array $changingFees = [],
-    ){}
+        private readonly array  $overpayments = [],
+        private readonly array  $interestsRateChanges = [],
+        private readonly array  $fixedFees = [],
+        private readonly array  $changingFees = [],
+    )
+    {
+    }
 
     public function schedule(): static
     {
@@ -37,8 +39,8 @@ class DecreasingInstallments implements InstallmentsInterface
             $lastRow = end($this->schedule);
             $currentDate = $this->getNextMonth($lastRow[0]);
             $numberOfDays = $currentDate->diffInDays($lastRow[0]);
-            $capitalToPay =  $lastRow[6];
-            $currentInterest = $lastRow[7];
+            $capitalToPay = $lastRow[6];
+            $currentInterest = $this->getInterestsRateChanges($currentDate) ?? $lastRow[7];
             $capitalPart = $this->getCapitalPart($this->credit->amountOfCredit, $this->credit->period);
             $interestPart = $this->getInterestPart(
                 $currentInterest,
@@ -48,8 +50,6 @@ class DecreasingInstallments implements InstallmentsInterface
             );
             $installment = $this->getInstallment($interestPart, $capitalPart);
             $capitalAfterPay = $this->getCapitalAfterPay($capitalToPay, $capitalPart);
-
-            $currentInterest = $this->getInterestsRateChanges($currentDate) ?? $currentInterest;
             $fixedFee = $this->getFixedFees($currentDate);
             $changingFee = $this->getChangingFees($currentDate, $capitalToPay);
 
@@ -84,7 +84,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $lastRow = end($this->schedule);
             $currentDate = $this->getNextMonth($lastRow[0]);
             $numberOfDays = $currentDate->diffInDays($lastRow[0]);
-            $capitalToPay =  $lastRow[6] - $lastRow[10];
+            $capitalToPay = $lastRow[6] - $lastRow[10];
             $currentInterest = $lastRow[7];
             $capitalPart = $this->getCapitalPart($this->credit->amountOfCredit, $this->credit->period);
             $interestPart = $this->getInterestPart(
@@ -139,7 +139,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $lastRow = end($this->schedule);
             $currentDate = $this->getNextMonth($lastRow[0]);
             $numberOfDays = $currentDate->diffInDays($lastRow[0]);
-            $capitalToPay =  $lastRow[6] - $lastRow[10];
+            $capitalToPay = $lastRow[6] - $lastRow[10];
             $currentInterest = $lastRow[7];
             $capitalPart = $lastRow[4] === 0
                 ? $lastRow[4]
@@ -185,7 +185,8 @@ class DecreasingInstallments implements InstallmentsInterface
     private function getInterestsRateChanges(Carbon $currentDate): float|null
     {
         foreach ($this->interestsRateChanges as $value) {
-            if (($value['date']['month'] + 1) === $currentDate->month && $value['date']['year'] === $currentDate->year) {
+            if (($value['date']['month'] + 1) === $currentDate->month
+                && $value['date']['year'] === $currentDate->year) {
                 return $this->toDecimal($value['value']);
             }
         }
@@ -228,7 +229,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['value'];
+                return $value['overpayment'];
             }
         }
 
@@ -333,7 +334,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['value'];
+                return $value['overpayment'];
             }
         }
 

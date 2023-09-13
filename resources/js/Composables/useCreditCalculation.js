@@ -3,27 +3,29 @@ import {ref} from "vue";
 export function useCreditCalculation() {
     const loading = ref(false);
 
-    const getSchedule = async (type, credit, interestsRateChanges = {}, fees = {}, overpayment = {}) => {
+    const getSchedule = async (creditData, interestsRateChanges = {}, fees = {}, overpayments = {}, overpaymentType = 'none') => {
         loading.value = true;
 
         try {
             let res = await axios.post(route('get-schedule'), {
-                typeOfInstallment: type,
+                typeOfInstallment: creditData.value.typeOfInstallment,
                 date: {
-                    year: credit.value.date.year,
-                    month: credit.value.date.month
+                    year: creditData.value.date.year,
+                    month: creditData.value.date.month
                 },
                 credit: {
-                    amountOfCredit: credit.value.amountOfCredit,
-                    period: credit.value.period,
-                    periodType: credit.value.periodType,
-                    margin: credit.value.margin,
-                    wibor: Number(credit.value.wibor),
-                    commission: credit.value.commission,
-                    commissionType: credit.value.commissionType
+                    amountOfCredit: creditData.value.amountOfCredit,
+                    period: creditData.value.period,
+                    periodType: creditData.value.periodType,
+                    margin: creditData.value.margin,
+                    wibor: Number(creditData.value.wibor),
+                    commission: creditData.value.commission,
+                    commissionType: creditData.value.commissionType
                 },
                 interestsRateChange: interestsRateChanges.value,
-                fees: fees.value
+                fees: fees.value,
+                overpayments: overpayments.value,
+                overpaymentType: overpaymentType.value
             });
 
             loading.value = false;

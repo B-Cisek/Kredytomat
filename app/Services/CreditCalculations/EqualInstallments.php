@@ -24,6 +24,89 @@ class EqualInstallments implements InstallmentsInterface
         private readonly array $changingFees = [],
     ){}
 
+    public function scheduleTest(): static
+    {
+        $currentDate = $this->getNextMonth($this->date);
+        $numberOfDays = $currentDate->diffInDays($this->date);
+        $currentInterest = $this->getCreditInterest($this->credit->margin, $this->credit->wibor);
+        $installment = $givenInstallment ?? $this->getInstallmentForEqualMonths($currentInterest);
+        $interestPart = $this->getInterestPart(
+            $currentInterest,
+            $this->credit->amountOfCredit,
+            $currentDate,
+            $numberOfDays
+        );
+        $capitalPart = $this->getCapitalPart($installment, $interestPart);
+        $capitalAfterPay = $this->getCapitalAfterPay($this->credit->amountOfCredit, $capitalPart);
+
+        $this->schedule[] = [
+            $currentDate,
+            $numberOfDays,
+            $this->credit->amountOfCredit,
+            $interestPart,
+            $capitalPart,
+            $installment,
+            $capitalAfterPay,
+            $currentInterest,
+        ];
+
+        $currentDate = $this->getNextMonth($this->date);
+        $this->schedule[0][] = $this->getFirstFixedFee($currentDate);
+        $this->schedule[0][] = $this->getFirstChangingFee($currentDate, $this->credit->amountOfCredit);
+        $this->schedule[0][] = 0; # overpayment
+
+        for ($index = 1; $index < $this->credit->period * 12; $index++) {
+            $lastRow = end($this->schedule);
+            $currentDate = $this->getNextMonth($lastRow[0]);
+            $numberOfDays = $currentDate->diffInDays($lastRow[0]);
+            $capitalToPay =  $lastRow[6];
+            $isInterestRateChanged = false;
+            $currentInterest = $lastRow[7];
+
+            if ($this->getInterestsRateChanges($currentDate)) {
+                $currentInterest = $this->getInterestsRateChanges($currentDate);
+                $isInterestRateChanged = true;
+            }
+
+            if ($isInterestRateChanged) {
+                $installment = $this->getInstallmentForEqualMonths($currentInterest);
+            } else {
+                $installment = $lastRow[5];
+            }
+
+            $interestPart = $this->getInterestPart(
+                $currentInterest,
+                $capitalToPay,
+                $currentDate,
+                $numberOfDays
+            );
+
+            $capitalPart = $this->getCapitalPart($installment, $interestPart);
+            $capitalAfterPay = $this->getCapitalAfterPay($capitalToPay, $capitalPart);
+
+            $fixedFee = $this->getFixedFees($currentDate);
+            $changingFee = $this->getChangingFees($currentDate, $capitalToPay);
+
+            $this->schedule[] = [
+                $currentDate,
+                $numberOfDays,
+                $capitalToPay,
+                $interestPart,
+                $capitalPart,
+                $installment,
+                $capitalAfterPay,
+                $currentInterest,
+                $fixedFee,
+                $changingFee,
+                0 // overpayment
+            ];
+
+            $isInterestRateChanged = false;
+        }
+
+        return $this;
+    }
+
     public function schedule(): static
     {
         $this->calculateInitialSchedule();
@@ -75,7 +158,19 @@ class EqualInstallments implements InstallmentsInterface
             $currentDate = $this->getNextMonth($lastRow[0]);
             $numberOfDays = $currentDate->diffInDays($lastRow[0]);
             $capitalToPay =  $lastRow[6];
+            $isInterestRateChanged = false;
             $currentInterest = $lastRow[7];
+
+            if ($this->getInterestsRateChanges($currentDate)) {
+                $currentInterest = $this->getInterestsRateChanges($currentDate);
+                $isInterestRateChanged = true;
+            }
+
+            if ($isInterestRateChanged) {
+                $installment = $this->getInstallmentForEqualMonths($currentInterest);
+            } else {
+                $installment = $lastRow[5];
+            }
 
             $interestPart = $this->getInterestPart(
                 $currentInterest,
@@ -83,12 +178,10 @@ class EqualInstallments implements InstallmentsInterface
                 $currentDate,
                 $numberOfDays
             );
-            $installment =  $givenInstallment ?? $lastRow[5]; //$this->getInstallmentForEqualMonths($currentInterest);
 
             $capitalPart = $this->getCapitalPart($installment, $interestPart);
             $capitalAfterPay = $this->getCapitalAfterPay($capitalToPay, $capitalPart);
 
-            $currentInterest = $this->getInterestsRateChanges($currentDate) ?? $currentInterest;
             $fixedFee = $this->getFixedFees($currentDate);
             $changingFee = $this->getChangingFees($currentDate, $capitalToPay);
 
@@ -105,6 +198,8 @@ class EqualInstallments implements InstallmentsInterface
                 $changingFee,
                 0 // overpayment
             ];
+
+            $isInterestRateChanged = false;
         }
     }
 
@@ -182,7 +277,7 @@ class EqualInstallments implements InstallmentsInterface
     private function getInterestsRateChanges(Carbon $currentDate): float|null
     {
         foreach ($this->interestsRateChanges as $value) {
-            if ($value['date']['month'] === $currentDate->month && $value['date']['year'] === $currentDate->year) {
+            if (($value['date']['month'] + 1) === $currentDate->month && $value['date']['year'] === $currentDate->year) {
                 return $this->toDecimal($value['value']);
             }
         }

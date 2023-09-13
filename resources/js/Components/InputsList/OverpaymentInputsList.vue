@@ -34,10 +34,26 @@ watch(list.value, () => {
 watch(overpaymentType, () => {
   emit("type", overpaymentType.value);
 });
+
+const updateEndDate = (value, index) => {
+  let end = list.value[index].end;
+
+  if (end.year < value.year) {
+    list.value[index].end = {
+      year: value.year,
+      month: value.month,
+    }
+  } else if (end.month < value.month) {
+    list.value[index].end = {
+      year: value.year,
+      month: value.month,
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="flex justify-between items-center mb-10">
+  <div class="flex justify-between items-center mb-5">
     <div class="flex">
       <span class="text-xl font-semibold mr-5">Nadpłata</span>
       <button @click="add">
@@ -59,13 +75,35 @@ watch(overpaymentType, () => {
       </div>
     </div>
   </div>
-  <div v-for="(input, index) in list" :key="index" class="flex gap-6 mt-3">
-    <Datepicker v-model="input.start" month-picker locale="pl" auto-apply/>
-    <Datepicker v-model="input.end" month-picker locale="pl" auto-apply/>
-    <input v-model="input.overpayment" class="border-gray-200 h-10 rounded-md" type="number"
-           :placeholder="props.placeholder">
-    <button @click="remove(index)">
-      <XCircleIcon class="h-6 w-6"/>
-    </button>
+  <div v-for="(input, index) in list" :key="index" class="flex gap-2 mt-3 lg:flex-row flex-col">
+    <div class="flex gap-2">
+      <Datepicker
+          v-model="input.start"
+          month-picker
+          locale="pl"
+          auto-apply
+          @update:model-value="updateEndDate($event, index)"
+      />
+      <Datepicker
+          v-model="input.end"
+          month-picker
+          locale="pl"
+          auto-apply
+          :min-date="new Date(input.start.year, input.start.month)"
+      />
+    </div>
+    <div class="flex md:flex-row md:gap-2">
+      <div>
+        <input v-model="input.overpayment"
+               class="border-gray-200 rounded-md h-[38px] w-[230px]"
+               type="number"
+               :placeholder="props.placeholder">
+      </div>
+      <div class="flex">
+        <button @click="remove(index)">
+          <XCircleIcon class="h-6 w-6"/>
+        </button>
+      </div>
+    </div>
   </div>
 </template>

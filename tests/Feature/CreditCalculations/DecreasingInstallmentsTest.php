@@ -13,7 +13,7 @@ use Tests\TestCase;
 class DecreasingInstallmentsTest extends TestCase
 {
     private Credit $credit;
-    private array  $overpayments;
+    private array $overpayments;
 
     public function __construct()
     {
@@ -31,30 +31,27 @@ class DecreasingInstallmentsTest extends TestCase
 
         $this->overpayments = [
             [
-                'date' => [
-                    'start' => [
-                        'month' => 12,
-                        'year' => 2023
-                    ],
-                    'end' => [
-                        'month' => 12,
-                        'year' => 2023
-                    ]
+                'start' => [
+                    'month' => 12,
+                    'year' => 2023
                 ],
-                'value' => 50_000
+                'end' => [
+                    'month' => 12,
+                    'year' => 2023
+                ],
+                'overpayment' => 50_000
             ],
             [
-                'date' => [
-                    'start' => [
-                        'month' => 12,
-                        'year' => 2025
-                    ],
-                    'end' => [
-                        'month' => 12,
-                        'year' => 2025
-                    ]
+                'start' => [
+                    'month' => 12,
+                    'year' => 2025
                 ],
-                'value' => 35_500
+                'end' => [
+                    'month' => 12,
+                    'year' => 2025
+                ],
+
+                'overpayment' => 35_500
             ],
         ];
     }
@@ -156,10 +153,10 @@ class DecreasingInstallmentsTest extends TestCase
         $this->assertEquals(3929.24, $schedule[0][5]);
         $this->assertEquals(398333.33, $schedule[0][6]);
 
-        $this->assertEquals(1287.35, $schedule[array_key_last($schedule)][2]);
-        $this->assertEquals(7.28, $schedule[array_key_last($schedule)][3]);
-        $this->assertEquals(1287.35, $schedule[array_key_last($schedule)][4]);
-        $this->assertEquals(1294.63, $schedule[array_key_last($schedule)][5]);
+        $this->assertEquals(1285.65, $schedule[array_key_last($schedule)][2]);
+        $this->assertEquals(7.27, $schedule[array_key_last($schedule)][3]);
+        $this->assertEquals(1285.65, $schedule[array_key_last($schedule)][4]);
+        $this->assertEquals(1292.93, $schedule[array_key_last($schedule)][5]);
         $this->assertEquals(0, $schedule[array_key_last($schedule)][6]);
     }
 }

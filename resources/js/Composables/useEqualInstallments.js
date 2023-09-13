@@ -1,43 +1,27 @@
 import {useHelpers} from "@/Composables/useHelpers";
 
 /**
- * RATY STAŁE
  *
- * @param credit Kredyt dane
- * @param overpayment Lista nadpłat
- * @param wiborList Lasta zmian wiboru
- * @param fixedFees Opłaty stałe
- * @param changingFees Opłaty zmienne
+ * @param credit Credit data
+ * @param overpayment overpayments
+ * @param newInterestRate Interest Rate Changes
+ * @param fixedFees Fixed Fees
+ * @param changingFees Changing Fees
+ * @returns {{getSchedule: (function(): (*|number|number)[][])}}
  */
 export function useEqualInstallments(
     credit,
     overpayment = [],
-    wiborList = [],
+    newInterestRate = [],
     fixedFees = [],
     changingFees = []
 ) {
     const {toDecimal} = useHelpers();
 
-    let firstDateFromOverpayment = new Date(1999,0);
-
-    if (overpayment[0]) {
-        firstDateFromOverpayment = new Date(overpayment[0].start.year, overpayment[0].start.month);
-    }
-
-    let firstDateFromFixedFees = new Date(1999,0);
-    if (fixedFees[0]) {
-        firstDateFromFixedFees = new Date(fixedFees[0].start.year, fixedFees[0].start.month);
-    }
-
-    let firstDateFromChangingFees = new Date(1999,0);
-    if (changingFees[0]) {
-        firstDateFromChangingFees = new Date(changingFees[0].start.year, changingFees[0].start.month);
-    }
-
     /**
-     * @param margin Marża
-     * @param wibor WIBOR
-     * @returns Oprocentowanie kredytu
+     * @param margin Credit margin
+     * @param wibor Wibor
+     * @returns {number} Credit Interest
      */
     function getCreditInterest(margin, wibor) {
         let creditInterest = 0;
@@ -48,32 +32,42 @@ export function useEqualInstallments(
 
     /**
      *
-     * @param wibor WIBOR
-     * @returns Pierwszą rate kredytu
+     * @param wibor Wibor
+     * @param margin Margin
+     * @returns {*} Credit Interest Per Year
      */
-    function getInstallment(wibor) {
+    function getCreditInterestPerYear(wibor, margin) {
+        return toDecimal(parseFloat(getCreditInterest(margin, wibor)) / 12);
+    }
+
+    /**
+     *
+     * @param wibor Wibor
+     * @param margin Margin
+     * @returns {number} Installment
+     */
+    function getInstallment(wibor, margin) {
         let mn = credit.period * 12;
-        let creditInterest =
-            toDecimal(parseFloat(getCreditInterest(credit.margin, wibor)) / 12);
+        let creditInterest = getCreditInterestPerYear(wibor, margin);
         let installment =
             credit.amountOfCredit * creditInterest * (creditInterest + 1) ** mn / (((creditInterest + 1) ** mn) - 1);
         return parseFloat(installment);
     }
 
     /**
-     * @param interest Oprocentowanie
-     * @param capitalToPay Kapitał do spłaty
-     * @returns Część odsetkowa
+     * @param interest Interest
+     * @param capitalToPay Capital To Pay
+     * @returns Interest Part
      */
-    function getInterestPart(interest, capitalToPay ) {
+    function getInterestPart(interest, capitalToPay) {
         let result = ((toDecimal(interest) / 12) * capitalToPay);
         return parseFloat(result);
     }
 
     /**
-     * @param installmentTotal Rata całkowita
-     * @param partInterest Częśc odsetkowa
-     * @returns Część kapitałowa
+     * @param installmentTotal Total Installment
+     * @param partInterest Interest Part
+     * @returns Capital Part
      */
     function getCapitalPart(installmentTotal, partInterest) {
         let result = installmentTotal - partInterest;
@@ -81,9 +75,9 @@ export function useEqualInstallments(
     }
 
     /**
-     * @param capitalToPay Kapitał do spłaty
-     * @param capitalPart Część kapitałowa
-     * @returns Kapitał po spłacie
+     * @param capitalToPay Repayment Capital
+     * @param capitalPart Capital Part
+     * @returns Capital After Repayment
      */
     function getCapitalAfterPay(capitalToPay, capitalPart) {
         let result = capitalToPay - capitalPart;
@@ -110,48 +104,107 @@ export function useEqualInstallments(
         return parseFloat(newInstallment);
     }
 
+    /**
+     *
+     * @param installmentNumber Number of capital part to subtract
+     * @param creditInterest Interest
+     * @param schedule Credit Schedule
+     * @returns {number} Total Installment
+     */
+    function getNewInstallmentAfterInterestChange(installmentNumber, creditInterest, schedule) {
+        let mn = credit.period * 12;
+        mn -= installmentNumber;
+        let sumOfPaidCapital = getSumOfPaidCapital(installmentNumber, schedule);
+        creditInterest = getCreditInterestPerYear(creditInterest, 0)
+        let installment =
+            ((credit.amountOfCredit - sumOfPaidCapital) * creditInterest * (creditInterest + 1) ** mn) /
+            (((creditInterest + 1) ** mn) - 1);
+
+        return parseFloat(installment);
+    }
+
+    function getSumOfPaidCapital(installmentNumber, schedule) {
+        let sumOfPaidCapital = 0.00;
+        for (let i = 0; i < installmentNumber; i++) {
+            sumOfPaidCapital += schedule[i][3];
+        }
+
+        return parseFloat(sumOfPaidCapital);
+    }
+
     function calculateChangingFee(fee, capitalToPay) {
         return (capitalToPay * fee) / 100;
     }
 
-    function getSchedule() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
-        let amount = parseFloat(credit.amountOfCredit);
-        let installmentTotal = getInstallment(credit.wibor);
-        let interestPart = getInterestPart(creditInterest, amount);
-        let capitalPart = getCapitalPart(installmentTotal, interestPart);
-        let capitalAfterPay = getCapitalAfterPay(amount, capitalPart);
+    function getFirstDateFromFixedFees(fixedFees) {
+        if (Array.isArray(fixedFees) && fixedFees.length > 0) {
+            return new Date(fixedFees[0].start.year, fixedFees[0].start.month);
+        }
+        return  new Date(1999,0);
+    }
 
+    function getFirstDateFromOverpayments(overpayments) {
+        if (Array.isArray(overpayments) && overpayments.length > 0) {
+            return new Date(overpayments[0].start.year, overpayments[0].start.month);
+        }
+        return  new Date(1999,0);
+    }
+
+    function getFirstDateFromChangingFees(changingFees) {
+        if (Array.isArray(changingFees) && changingFees.length > 0) {
+            return new Date(changingFees[0].start.year, changingFees[0].start.month);
+        }
+        return  new Date(1999,0);
+    }
+
+
+
+    /**
+     *
+     * @returns {[]} Credit Schedule
+     */
+    function getSchedule() {
+        let currentInterest = getCreditInterest(credit.margin, credit.wibor);
+        let amountOfCredit = parseFloat(credit.amountOfCredit);
+        let installmentTotal = getInstallment(credit.wibor, credit.margin);
+        let interestPart = getInterestPart(currentInterest, amountOfCredit);
+        let capitalPart = getCapitalPart(installmentTotal, interestPart);
+        let capitalAfterPay = getCapitalAfterPay(amountOfCredit, capitalPart);
 
         let creditSchedule = [
             [
                 credit.date,
-                amount,
+                amountOfCredit,
                 interestPart,
                 capitalPart,
                 installmentTotal,
                 capitalAfterPay,
-                0,
-                credit.wibor,
-                firstDateFromFixedFees.getTime() === credit.date.getTime()
+                0, // overpayment
+                currentInterest,
+                getFirstDateFromFixedFees(fixedFees).getTime() === credit.date.getTime()
                     ? fixedFees[0].fee
                     : 0,
-                firstDateFromChangingFees.getTime() === credit.date.getTime()
-                    ? calculateChangingFee(changingFees[0].fee, amount)
+                getFirstDateFromChangingFees(changingFees).getTime() === credit.date.getTime()
+                    ? calculateChangingFee(changingFees[0].fee, amountOfCredit)
                     : 0,
-            ],
+            ]
         ];
-
-        //creditSchedule[0][4] += creditSchedule[0][8] + creditSchedule[0][9];
 
         for (let index = 1; index < credit.period * 12; index++) {
             let lastRow = creditSchedule.at(-1);
             let capitalToPay = lastRow[5] - lastRow[6];
-            let lastCreditInterest = getCreditInterest(credit.margin, lastRow[7]);
             let currentDate = getNextMonth(lastRow[0]);
-            let currentWibor = lastRow[7];
             let fixedFee = 0;
             let changingFee = 0;
+            let isInterestRateChanged = false;
+
+            newInterestRate.forEach(value => {
+                if (value.date.month === currentDate.getMonth()
+                    && value.date.year === currentDate.getFullYear()) {
+                    currentInterest = value.value
+                    isInterestRateChanged = true;
+                }
+            });
 
             fixedFees.forEach(value => {
                 let startDate = new Date(value.start.year, value.start.month);
@@ -173,18 +226,35 @@ export function useEqualInstallments(
                 }
             });
 
-            let current = [
-                currentDate,
-                capitalToPay,
-                getInterestPart(lastCreditInterest, capitalToPay),
-                getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay)),
-                getInstallment(currentWibor),
-                getCapitalAfterPay(capitalToPay, getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay))),
-                0,
-                currentWibor,
-                fixedFee,
-                changingFee
-            ];
+            let current = [];
+
+            if (isInterestRateChanged) {
+                current = [
+                    currentDate,
+                    capitalToPay,
+                    getInterestPart(currentInterest, capitalToPay),
+                    getCapitalPart(getNewInstallmentAfterInterestChange(index, currentInterest, creditSchedule), getInterestPart(currentInterest, capitalToPay)),
+                    getNewInstallmentAfterInterestChange(index, currentInterest, creditSchedule),
+                    getCapitalAfterPay(capitalToPay, getCapitalPart(getNewInstallmentAfterInterestChange(index, currentInterest, creditSchedule), getInterestPart(currentInterest, capitalToPay))),
+                    0,
+                    currentInterest,
+                    fixedFee,
+                    changingFee,
+                ];
+            } else {
+                current = [
+                    currentDate,
+                    capitalToPay,
+                    getInterestPart(currentInterest, capitalToPay),
+                    getCapitalPart(lastRow[4], getInterestPart(currentInterest, capitalToPay)),
+                    lastRow[4],
+                    getCapitalAfterPay(capitalToPay, getCapitalPart(lastRow[4], getInterestPart(currentInterest, capitalToPay))),
+                    0,
+                    currentInterest,
+                    fixedFee,
+                    changingFee,
+                ];
+            }
 
             // jezeli rata calkowita jest mniejsza od kapitalu do splaty
             if (current[4] > current[1]) {
@@ -192,9 +262,6 @@ export function useEqualInstallments(
                 current[3] = current[4] - current[2]; // czesc kapitalowa
                 current[5] = current[1] - current[3]; // kapital po splacie
             }
-
-            // sumowanie oplat
-            //current[4] += current[8] + current[9];
 
             creditSchedule.push(current);
             if (current[5] <= 0) break;
@@ -204,23 +271,22 @@ export function useEqualInstallments(
     }
 
     function getScheduleShorterPeriod() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
-        let amount = parseFloat(credit.amountOfCredit);
-        let installmentTotal = getInstallment(credit.wibor);
-        let interestPart = getInterestPart(creditInterest, amount);
+        let currentInterest = getCreditInterest(credit.margin, credit.wibor);
+        let amountOfCredit = parseFloat(credit.amountOfCredit);
+        let installmentTotal = getInstallment(credit.wibor, credit.margin);
+        let interestPart = getInterestPart(currentInterest, amountOfCredit);
         let capitalPart = getCapitalPart(installmentTotal, interestPart);
-        let capitalAfterPay = getCapitalAfterPay(amount, capitalPart);
-
+        let capitalAfterPay = getCapitalAfterPay(amountOfCredit, capitalPart);
 
         let creditSchedule = [
             [
                 credit.date,
-                amount,
+                amountOfCredit,
                 interestPart,
                 capitalPart,
                 installmentTotal,
                 capitalAfterPay,
-                firstDateFromOverpayment.getTime() === credit.date.getTime()
+                getFirstDateFromOverpayments(overpayment).getTime() === credit.date.getTime()
                     ? overpayment[0].overpayment
                     : 0,
                 credit.wibor
@@ -236,14 +302,6 @@ export function useEqualInstallments(
             let currentWibor = lastRow[7];
             let onceOverpayment = 0;
 
-            // TODO:
-            wiborList.forEach(value => {
-                if (value.start.month === lastRow[0].getMonth() &&
-                    value.start.year === lastRow[0].getFullYear()) {
-                    currentWibor = value.wibor
-                }
-            });
-
             overpayment.forEach(value => {
                 let startDate = new Date(value.start.year, value.start.month);
                 let endDate = new Date(value.end.year, value.end.month);
@@ -258,9 +316,9 @@ export function useEqualInstallments(
                 currentDate,
                 capitalToPay,
                 getInterestPart(lastCreditInterest, capitalToPay),
-                getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay)),
-                getInstallment(currentWibor),
-                getCapitalAfterPay(capitalToPay, getCapitalPart(getInstallment(currentWibor), getInterestPart(lastCreditInterest, capitalToPay))),
+                getCapitalPart(getInstallment(currentWibor, credit.margin), getInterestPart(lastCreditInterest, capitalToPay)),
+                getInstallment(currentWibor, credit.margin),
+                getCapitalAfterPay(capitalToPay, getCapitalPart(getInstallment(currentWibor, credit.margin), getInterestPart(lastCreditInterest, capitalToPay))),
                 onceOverpayment !== 0 ? onceOverpayment : lastOverpayment,
                 currentWibor
             ];
@@ -281,22 +339,22 @@ export function useEqualInstallments(
     }
 
     function getScheduleSmallerInstallment() {
-        let creditInterest = getCreditInterest(credit.margin, credit.wibor);
-        let amount = parseFloat(credit.amountOfCredit);
-        let installmentTotal = getInstallment(credit.wibor);
-        let interestPart = getInterestPart(creditInterest, amount);
+        let currentInterest = getCreditInterest(credit.margin, credit.wibor);
+        let amountOfCredit = parseFloat(credit.amountOfCredit);
+        let installmentTotal = getInstallment(credit.wibor, credit.margin);
+        let interestPart = getInterestPart(currentInterest, amountOfCredit);
         let capitalPart = getCapitalPart(installmentTotal, interestPart);
-        let capitalAfterPay = getCapitalAfterPay(amount, capitalPart);
+        let capitalAfterPay = getCapitalAfterPay(amountOfCredit, capitalPart);
 
         let creditSchedule = [
             [
                 credit.date,
-                amount,
+                amountOfCredit,
                 interestPart,
                 capitalPart,
                 installmentTotal,
                 capitalAfterPay,
-                firstDateFromOverpayment.getTime() === credit.date.getTime()
+                getFirstDateFromOverpayments(overpayment).getTime() === credit.date.getTime()
                     ? overpayment[0].overpayment
                     : 0,
                 credit.wibor
@@ -313,14 +371,6 @@ export function useEqualInstallments(
             let onceOverpayment = 0;
             let lastCapitalBeforePay = lastRow[5] - lastOverpayment;
             let newInstallmentTotal = lastRow[4];
-
-            // TODO:
-            wiborList.forEach(value => {
-                if (value.start.month === lastRow[0].getMonth() &&
-                    value.start.year === lastRow[0].getFullYear()) {
-                    currentWibor = value.wibor
-                }
-            });
 
             overpayment.forEach(value => {
                 let startDate = new Date(value.start.year, value.start.month);
@@ -367,9 +417,8 @@ export function useEqualInstallments(
     }
 
     return {
-        getScheduleShorterPeriod,
-        getScheduleSmallerInstallment,
         getSchedule,
-        getInstallment,
+        getScheduleShorterPeriod,
+        getScheduleSmallerInstallment
     }
 }
