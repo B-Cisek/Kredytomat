@@ -27,4 +27,17 @@ trait CreditCalculationHelpers
             ? $interestRate / 366
             : $interestRate / 365;
     }
+
+    protected function countNegativeValuesInColumn(array $schedule, int $columnNumber): int
+    {
+        $countNegative = 0;
+
+        foreach ($schedule as $row) {
+            if ($row[$columnNumber] < 0) {
+                $countNegative++;
+            }
+        }
+
+        return $countNegative;
+    }
 }

@@ -1,6 +1,6 @@
 <script setup>
 import {Head} from '@inertiajs/inertia-vue3'
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue"
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue"
 import Tile from "@/Components/Tile.vue"
 import {UsersIcon} from "@heroicons/vue/24/solid";
 import {DocumentTextIcon} from "@heroicons/vue/24/solid";

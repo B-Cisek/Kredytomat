@@ -1,5 +1,5 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
 import BanksTable from "@/Components/Tables/BanksTable.vue";
 import Pagination from "@/Components/Pagination.vue";
 import { defineProps } from "vue";

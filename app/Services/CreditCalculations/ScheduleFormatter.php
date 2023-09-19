@@ -12,6 +12,10 @@ class ScheduleFormatter
     {
         foreach ($schedule as &$row) {
             foreach ($row as $key => &$value) {
+                if ($key === 3 && $value < 0) {
+                    $value = 0;
+                }
+
                 if (in_array($key, self::$columnsToFormat)) {
                     $value = round($value, 2);
                 }

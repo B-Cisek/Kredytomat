@@ -32,10 +32,10 @@ Route::get('kalkulator-rozszerzony', ExtendedCalculatorController::class)->name(
 Route::get('kalkulator-nadplaty', OverpaymentCalculatorController::class)->name('calculator.overpayment');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('profil' , [ProfileController::class, 'index'])->name('profil');
-    Route::post('profil' , [ProfileController::class, 'profileUpdate'])->name('profil.update');
-    Route::post('profil/zmiana-hasla' , [ProfileController::class, 'passwordUpdate'])->name('profil.password.update');
-    Route::post('profil/usun-konto' , [ProfileController::class, 'deleteAccount'])->name('profil.delete');
+    Route::get('profil', [ProfileController::class, 'index'])->name('profil');
+    Route::post('profil', [ProfileController::class, 'profileUpdate'])->name('profil.update');
+    Route::post('profil/zmiana-hasla', [ProfileController::class, 'passwordUpdate'])->name('profil.password.update');
+    Route::post('profil/usun-konto', [ProfileController::class, 'deleteAccount'])->name('profil.delete');
 
     Route::post('zapisz-symulacje', [CreditSimulationsController::class, 'save'])
         ->name('credit-simulation.save');
@@ -68,7 +68,7 @@ Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'a
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 
-Route::post('harmonogram' , ScheduleCalculator::class)->name('get-schedule');
+Route::post('harmonogram', ScheduleCalculator::class)->name('get-schedule');
 
 
 Route::get('test', function () {
@@ -77,8 +77,8 @@ Route::get('test', function () {
         300_000,
         20,
         PeriodType::YEAR,
-        6.66,
-        1,
+        8.72,
+        0,
         0,
         CommissionType::NUMBER
     );
@@ -86,56 +86,69 @@ Route::get('test', function () {
     $interestsRateChanges = [
         [
             'date' => [
-                'month' => 1,
-                'year' => 2026
+                'month' => 10,
+                'year' => 2024
             ],
-            'value' => 5
+            'value' => 5.72
+        ],
+        [
+            'date' => [
+                'month' => 4,
+                'year' => 2025
+            ],
+            'value' => 8
+        ],
+        [
+            'date' => [
+                'month' => 2,
+                'year' => 2027
+            ],
+            'value' => 7.52
         ]
     ];
 
 
 //    $overpayments = [
 //        [
-//            'date' => [
-//                'start' => [
-//                    'month' => 12,
-//                    'year' => 2023
-//                ],
-//                'end' => [
-//                    'month' => 12,
-//                    'year' => 2023
-//                ]
+//            'start' => [
+//                'month' => 11,
+//                'year' => 2023
 //            ],
-//            'value' => 50_000
-//        ],
-//        [
-//            'date' => [
-//                'start' => [
-//                    'month' => 12,
-//                    'year' => 2025
-//                ],
-//                'end' => [
-//                    'month' => 12,
-//                    'year' => 2025
-//                ]
+//            'end' => [
+//                'month' => 11,
+//                'year' => 2023
 //            ],
-//            'value' => 35_500
+//
+//            'overpayment' => 5_000
 //        ],
+////        [
+////            'date' => [
+////                'start' => [
+////                    'month' => 12,
+////                    'year' => 2025
+////                ],
+////                'end' => [
+////                    'month' => 12,
+////                    'year' => 2025
+////                ]
+////            ],
+////            'value' => 35_500
+////        ],
 //    ];
 
     $creditCalculation = \App\Services\CreditCalculations\CreditCalculationsFactory::createCreditCalculation(
         \App\Services\CreditCalculations\Enum\TypeOfInstallment::EQUAL,
-        \Carbon\Carbon::create(2023,8),
+        \Carbon\Carbon::create(2023, 1),
         $credit,
-        interestsRateChanges: $interestsRateChanges
-        //overpayments: $overpayments
+        interestsRateChanges: $interestsRateChanges,
     );
 
     $schedule = $creditCalculation->schedule()->get();
 
-    dd(\App\Services\CreditCalculations\ScheduleFormatter::format($schedule));
-
-
+    dd(
+        \App\Services\CreditCalculations\ScheduleFormatter::format($schedule),
+        \App\Services\CreditCalculations\ScheduleFormatter::format($schedule)[array_key_last($schedule)]
+    );
 });
 require __DIR__ . '/auth.php';
 

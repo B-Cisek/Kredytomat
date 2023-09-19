@@ -95,7 +95,7 @@ async function scheduleCalculate(index) {
       props.credit.period,
       props.credit.periodType,
       props.credit.margin,
-      Number(props.credit.wibor) + index,
+      Number(props.credit.wibor) + interestRateChanges[index],
       props.credit.commission,
       props.credit.commissionType
   );

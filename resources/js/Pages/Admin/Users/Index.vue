@@ -1,9 +1,8 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
 import { defineProps } from "vue";
 import Pagination from "@/Components/Pagination.vue";
 import UsersTable from "@/Components/Tables/UsersTable.vue";
-import NavLink from "@/Components/NavLink.vue";
 import Alert from "@/Components/Alert.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 

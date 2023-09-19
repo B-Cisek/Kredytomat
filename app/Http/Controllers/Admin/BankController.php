@@ -101,7 +101,7 @@ class BankController extends Controller
         return redirect()
             ->route('admin.banks.index')
             ->with([
-                'alert_type' => 'info',
+                'alert_type' => AlertType::SUCCESS,
                 'alert_message' => 'Bank zaktualizowany!'
             ]);
     }
@@ -123,7 +123,7 @@ class BankController extends Controller
         return redirect()
             ->route('admin.banks.index')
             ->with([
-                'alert_type' => 'danger',
+                'alert_type' => AlertType::DANGER,
                 'alert_message' => 'Bank usunięty!'
             ]);
     }

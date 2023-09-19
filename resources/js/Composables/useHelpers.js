@@ -28,7 +28,7 @@ export function useHelpers() {
     function totalCreditCost(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][5];
+            cost += schedule[i][4];
         }
         return cost + totalCreditInterest(schedule);
     }
@@ -36,7 +36,7 @@ export function useHelpers() {
     function totalCreditInterest(schedule) {
         let cost = 0.00;
         for (let i = 0; i < schedule.length; i++) {
-            cost += schedule[i][4];
+            cost += schedule[i][3];
         }
         return cost;
     }
@@ -108,7 +108,7 @@ export function useHelpers() {
     function getTotalInstallmentsYear(schedule) {
         let totalInstallmentsYear = 0;
         for (let i = 0; i < 11; i++) {
-            totalInstallmentsYear += schedule[i][4];
+            totalInstallmentsYear += schedule[i][5];
         }
         return totalInstallmentsYear;
     }

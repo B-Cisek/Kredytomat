@@ -41,9 +41,6 @@ const costCostDiff = ref(null);
 const monthsLess = ref(0);
 const costLessPercent = ref(0);
 
-const commission = useLocalStorage(0, 'calculator-overpayment-commission');
-const commissionType = useLocalStorage('percent', 'calculator-overpayment-commission-type');
-
 const formData = useLocalStorage({
   date: {
     year: new Date().getFullYear(),
@@ -100,15 +97,14 @@ const getResult = async () => {
       overpayments,
       overpaymentType
   );
+
   schedule.value = await overpaymentRes.data.schedule;
 
   totalCost.value = totalCreditCost(overpaymentRes);
-
-  console.log(totalCreditInterest(baseCreditSchedule.value))
-  console.log(totalCreditInterest(schedule.value))
   costCostDiff.value = totalCreditInterest(baseCreditSchedule.value) - totalCreditInterest(schedule.value);
   monthsLess.value = baseCreditSchedule.value.length - schedule.value.length;
-  costLessPercent.value = 100 - ((totalCreditInterest(schedule.value) / totalCreditInterest(baseCreditSchedule.value)) * 100);
+  costLessPercent.value =
+      ((totalCreditInterest(baseCreditSchedule.value) - totalCreditInterest(schedule.value)) / totalCreditInterest(baseCreditSchedule.value)) * 100;
 
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
@@ -287,6 +283,7 @@ const changeStartDate = (value) => {
                 :data="overpaymentsStorage"
                 @input-list="getOverpayments"
                 @type="getType"
+                :type="overpaymentType"
                 placeholder="PLN"
             />
           </div>

@@ -8,7 +8,7 @@ import Collapse from "@/Components/Collapse.vue";
 import ResultBox from "@/Components/ResultBox.vue";
 import CreditSchedule from "@/Components/CreditSchedule.vue";
 import useVuelidate from "@vuelidate/core";
-import {between, numeric, required} from "@vuelidate/validators";
+import {between, numeric, required, integer} from "@vuelidate/validators";
 import FeesInputsList from "@/Components/InputsList/FeesInputsList.vue";
 import CapitalRepaymentSimulation from "@/Components/CapitalRepaymentSimulation.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
@@ -69,7 +69,7 @@ const defaultSchedule = ref([]);
 const schedule = ref([]);
 
 const rules = {
-  amountOfCredit: {required, numeric, between: between(50000, 2000000)},
+  amountOfCredit: {required, integer, between: between(50000, 2000000)},
   period: {required, numeric, between: between(5, 420)},
   periodType: {required},
   margin: {required, numeric, between: between(0, 15)},
@@ -88,6 +88,21 @@ const getProperWibor = () => {
   });
 }
 
+const setDataFromQueryParams = () => {
+  const commission = usePage().props.value.ziggy.query.commission;
+  const margin = usePage().props.value.ziggy.query.margin;
+  const wibor = usePage().props.value.ziggy.query.wibor;
+
+  if (commission !== undefined &&
+      margin !== undefined &&
+      wibor !== undefined) {
+      formData.value.commissionType = 'percent';
+      formData.value.commission = Number(commission);
+      formData.value.margin = Number(margin);
+      formData.value.wibor = wibor;
+  }
+}
+
 onMounted(() => {
   const exist = props.wiborList.some(obj => {
     let data = localStorage.getItem('calculator-extended-data');
@@ -104,6 +119,8 @@ onMounted(() => {
   interestRateChanges.value = JSON.parse(interestRateChangesStorage.value) ?? [];
   fees.value.fixed = JSON.parse(fixedFeesStorage.value) ?? [];
   fees.value.changing = JSON.parse(changingFeesStorage.value) ?? [];
+
+  setDataFromQueryParams();
 });
 
 const {options, chartData} = useLineChart();
@@ -146,7 +163,6 @@ const getResult = async () => {
   const res = await getSchedule(formData, interestRateChanges, fees);
   schedule.value = await res.data.schedule;
 
-    console.table(schedule.value)
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
@@ -405,8 +421,10 @@ const changeStartDate = (value) => {
           <CapitalRepaymentSimulation :schedule="defaultSchedule"/>
         </Collapse>
 
-        <Collapse v-if="formData.typeOfInstallment === 'equal'" title="Roczny wzrost obciążeń z tytułu kredytu"
-                  :collapsed="true">
+        <Collapse v-if="formData.typeOfInstallment === 'equal'"
+                  title="Roczny wzrost obciążeń z tytułu kredytu"
+                  :collapsed="true"
+        >
           <InterestRateChange :credit="formData" :schedule="defaultSchedule"/>
         </Collapse>
 

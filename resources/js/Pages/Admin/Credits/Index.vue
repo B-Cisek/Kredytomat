@@ -1,5 +1,5 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
 import Alert from "@/Components/Alert.vue";
 import NavLink from "@/Components/NavLink.vue";
 import CreditsTable from "@/Components/Tables/CreditsTable.vue";

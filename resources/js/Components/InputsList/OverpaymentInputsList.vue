@@ -6,13 +6,14 @@ import {ref, watch} from "vue";
 
 const props = defineProps({
   placeholder: String,
-  data: String
+  data: String,
+  type: String
 });
 
 const emit = defineEmits(["inputList", "type"]);
 
 const list = ref(JSON.parse(props.data) ?? []);
-const overpaymentType = ref("period");
+const overpaymentType = ref(props.type);
 const date = new Date();
 
 const add = () => {

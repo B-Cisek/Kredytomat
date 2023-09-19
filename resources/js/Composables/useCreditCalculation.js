@@ -36,7 +36,7 @@ export function useCreditCalculation() {
         }
     }
 
-    const getSchedulev2 = async (typeOfInstallment, date, amountOfCredit, period, periodType, margin, wibor, commission, commissionType) => {
+    const getSchedulev2 = async (typeOfInstallment, date, amountOfCredit, period, periodType, margin, wibor, commission, commissionType, interestsRateChange = {}, fees = {}, overpayments = {}, overpaymentType = 'none') => {
         loading.value = true;
 
         try {
@@ -55,6 +55,10 @@ export function useCreditCalculation() {
                     commission: commission,
                     commissionType: commissionType
                 },
+                interestsRateChange: interestsRateChange,
+                fees: fees,
+                overpayments: overpayments,
+                overpaymentType: overpaymentType
             });
 
             loading.value = false;

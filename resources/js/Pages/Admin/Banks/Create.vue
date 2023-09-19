@@ -1,5 +1,5 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
 import {Head, Link, useForm} from "@inertiajs/inertia-vue3";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";

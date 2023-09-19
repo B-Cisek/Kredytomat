@@ -3,8 +3,6 @@ import Layout from "@/Layouts/Layout.vue";
 import ResultBox from "@/Components/ResultBox.vue";
 import {LineChart} from "vue-chart-3";
 import {useHelpers} from "@/Composables/useHelpers";
-import {useEqualInstallments} from "@/Composables/useEqualInstallments";
-import {useDecreasinginstallments} from "@/Composables/useDecreasinginstallments";
 import {onBeforeMount, ref} from "vue";
 import {Chart, registerables} from "chart.js";
 import html2pdf from "html2pdf.js";
@@ -13,8 +11,7 @@ import ChangesInterestsRatesTable from "@/Components/Tables/ChangesInterestsRate
 import {Inertia} from "@inertiajs/inertia";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import InterestRateChange from "@/Components/InterestRateChange.vue";
-import {useEqualInstallments} from "@/Composables/useEqualInstallments";
-import {useDecreasingInstallments} from "@/Composables/useDecreasingInstallments";
+import {useCreditCalculation} from "@/Composables/useCreditCalculation";
 
 const {
   formattedToPLN,
@@ -28,6 +25,8 @@ const props = defineProps({
   creditSimulation: Object
 });
 
+console.log(props.creditSimulation)
+
 
 const interestPartArray = ref(null);
 const capitalPartArray = ref(null);
@@ -38,38 +37,20 @@ const credit = ref({
   margin: Number(props.creditSimulation.margin),
   wibor: Number(props.creditSimulation.wibor.value),
   typeOfInstallment: props.creditSimulation.type_of_installment,
-  commission: 0
+  commission: Number(props.creditSimulation.commission)
 });
 
 Chart.register(...registerables);
 
-const calculation = () => {
-  if (props.creditSimulation.type_of_installment === "equal") {
-    schedule.value = useEqualInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.creditSimulation.amount_of_credit),
-        period: Number(props.creditSimulation.period),
-        margin: Number(props.creditSimulation.margin),
-        wibor: Number(props.creditSimulation.wibor.value),
-        commission: Number(props.creditSimulation.commission)
-      },
-      [],
-      [],
-      JSON.parse(props.creditSimulation.fixed_fees),
-      JSON.parse(props.creditSimulation.changing_fees)
-    ).getSchedule();
-  } else {
-    schedule.value = useDecreasingInstallments({
-      date: new Date(2023, 0),
-      amountOfCredit: Number(props.creditSimulation.amount_of_credit),
-      period: Number(props.creditSimulation.period),
-      margin: Number(props.creditSimulation.margin),
-      wibor: Number(props.creditSimulation.wibor.value),
-      commission: Number(props.creditSimulation.commission)
-    }, [], [],
-      JSON.parse(props.creditSimulation.fixed_fees),
-      JSON.parse(props.creditSimulation.changing_fees)).getSchedule();
-  }
+const {getSchedulev2} = useCreditCalculation();
+
+const calculation = async () => {
+  const res = await getSchedulev2(
+      credit.value.typeOfInstallment,
+
+  );
+
+  schedule.value = res.data.schedule;
 
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);

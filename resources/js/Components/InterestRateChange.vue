@@ -3,7 +3,7 @@ import {Bar} from 'vue-chartjs'
 import {Chart, registerables} from "chart.js";
 import {onMounted, ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
-import {useEqualInstallments} from "@/Composables/useEqualInstallments";
+import {useCreditCalculation} from "@/Composables/useCreditCalculation";
 
 Chart.register(...registerables);
 
@@ -20,22 +20,32 @@ const interestRateChanges = [
   -2.50, -2.00, -1.50, -1.00, -0.50, 0.50, 1.00, 1.50, 2.00, 2.50
 ];
 
-const scheduleCalculate = (index) => {
+const {loading, getSchedule, getSchedulev2} = useCreditCalculation();
+
+const scheduleCalculate = async (index) => {
   if (props.credit.typeOfInstallment === "equal") {
-    return useEqualInstallments({
-      date: new Date(2023, 0),
-      amountOfCredit: props.credit.amountOfCredit,
-      period: props.credit.period,
-      margin: props.credit.margin,
-      wibor: props.credit.wibor + interestRateChanges[index],
-      commission: props.credit.commission
-    }).getSchedule();
+
+    let wibor = Number(props.credit.wibor) + interestRateChanges[index];
+
+    const defaultRes = await getSchedulev2(
+        props.credit.typeOfInstallment,
+        props.credit.date,
+        props.credit.amountOfCredit,
+        props.credit.period,
+        props.credit.periodType,
+        props.credit.margin,
+        wibor,
+        props.credit.commission,
+        props.credit.commissionType
+    );
+
+    return await defaultRes.data.schedule;
   }
 }
 
-const calculate = () => {
+const calculate = async () => {
   for (let i = 0; i < 10; i++) {
-    let newSchedule = scheduleCalculate(i);
+    let newSchedule = await scheduleCalculate(i);
 
     result.value.push({
       change: getTotalInstallmentsYear(props.schedule) - getTotalInstallmentsYear(newSchedule),
@@ -44,8 +54,8 @@ const calculate = () => {
   }
 }
 
-onMounted(() => {
-  calculate();
+onMounted(async () => {
+  await calculate();
 
   result.value.splice(5, 0, {
     change: 0,
