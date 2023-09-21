@@ -30,7 +30,7 @@ class SendResetPasswordLink
             return back()->with([
                 'status' => __($status),
                 'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Wysłano link do zmiany hasła!'
+                'alert_message' => 'Wysłano link do zmiany hasła.'
             ]);
         }
 

@@ -5,6 +5,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, useForm } from "@inertiajs/inertia-vue3";
+import Spinner from "@/Components/Spinner.vue";
 
 defineProps({
   status: String,
@@ -24,10 +25,10 @@ const submit = () => {
     <Head title="Zapomniałeś hasła?" />
 
     <h1 class="text-xl font-bold text-center tracking-wide">
-      WYŚLIJ LINK
+      Wyślij link
     </h1>
     <h1 class="text-xl font-bold text-center mb-10 tracking-wide">
-      DO RESETOWANIA HASŁA
+      do resetowania hasła
     </h1>
     <div class="mb-4 text-sm text-gray-600 text-center">
       <p>Zapomniałeś hasła? Nie ma problemu.</p>
@@ -55,11 +56,11 @@ const submit = () => {
 
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
-          class="w-full"
+          class="w-full h-[38px] justify-center inline-flex items-center"
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
-        >
-          Wyślij
+        ><Spinner v-if="form.processing"/>
+          {{ form.processing ? '' : 'Wyślij' }}
         </PrimaryButton>
       </div>
     </form>

@@ -8,6 +8,7 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -60,7 +61,7 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => AlertType::INFO,
+                'alert_type' => AlertType::WARNING,
                 'alert_message' => 'Użytkownik zaktualizowany!'
             ]);
     }
@@ -74,6 +75,29 @@ class UserController extends Controller
             ->with([
                 'alert_type' => AlertType::DANGER,
                 'alert_message' => 'Użytkownik usunięty!'
+            ]);
+    }
+
+    public function massDestroy(Request $request): RedirectResponse
+    {
+        $ids = $request->get('ids') ?? [];
+
+        if (empty($ids)) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie zaznaczono użytkowników do usunięcia!'
+                ]);
+        }
+
+        User::destroy($ids);
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with([
+                'alert_type' => AlertType::DANGER,
+                'alert_message' => 'Usunięto użytkowników!'
             ]);
     }
 }

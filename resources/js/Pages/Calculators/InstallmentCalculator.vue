@@ -12,7 +12,7 @@ import RangeInputCommission from "@/Components/Inputs/RangeInputCommission.vue";
 import Spinner from "@/Components/Spinner.vue";
 import {usePieChart} from "@/Composables/Charts/usePieChart";
 import useVuelidate from "@vuelidate/core";
-import {required, between, numeric} from "@vuelidate/validators";
+import {required, between, numeric, integer} from "@vuelidate/validators";
 
 const {toDecimal, formattedToPLN, totalCreditCost} = useHelpers();
 
@@ -85,8 +85,8 @@ const getSchedule = async (type) => {
 
 // validation rules
 const rules = {
-  amountOfCredit: {required, numeric, between: between(50000, 2000000)},
-  period: {required, numeric, between: between(5, 420)},
+  amountOfCredit: {required, numeric, integer, between: between(50000, 2000000)},
+  period: {required, numeric, integer, between: between(5, 420)},
   rate: {required, numeric, between: between(0.01, 15)},
   commission: {required, numeric, between: between(0, 10000)}
 }

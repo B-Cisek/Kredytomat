@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-  <Head title="Twoje symulacje"/>
+  <Head title="Moje symulacje"/>
   <Layout>
     <template v-slot:header>
       Zapisane symulacje

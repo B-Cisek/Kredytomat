@@ -10,6 +10,7 @@ use App\Models\Bank;
 use App\Models\Credit;
 use App\Models\Wibor;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,7 +46,7 @@ class CreditController extends Controller
             ->route('admin.credits.index')
             ->with([
                 'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Kredyt poprawnie dodany!'
+                'alert_message' => 'Kredyt poprawnie dodany.'
             ]);
     }
 
@@ -88,7 +89,7 @@ class CreditController extends Controller
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => AlertType::INFO,
+                'alert_type' => AlertType::WARNING,
                 'alert_message' => __('dashboard.credit.updated')
             ]);
     }
@@ -101,20 +102,30 @@ class CreditController extends Controller
             ->route('admin.credits.index')
             ->with([
                 'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Kredyt usunięty!'
+                'alert_message' => 'Kredyt usunięty.'
             ]);
     }
 
-    public function massDestroy()
+    public function massDestroy(Request $request): RedirectResponse
     {
-        $ids = [1, 2, 3];
+        $ids = $request->get('ids') ?? [];
+
+        if (empty($ids)) {
+            return redirect()
+                ->route('admin.credits.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie zaznaczony kredytów do usunięcia.'
+                ]);
+        }
+
         Credit::destroy($ids);
 
         return redirect()
             ->route('admin.credits.index')
             ->with([
                 'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Usunięto zaznaczone kredyty!'
+                'alert_message' => 'Usunięto zaznaczone kredyty.'
             ]);
     }
 }

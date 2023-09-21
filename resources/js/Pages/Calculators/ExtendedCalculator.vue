@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "@/Layouts/Layout.vue";
-import {computed, nextTick, onMounted, ref} from "vue";
+import {computed, nextTick, onBeforeMount, onMounted, ref} from "vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
@@ -70,7 +70,7 @@ const schedule = ref([]);
 
 const rules = {
   amountOfCredit: {required, integer, between: between(50000, 2000000)},
-  period: {required, numeric, between: between(5, 420)},
+  period: {required, numeric, integer, between: between(5, 420)},
   periodType: {required},
   margin: {required, numeric, between: between(0, 15)},
   commission: {required, numeric, between: between(0, 10000)},
@@ -89,18 +89,41 @@ const getProperWibor = () => {
 }
 
 const setDataFromQueryParams = () => {
-  const commission = usePage().props.value.ziggy.query.commission;
+  const amountOfCredit = usePage().props.value.ziggy.query.amount_of_credit;
+  const period = usePage().props.value.ziggy.query.period;
   const margin = usePage().props.value.ziggy.query.margin;
+  const commission = usePage().props.value.ziggy.query.commission;
   const wibor = usePage().props.value.ziggy.query.wibor;
-
-  if (commission !== undefined &&
-      margin !== undefined &&
-      wibor !== undefined) {
-      formData.value.commissionType = 'percent';
-      formData.value.commission = Number(commission);
-      formData.value.margin = Number(margin);
-      formData.value.wibor = wibor;
+  const typeOfInstallment = usePage().props.value.ziggy.query.type_of_installment;
+  let startDate;
+  if (usePage().props.value.ziggy.query.start_date !== undefined) {
+    startDate = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.start_date));
   }
+  let interestChanges;
+  if (usePage().props.value.ziggy.query.interest_changes !== undefined) {
+    interestChanges = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.interest_changes));
+  }
+  let fixedFees;
+  if (usePage().props.value.ziggy.query.fixed_fees !== undefined) {
+    fixedFees = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.fixed_fees));
+  }
+  let changingFees;
+  if (usePage().props.value.ziggy.query.changing_fees !== undefined) {
+    changingFees = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.changing_fees));
+  }
+  if (amountOfCredit !== undefined) formData.value.amountOfCredit = Number(amountOfCredit);
+  if (period !== undefined) formData.value.period = Number(period);
+  if (margin !== undefined) formData.value.margin = Number(margin);
+  if (commission !== undefined) {
+    formData.value.commissionType = 'percent';
+    formData.value.commission = Number(commission);
+  }
+  if (wibor !== undefined) formData.value.wibor = wibor;
+  if (typeOfInstallment !== undefined) formData.value.typeOfInstallment = typeOfInstallment;
+  if (startDate !== undefined) formData.value.date = startDate;
+  if (interestChanges !== undefined) interestRateChanges.value = interestChanges;
+  if (fixedFees !== undefined) fees.value.fixed = fixedFees;
+  if (changingFees !== undefined) fees.value.changing = changingFees;
 }
 
 onMounted(() => {
@@ -215,7 +238,10 @@ const changeStartDate = (value) => {
 
 
 <template>
-  <Head title="Kalkulator rozszerzony"/>
+  <Head>
+    <title>Kalkulator rozszerzony</title>
+    <meta name="description" content="Kalkulator rozszerzony">
+  </Head>
   <Layout>
     <template v-slot:header>Kalkulator rozszerzony</template>
 

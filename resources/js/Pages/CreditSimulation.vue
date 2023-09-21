@@ -25,8 +25,6 @@ const props = defineProps({
   creditSimulation: Object
 });
 
-console.log(props.creditSimulation)
-
 const interestPartArray = ref(null);
 const capitalPartArray = ref(null);
 const schedule = ref([]);

@@ -10,6 +10,8 @@ import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import {ref} from "vue";
 import {Inertia} from "@inertiajs/inertia";
 import Arrow from "@/Components/Arrow.vue";
+import Spinner from "@/Components/Spinner.vue";
+import {tr} from "date-fns/locale";
 
 const props = defineProps({
   user: Object,
@@ -30,8 +32,16 @@ const update = () => {
   form.put(route("admin.users.update", props.user.id));
 };
 
+const loading = ref(false);
+
 const resetPassword = () => {
-  Inertia.get(route('admin.users.reset-password'), {email: props.user.email});
+  Inertia.get(
+    route('admin.users.reset-password'),
+    {email: props.user.email},{
+      onStart: params => loading.value = true,
+      onFinish: params => loading.value = false
+    }
+  );
 };
 </script>
 
@@ -115,12 +125,13 @@ const resetPassword = () => {
           </div>
           <div class="flex mt-4 justify-between">
             <PrimaryButton type="submit ">Aktualizuj</PrimaryButton>
-            <div>
+            <div class="flex flex-wrap">
               <PrimaryButton
                 @click="resetPassword"
                 type="button"
-                class="bg-indigo-700 ml-2"
-              >Resetuj hasło
+                class="ml-2 bg-indigo-700 justify-center inline-flex items-center text-sm rounded min-w-[206px] min-h-[38px] px-3 py-0.5 font-semibold"
+              ><Spinner v-show="loading"/>
+                {{ loading ? '' : 'Resetuj hasło' }}
               </PrimaryButton>
               <PrimaryButton
                 @click="confirmationModalOpen = true"

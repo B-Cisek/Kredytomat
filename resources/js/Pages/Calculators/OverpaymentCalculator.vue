@@ -129,6 +129,39 @@ const getType = (value) => {
   localStorage.setItem("overpayment-type", value);
 }
 
+const setDataFromQueryParams = () => {
+    const amountOfCredit = usePage().props.value.ziggy.query.amount_of_credit;
+    const period = usePage().props.value.ziggy.query.period;
+    const margin = usePage().props.value.ziggy.query.margin;
+    const commission = usePage().props.value.ziggy.query.commission;
+    const wibor = usePage().props.value.ziggy.query.wibor;
+    const typeOfInstallment = usePage().props.value.ziggy.query.type_of_installment;
+    const overpaymentType = usePage().props.value.ziggy.query.overpayment_type;
+    let startDate;
+    if (usePage().props.value.ziggy.query.start_date !== undefined) {
+        startDate = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.start_date));
+    }
+    let overpayments;
+    if (usePage().props.value.ziggy.query.overpayments !== undefined) {
+        overpayments = JSON.parse(decodeURIComponent(usePage().props.value.ziggy.query.overpayments));
+    }
+
+    if (amountOfCredit !== undefined) formData.value.amountOfCredit = Number(amountOfCredit);
+    if (period !== undefined) formData.value.period = Number(period);
+    if (margin !== undefined) formData.value.margin = Number(margin);
+    if (commission !== undefined) {
+        formData.value.commissionType = 'percent';
+        formData.value.commission = Number(commission);
+    }
+    if (wibor !== undefined) formData.value.wibor = wibor;
+    if (typeOfInstallment !== undefined) formData.value.typeOfInstallment = typeOfInstallment;
+    if (startDate !== undefined) formData.value.date = startDate;
+    if (overpayments !== undefined) overpayments.value = overpayments;
+    if (overpaymentType !== undefined) {
+        localStorage.setItem('overpayment-type', overpaymentType)
+    }
+}
+
 onMounted(() => {
   const exist = props.wiborList.some(obj => {
     let data = localStorage.getItem('calculator-extended-data');
@@ -143,6 +176,8 @@ onMounted(() => {
   }
 
   overpayments.value = JSON.parse(overpaymentsStorage.value) ?? [];
+
+  setDataFromQueryParams();
 });
 
 const saveSimulation = () => {
@@ -172,7 +207,10 @@ const changeStartDate = (value) => {
 </script>
 
 <template>
-  <Head title="Kalkulator nadpłaty kredytu"/>
+  <Head>
+    <title>Kalkulator nadpłaty kredytu</title>
+    <meta name="description" content="Kalulator nadpłaty kredytu">
+  </Head>
   <Layout>
     <template v-slot:header>
       Kalkulator nadpłaty kredytu

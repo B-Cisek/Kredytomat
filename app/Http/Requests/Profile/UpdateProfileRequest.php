@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Profile;
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,7 +24,7 @@ class UpdateProfileRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                'email',
+                new EmailRule,
                 Rule::unique('users', 'email')->ignore($this->user()->id)
             ]
         ];

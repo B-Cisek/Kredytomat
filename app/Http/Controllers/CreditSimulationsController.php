@@ -63,6 +63,7 @@ class CreditSimulationsController extends Controller
 
         $creditSimulation = CreditSimulation::where('amount_of_credit', $validated['amount_of_credit'])
             ->where('period', $validated['period'])
+            ->where('user_id', $validated['user_id'])
             ->where('start_date', $validated['start_date'])
             ->where('margin', $validated['margin'])
             ->where('commission', $validated['commission'])

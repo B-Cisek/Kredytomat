@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Bank\StoreBankRequest;
 use App\Http\Requests\Bank\UpdateBankRequest;
 use App\Models\Bank;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -57,7 +59,7 @@ class BankController extends Controller
             ->route('admin.banks.index')
             ->with([
                 'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Bank dodany poprawnie!'
+                'alert_message' => 'Bank dodany poprawnie.'
             ]);
     }
 
@@ -102,7 +104,7 @@ class BankController extends Controller
             ->route('admin.banks.index')
             ->with([
                 'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Bank zaktualizowany!'
+                'alert_message' => 'Bank zaktualizowany.'
             ]);
     }
 
@@ -124,7 +126,30 @@ class BankController extends Controller
             ->route('admin.banks.index')
             ->with([
                 'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Bank usunięty!'
+                'alert_message' => 'Bank usunięty.'
+            ]);
+    }
+
+    public function massDestroy(Request $request): RedirectResponse
+    {
+        $ids = $request->get('ids') ?? [];
+
+        if (empty($ids)) {
+            return redirect()
+                ->route('admin.banks.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie zaznaczono banków do usunięcia.'
+                ]);
+        }
+
+        Bank::destroy($ids);
+
+        return redirect()
+            ->route('admin.banks.index')
+            ->with([
+                'alert_type' => AlertType::DANGER,
+                'alert_message' => 'Usunięto zaznaczone banki.'
             ]);
     }
 }

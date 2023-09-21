@@ -13,7 +13,7 @@ const props = defineProps({
   <Layout>
     <template v-slot:header>Oferty Banków</template>
     <template v-slot:default>
-      <section class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
+      <section v-show="props.banks.length" class="w-full rounded-lg shadow-2xl border border-gray-200 bg-white p-5">
         <div class="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <div
             v-for="bank in props.banks"

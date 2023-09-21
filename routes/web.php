@@ -62,9 +62,12 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => ['admin', 'auth'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::resource('users', UserController::class)->except(['show']);
+    Route::post('users/massDelete', [UserController::class, 'massDestroy'])->name('users.massDelete');
     Route::get('uzytkownicy/resetowanie-hasla', SendResetPasswordLink::class)->name('users.reset-password');
     Route::resource('credits', CreditController::class)->except(['show']);
+    Route::post('credits/massDelete', [CreditController::class, 'massDestroy'])->name('credits.massDelete');
     Route::resource('banks', BankController::class)->except(['show']);
+    Route::post('banks/massDelete', [BankController::class, 'massDestroy'])->name('banks.massDelete');
     Route::get('dashboard', AdminDashboardController::class)->name('dashboard');
 });
 

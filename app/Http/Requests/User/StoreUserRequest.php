@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -34,7 +35,7 @@ class StoreUserRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                'email',
+                new EmailRule,
                 Rule::unique('users', 'email')
             ],
             'password' => [

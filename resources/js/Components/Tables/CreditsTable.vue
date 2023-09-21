@@ -1,14 +1,21 @@
 <script setup>
 import { Link } from "@inertiajs/inertia-vue3";
-import { ref, watch } from "vue";
+import {computed, ref, watch} from "vue";
 import {EllipsisHorizontalIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   credits: Object,
 });
 
+const emit = defineEmits(['massDelete']);
+
 const checked = ref([]);
 const checkedAll = ref(false);
+
+
+watch(checked, () => {
+  emit('massDelete', checked);
+}, {deep: true})
 
 watch(checkedAll, (value) => {
   if (value) {
@@ -23,6 +30,8 @@ watch(checkedAll, (value) => {
     });
   }
 });
+
+
 </script>
 
 <template>
