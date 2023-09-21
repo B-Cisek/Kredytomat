@@ -5,6 +5,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Arrow from "@/Components/Arrow.vue";
 
 const form = useForm({
   credit_name: "",
@@ -33,12 +34,10 @@ const store = () => {
   <Head title="Nowy kredyt"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard >
-      </Link>
-      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
-        >Kredyty >
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow/>
+      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700">Kredyty</Link>
+      <Arrow />
       <span class="font-light"> Nowy kredyt</span>
     </template>
     <template #default>

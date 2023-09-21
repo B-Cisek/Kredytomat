@@ -8,6 +8,7 @@ import InputFile from "@/Components/InputFile.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {ref} from "vue";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
+import Arrow from "@/Components/Arrow.vue";
 
 const props = defineProps({
   bank: Object,
@@ -34,12 +35,10 @@ const update = () => {
   <Head title="Edycja banku"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard >
-      </Link>
-      <Link :href="route('admin.banks.index')" class="hover:text-indigo-700"
-        >Banki >
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow />
+      <Link :href="route('admin.banks.index')" class="hover:text-indigo-700">Banki</Link>
+      <Arrow />
       <span class="font-light">Edycja banku</span>
     </template>
 

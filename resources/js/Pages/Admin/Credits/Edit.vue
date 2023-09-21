@@ -7,6 +7,7 @@ import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {onMounted, ref} from "vue";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
+import Arrow from "@/Components/Arrow.vue";
 
 const props = defineProps({
   credit: Object,
@@ -57,12 +58,10 @@ const destroy = id => {
   <Head title="Edycja kredytu"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard >
-      </Link>
-      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
-        >Kredyty >
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow />
+      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700">Kredyty</Link>
+      <Arrow />
       <span class="font-light">Edycja kredytu</span>
     </template>
     <template #default>

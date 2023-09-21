@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import {useToastsStore} from "@/Composables/useToastsStore";
 
 export function useCreditCalculation() {
     const loading = ref(false);

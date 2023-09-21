@@ -3,6 +3,7 @@ import RowLink from "@/Components/RowLink.vue"
 import {defineProps} from "vue"
 import {Link} from "@inertiajs/inertia-vue3"
 import {PaperAirplaneIcon} from "@heroicons/vue/24/outline";
+import { EllipsisHorizontalIcon } from "@heroicons/vue/24/outline";
 
 defineProps({
     banks: Object
@@ -33,7 +34,7 @@ defineProps({
                 <th scope="col" class="py-3 px-6">
                     Logo
                 </th>
-                <th scope="col" class="py-3 px-6">
+                <th scope="col" class="py-3 px-6 text-center">
                     Akcje
                 </th>
             </tr>
@@ -55,12 +56,12 @@ defineProps({
                 <td class="py-4 px-6">
                     {{ bank.logo_path }}
                 </td>
-                <td class="">
-                    <img :src="bank.logo_path" alt="logo" width="120">
+                <td>
+                    <img :src="bank.logo_path" alt="logo" width="120" height="53px">
                 </td>
                 <td class="text-center">
                     <Link :href="route('admin.banks.edit', bank.id)">
-                      <PaperAirplaneIcon class="h-6 w-6 text-gray-500" />
+                      <EllipsisHorizontalIcon class="h-10 w-10 text-gray-700" />
                     </Link>
                 </td>
             </tr>

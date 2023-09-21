@@ -5,6 +5,7 @@ import Pagination from "@/Components/Pagination.vue";
 import UsersTable from "@/Components/Tables/UsersTable.vue";
 import Alert from "@/Components/Alert.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
+import Arrow from "@/Components/Arrow.vue";
 
 defineProps({
   users: Object,
@@ -16,21 +17,13 @@ defineProps({
 
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard ></Link
-      >
-      Użytkownicy
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow />
+      <span>Użytkownicy</span>
     </template>
 
     <template #default>
       <section class="flex justify-end flex-wrap items-center mb-3">
-        <Alert
-          :type="$page.props.flash.alert_type"
-          v-if="$page.props.flash.alert_message"
-        >
-          {{ $page.props.flash.alert_message }}
-        </Alert>
-        <!--     FILTERS      -->
         <Link :href="route('admin.users.create')" class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700">
           Dodaj użytkownika
         </Link>

@@ -27,31 +27,68 @@ const props = defineProps({
 
 console.log(props.creditSimulation)
 
-
 const interestPartArray = ref(null);
 const capitalPartArray = ref(null);
 const schedule = ref([]);
+const scheduleDefault = ref([]);
 const credit = ref({
   amountOfCredit: Number(props.creditSimulation.amount_of_credit),
   period: Number(props.creditSimulation.period),
+  periodType: 'year',
+  date: JSON.parse(props.creditSimulation.start_date),
   margin: Number(props.creditSimulation.margin),
   wibor: Number(props.creditSimulation.wibor.value),
   typeOfInstallment: props.creditSimulation.type_of_installment,
-  commission: Number(props.creditSimulation.commission)
+  commission: Number(props.creditSimulation.commission),
+  commissionType: 'percent'
 });
 
 Chart.register(...registerables);
 
 const {getSchedulev2} = useCreditCalculation();
 
+const scheduleFetched = ref(false);
+
 const calculation = async () => {
   const res = await getSchedulev2(
       credit.value.typeOfInstallment,
-
+      credit.value.date,
+      credit.value.amountOfCredit,
+      credit.value.period,
+      'year',
+      credit.value.margin,
+      credit.value.wibor,
+      credit.value.commission,
+      'percent',
+      JSON.parse(props.creditSimulation.interest_changes),
+      {
+        fixed: JSON.parse(props.creditSimulation.fixed_fees),
+        changing: JSON.parse(props.creditSimulation.changing_fees)
+      }
   );
 
-  schedule.value = res.data.schedule;
+  schedule.value = await res.data.schedule;
 
+  const resDefault = await getSchedulev2(
+      credit.value.typeOfInstallment,
+      credit.value.date,
+      credit.value.amountOfCredit,
+      credit.value.period,
+      'year',
+      credit.value.margin,
+      credit.value.wibor,
+      credit.value.commission,
+      'percent',
+      {},
+      {
+        fixed: JSON.parse(props.creditSimulation.fixed_fees),
+        changing: JSON.parse(props.creditSimulation.changing_fees)
+      }
+  );
+
+  scheduleDefault.value = await resDefault.data.schedule;
+
+  scheduleFetched.value = true;
   interestPartArray.value = getInterestPartArray(schedule.value);
   capitalPartArray.value = getCapitalPartArray(schedule.value);
 
@@ -62,7 +99,7 @@ const calculation = async () => {
   chartData.value.datasets[0].data = interestPartArray.value;
   let combinedData = [];
   for (let i = 0; i < schedule.value.length; i++) {
-    combinedData.push(schedule.value[i][2] + schedule.value[i][3]);
+    combinedData.push(schedule.value[i][3] + schedule.value[i][4]);
   }
   chartData.value.datasets[1].data = combinedData;
   chartData.value.labels = label;
@@ -109,7 +146,7 @@ const chartData = ref({
   ],
 });
 
-let options = {
+let options = ref({
   elements: {
     point: {
       pointRadius: 0
@@ -118,7 +155,6 @@ let options = {
   plugins: {
     title: {
       display: true,
-      text: 'Stacked'
     },
   },
   responsive: true,
@@ -136,7 +172,7 @@ let options = {
       }
     }
   }
-};
+});
 
 onBeforeMount(() => {
   calculation();
@@ -153,6 +189,7 @@ const openCalculator = () => {
   Inertia.get(route('calculator.extended', {
     amount_of_credit: props.creditSimulation.amount_of_credit,
     period: props.creditSimulation.period,
+    start_date: encodeURIComponent(props.creditSimulation.start_date),
     margin: props.creditSimulation.margin,
     commission: props.creditSimulation.commission,
     wibor: props.creditSimulation.wibor.value,
@@ -169,12 +206,12 @@ const openCalculator = () => {
     <template v-slot:header>Symulacja kredytowa</template>
     <template v-slot:default>
       <ConfirmationModal
-        v-if="confirmationModalOpen"
-        @close="confirmationModalOpen = false"
-        @submit="remove"
-        title="Usuwanie symulacji"
-        description="Czy napewno chcesz usunąć symulacje?"
-        confirm-button-text="Usuń"
+          v-if="confirmationModalOpen"
+          @close="confirmationModalOpen = false"
+          @submit="remove"
+          title="Usuwanie symulacji"
+          description="Czy napewno chcesz usunąć symulacje?"
+          confirm-button-text="Usuń"
       />
       <div class="w-full rounded-lg shadow-md border border-gray-200 bg-white p-5">
         <div class="w-full flex items-center">
@@ -192,17 +229,17 @@ const openCalculator = () => {
                 </div>
                 <div class="ml-4 flex-shrink-0">
                   <button
-                    v-if="!loading"
-                    @click="downloadPdf"
-                    class="font-medium text-indigo-600 hover:text-indigo-500"
+                      v-if="!loading"
+                      @click="downloadPdf"
+                      class="font-medium text-indigo-600 hover:text-indigo-500"
                   >Pobierz
                   </button>
                   <div
-                    v-if="loading"
-                    class="text-[#4338ca] inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                    role="status">
+                      v-if="loading"
+                      class="text-[#4338ca] inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                      role="status">
                     <span
-                      class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Ładowanie...</span>
+                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Ładowanie...</span>
                   </div>
                 </div>
               </div>
@@ -252,7 +289,7 @@ const openCalculator = () => {
                       {{
                         Math.round((Number(props.creditSimulation.margin) + Number(props.creditSimulation.wibor.value)) * 100) / 100
                       }}% <span
-                      class="text-sm font-normal">(WIBOR {{
+                        class="text-sm font-normal">(WIBOR {{
                         props.creditSimulation.wibor.value
                       }}% + marża {{ props.creditSimulation.margin }}%)</span>
                     </p>
@@ -287,10 +324,12 @@ const openCalculator = () => {
               </div>
               <div class="flex-1 html2pdf__page-break">
                 <ResultBox
-                  :schedule="schedule"
-                  :commission="credit.commission"
-                  :amount-of-credit="credit.amountOfCredit"
-                  class="rounded-none"
+                    v-if="scheduleFetched"
+                    :schedule="scheduleDefault"
+                    :commission="credit.commission"
+                    :amount-of-credit="credit.amountOfCredit"
+                    :commission-type="credit.commissionType"
+                    class="rounded-none"
                 />
               </div>
             </div>
@@ -299,24 +338,24 @@ const openCalculator = () => {
             </div>
           </div>
           <div
-            v-if="credit.typeOfInstallment === 'equal'"
-            class="border-t-2 html2pdf__page-break">
+              v-if="credit.typeOfInstallment === 'equal'"
+              class="border-t-2 html2pdf__page-break">
             <div class="flex items-center justify-between cursor-pointer p-5 w-full">
               <h1 class="font-semibold text-xl">Roczny wzrost obciążeń z tytułu kredytu</h1>
             </div>
-            <InterestRateChange :schedule="schedule" :credit="credit"/>
+            <InterestRateChange v-if="scheduleFetched" :schedule="scheduleDefault" :credit="credit"/>
           </div>
           <div class="border-t-2 html2pdf__page-break">
             <div class="flex items-center justify-between cursor-pointer p-5 w-full">
               <h1 class="font-semibold text-xl">Symulacja zmiany raty dla zmian stóp procentowych</h1>
             </div>
-            <ChangesInterestsRatesTable :schedule="schedule" :credit="credit"/>
+            <ChangesInterestsRatesTable v-if="scheduleFetched" :schedule="scheduleDefault" :credit="credit"/>
           </div>
           <div class="html2pdf__page-break">
             <div class="flex items-center justify-between cursor-pointer p-5 w-full">
               <h1 class="font-semibold text-xl">Harmonogram spłaty</h1>
             </div>
-            <CreditSchedule :schedule="schedule"/>
+            <CreditSchedule v-if="scheduleFetched" :schedule="schedule"/>
           </div>
         </div>
       </section>

@@ -13,7 +13,7 @@ enum OverpaymentType: string
         return match ($name) {
             self::INSTALLMENT->value => self::INSTALLMENT,
             self::PERIOD->value => self::PERIOD,
-            null => self::NONE
+            self::NONE->value, null => self::NONE
         };
     }
 }

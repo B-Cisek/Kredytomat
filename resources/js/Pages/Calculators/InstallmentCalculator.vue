@@ -26,6 +26,8 @@ const rate = useLocalStorage(7, 'calculator-rate');
 const commission = useLocalStorage(0, 'calculator-commission');
 const commissionType = useLocalStorage("percent", "calculator-commission-type");
 
+const amount = ref(0);
+
 /** Equal Installment */
 const equalInstallment = ref(null);
 const equalInstallmentCost = ref(0);
@@ -116,19 +118,46 @@ const calc = async () => {
   const costDecreasing = totalCreditCost(decreasingSchedule) + commissionResult.value;
   decreasingInstallmentCost.value = Math.round(costDecreasing * 100) / 100;
 
+  dataEqualInstallment.value.datasets[0].data[0] = amountOfCredit.value;
+  dataEqualInstallment.value.datasets[0].data[1] = equalInstallmentCost.value;
+  dataEqualInstallment.value.datasets[0].data[2] = commissionResult.value;
+
+  dataDecreasingInstallment.value.datasets[0].data[0] = amountOfCredit.value;
+  dataDecreasingInstallment.value.datasets[0].data[1] = decreasingInstallmentCost.value;
+  dataDecreasingInstallment.value.datasets[0].data[2] = commissionResult.value;
+
   await nextTick(() => scrollToResult());
 }
 
-const {
-  dataEqualInstallment,
-  options,
-  dataDecreasingInstallment
-} = usePieChart(
-  amountOfCredit,
-  equalInstallmentCost,
-  decreasingInstallmentCost,
-  commissionResult
-);
+const dataEqualInstallment = ref({
+  labels: ['Kwota kredytu', 'Odsetki', 'Prowizja banku'],
+  datasets: [
+    {
+      data: [0, equalInstallmentCost, commissionResult],
+      backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
+    },
+  ],
+});
+
+const options = ref({
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+  }
+});
+
+const dataDecreasingInstallment = ref({
+  labels: ['Kwota kredytu', 'Odsetki', 'Prowizja banku'],
+  datasets: [
+    {
+      data: [0, decreasingInstallmentCost, commissionResult],
+      backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
+    },
+  ],
+});
+
 </script>
 
 <template>
@@ -156,9 +185,15 @@ const {
             />
           </div>
           <div class="flex-1">
-            <RangeInputPeriod
+            <RangeWithInput
               v-model="period"
-              v-model:type="periodType"
+              input-type-label="LAT"
+              heading="Okres"
+              :min="5"
+              :max="35"
+              :step="1"
+              label-left="5 lat"
+              label-right="35 lat"
               :error="v$.period.$error"
             />
           </div>

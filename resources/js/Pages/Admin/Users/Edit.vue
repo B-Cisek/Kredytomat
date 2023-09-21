@@ -9,6 +9,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import {ref} from "vue";
 import {Inertia} from "@inertiajs/inertia";
+import Arrow from "@/Components/Arrow.vue";
 
 const props = defineProps({
   user: Object,
@@ -38,12 +39,10 @@ const resetPassword = () => {
   <Head title="Edycja użytkownika"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard >
-      </Link>
-      <Link :href="route('admin.users.index')" class="hover:text-indigo-700"
-      >Użytkownicy >
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow />
+      <Link :href="route('admin.users.index')" class="hover:text-indigo-700">Użytkownicy</Link>
+      <Arrow/>
       <span class="font-light">Edycja użytkownika</span>
     </template>
 

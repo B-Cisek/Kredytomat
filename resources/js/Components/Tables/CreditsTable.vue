@@ -1,7 +1,7 @@
 <script setup>
 import { Link } from "@inertiajs/inertia-vue3";
 import { ref, watch } from "vue";
-import {PaperAirplaneIcon} from "@heroicons/vue/24/outline";
+import {EllipsisHorizontalIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   credits: Object,
@@ -89,7 +89,7 @@ watch(checkedAll, (value) => {
           </td>
           <td class="text-center">
             <Link :href="route('admin.credits.edit', credit.id)">
-              <PaperAirplaneIcon class="h-6 w-6 text-gray-500" />
+              <EllipsisHorizontalIcon class="h-10 w-10 text-gray-700" />
             </Link>
           </td>
         </tr>

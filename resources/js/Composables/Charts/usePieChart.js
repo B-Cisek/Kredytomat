@@ -1,7 +1,7 @@
 import {ref} from "vue";
 
 export function usePieChart(amountOfCredit, equalInstallmentCost, decreasingInstallmentCost, commissionResult) {
-    const dataEqualInstallment = {
+    const dataEqualInstallment = ref({
         labels: ['Kwota kredytu', 'Odsetki', 'Prowizja banku'],
         datasets: [
             {
@@ -9,7 +9,7 @@ export function usePieChart(amountOfCredit, equalInstallmentCost, decreasingInst
                 backgroundColor: ["#0045db", "#ff2e66", "#ffb947"],
             },
         ],
-    };
+    });
 
     const options = ref({
         responsive: true,

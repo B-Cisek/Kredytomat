@@ -38,6 +38,7 @@ class OverpaymentSimulationsController extends Controller
         $validated = $request->validate([
             'amount_of_credit' => 'required|numeric',
             'period' => 'required|numeric',
+            'start_date' => 'required|json',
             'margin' => 'required|numeric',
             'commission' => 'required|numeric',
             'commission_type' => 'string',
@@ -61,10 +62,12 @@ class OverpaymentSimulationsController extends Controller
 
         $overpaymentsSimulation = OverpaymentSimulation::where('amount_of_credit', $validated['amount_of_credit'])
             ->where('period', $validated['period'])
+            ->where('start_date', $validated['start_date'])
             ->where('margin', $validated['margin'])
             ->where('commission', $validated['commission'])
             ->where('type_of_installment', $validated['type_of_installment'])
             ->where('wibor_id', $validated['wibor_id'])
+            ->where('overpayment_type', $validated['overpayment_type'])
             ->where('overpayments', $validated['overpayments'])
             ->first();
 

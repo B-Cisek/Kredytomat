@@ -93,11 +93,11 @@ async function scheduleCalculate(index) {
       props.credit.date,
       props.credit.amountOfCredit,
       props.credit.period,
-      props.credit.periodType,
+      'year',
       props.credit.margin,
       Number(props.credit.wibor) + interestRateChanges[index],
       props.credit.commission,
-      props.credit.commissionType
+      'percent'
   );
 
   return defaultRes.data.schedule;

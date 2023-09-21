@@ -191,6 +191,7 @@ const saveSimulation = () => {
   Inertia.post(route('credit-simulation.save'), {
     amount_of_credit: formData.value.amountOfCredit,
     period: formData.value.period,
+    start_date: JSON.stringify(formData.value.date),
     margin: formData.value.margin,
     commission: formData.value.commission,
     commission_type: formData.value.commissionType,
@@ -246,10 +247,16 @@ const changeStartDate = (value) => {
             />
           </div>
           <div class="flex-1">
-            <RangeInputPeriod
-                v-model="formData.period"
-                v-model:type="formData.periodType"
-                :error="v$.period.$error"
+            <RangeWithInput
+              v-model="formData.period"
+              input-type-label="LAT"
+              heading="Okres"
+              :min="5"
+              :max="35"
+              :step="1"
+              label-left="5 lat"
+              label-right="35 lat"
+              :error="v$.period.$error"
             />
           </div>
         </div>

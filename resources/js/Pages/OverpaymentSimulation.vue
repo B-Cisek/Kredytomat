@@ -3,13 +3,12 @@ import Layout from "@/Layouts/Layout.vue";
 import {useHelpers} from "@/Composables/useHelpers";
 import ConfirmationModal from "@/Components/Modals/ConfirmationModal.vue";
 import {Inertia} from "@inertiajs/inertia";
-import {onMounted, ref} from "vue";
-import {useEqualInstallments} from "@/Composables/useEqualInstallments";
-import {useDecreasingInstallments} from "@/Composables/useDecreasingInstallments";
+import {onBeforeMount, ref} from "vue";
 import {LineChart} from "vue-chart-3";
 import {Chart, registerables} from "chart.js";
 import CreditScheduleOverpayment from "@/Components/Tables/CreditScheduleOverpayment.vue";
 import html2pdf from "html2pdf.js";
+import {useCreditCalculation} from "@/Composables/useCreditCalculation";
 
 const {formattedToPLN, totalCreditCost, totalCreditInterest, getInterestPartArray} = useHelpers();
 
@@ -26,127 +25,46 @@ const costCostDiff = ref(0);
 const monthsLess = ref(0);
 const costLessPercent = ref(0);
 
-const decreasingInstallment = () => {
-  if (props.overpaymentSimulation.overpayment_type === "period") {
-    schedule.value = useDecreasingInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      }, JSON.parse(props.overpaymentSimulation.overpayments),
-      [],
-      [],
-      []).getScheduleShorterPeriod();
 
-    baseCreditSchedule.value = useDecreasingInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      }, [],
-      [],
-      [],
-      []).getScheduleShorterPeriod();
-  }
+const {getSchedulev2} = useCreditCalculation();
 
-  if (props.overpaymentSimulation.overpayment_type === "installment") {
-    schedule.value = useDecreasingInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      }, JSON.parse(props.overpaymentSimulation.overpayments),
-      [],
-      [],
-      []).getScheduleSmallerInstallment();
+const scheduleFetched = ref(false);
 
-    baseCreditSchedule.value = useDecreasingInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      }, [],
-      [],
-      [],
-      []).getScheduleSmallerInstallment();
-  }
-}
+const calculation = async () => {
+  const resBase = await getSchedulev2(
+      props.overpaymentSimulation.type_of_installment,
+      JSON.parse(props.overpaymentSimulation.start_date),
+      props.overpaymentSimulation.amount_of_credit,
+      props.overpaymentSimulation.period,
+      'year',
+      Number(props.overpaymentSimulation.margin),
+      Number(props.overpaymentSimulation.wibor.value),
+      Number(props.overpaymentSimulation.commission),
+      'percent',
+      {},
+      {}
+  );
 
-const equalInstallment = () => {
-  if (props.overpaymentSimulation.overpayment_type === "period") {
-    schedule.value = useEqualInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      },
+  baseCreditSchedule.value = await resBase.data.schedule;
+
+  const res = await getSchedulev2(
+      props.overpaymentSimulation.type_of_installment,
+      JSON.parse(props.overpaymentSimulation.start_date),
+      props.overpaymentSimulation.amount_of_credit,
+      props.overpaymentSimulation.period,
+      'year',
+      Number(props.overpaymentSimulation.margin),
+      Number(props.overpaymentSimulation.wibor.value),
+      Number(props.overpaymentSimulation.commission),
+      'percent',
+      {},
+      {},
       JSON.parse(props.overpaymentSimulation.overpayments),
-      [],
-      [],
-      []
-    ).getScheduleShorterPeriod();
+      props.overpaymentSimulation.overpayment_type
+  );
 
-    baseCreditSchedule.value = useEqualInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      },
-      [],
-      [],
-      [],
-      []
-    ).getScheduleShorterPeriod();
-  }
-
-  if (props.overpaymentSimulation.overpayment_type === "installment") {
-    schedule.value = useEqualInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      },
-      JSON.parse(props.overpaymentSimulation.overpayments),
-      [],
-      [],
-      []
-    ).getScheduleSmallerInstallment();
-
-    baseCreditSchedule.value = useEqualInstallments({
-        date: new Date(2023, 0),
-        amountOfCredit: Number(props.overpaymentSimulation.amount_of_credit),
-        period: Number(props.overpaymentSimulation.period),
-        margin: Number(props.overpaymentSimulation.margin),
-        wibor: Number(props.overpaymentSimulation.wibor.value),
-        commission: Number(props.overpaymentSimulation.commission)
-      },
-      [],
-      [],
-      [],
-      []
-    ).getScheduleSmallerInstallment();
-  }
-}
-
-
-const calculation = () => {
-
-  if (props.overpaymentSimulation.type_of_installment === "equal") equalInstallment();
-  if (props.overpaymentSimulation.type_of_installment === "decreasing") decreasingInstallment();
+  schedule.value = await res.data.schedule;
+  scheduleFetched.value = true;
 
   let label = [];
   for (let i = 1; i <= schedule.value.length; i++) {
@@ -234,8 +152,8 @@ let options = {
   }
 };
 
-onMounted(() => {
-  calculation();
+onBeforeMount(() => {
+   calculation();
 });
 
 const remove = () => {
@@ -438,13 +356,13 @@ const openCalculator = () => {
               <div class="flex items-center justify-between cursor-pointer p-5 w-full border-t-2">
                 <h1 class="font-semibold text-xl">Wykres kosztu kredytu</h1>
               </div>
-              <LineChart class="h-[400px]" :chartData="chartData" :options="options"/>
+              <LineChart v-if="scheduleFetched" class="h-[400px]" :chartData="chartData" :options="options"/>
             </div>
             <div class="html2pdf__page-break">
               <div class="flex items-center justify-between cursor-pointer p-5 w-full border-t-2">
                 <h1 class="font-semibold text-xl">Harmonogram</h1>
               </div>
-              <CreditScheduleOverpayment :schedule="schedule"/>
+              <CreditScheduleOverpayment v-if="scheduleFetched" :schedule="schedule"/>
             </div>
           </div>
         </div>

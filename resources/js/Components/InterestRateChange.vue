@@ -32,11 +32,11 @@ const scheduleCalculate = async (index) => {
         props.credit.date,
         props.credit.amountOfCredit,
         props.credit.period,
-        props.credit.periodType,
+        'year',
         props.credit.margin,
         wibor,
         props.credit.commission,
-        props.credit.commissionType
+        'percent'
     );
 
     return await defaultRes.data.schedule;
@@ -147,7 +147,6 @@ const chartOptions = {
   </div>
   <div>
     <Bar
-      class="p-5 w-full"
       :chartOptions="chartOptions"
       :chartData="chartData"
     />
