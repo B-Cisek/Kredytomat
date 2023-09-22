@@ -187,7 +187,9 @@ class DecreasingInstallments implements InstallmentsInterface
         foreach ($this->interestsRateChanges as $value) {
             if (($value['date']['month'] + 1) === $currentDate->month
                 && $value['date']['year'] === $currentDate->year) {
-                return $this->toDecimal($value['value']);
+                if ($value['value'] !== null) {
+                    return $this->toDecimal($value['value']);
+                }
             }
         }
 
@@ -201,7 +203,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['fee'];
+                return $value['fee'] ?? 0;
             }
         }
 
@@ -215,7 +217,9 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $this->calculateChangingFee($value['fee'], $capitalToPay);
+                if ($value['fee'] !== null) {
+                    return $this->calculateChangingFee($value['fee'], $capitalToPay);
+                }
             }
         }
 
@@ -229,7 +233,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['overpayment'];
+                return $value['overpayment'] ?? 0;
             }
         }
 
@@ -306,7 +310,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['fee'];
+                return $value['fee'] ?? 0;
             }
         }
 
@@ -320,7 +324,9 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $this->calculateChangingFee($value['fee'], $capitalToPay);
+                if ($value['fee'] !== null) {
+                    return $this->calculateChangingFee($value['fee'], $capitalToPay);
+                }
             }
         }
 
@@ -334,7 +340,7 @@ class DecreasingInstallments implements InstallmentsInterface
             $endDate = Carbon::create($value['end']['year'], $value['end']['month'] + 1);
 
             if ($this->isDateInRange($currentDate, $startDate, $endDate)) {
-                return $value['overpayment'];
+                return $value['overpayment'] ?? 0;
             }
         }
 

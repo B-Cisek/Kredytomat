@@ -64,10 +64,6 @@ const formatToPLN = amount => {
           <span class="text-gray-500">Marża</span>
           <p class="font-semibold">{{ credit.margin }}%</p>
         </div>
-        <div class="sm:block hidden">
-          <span class="text-gray-500">RRSO</span>
-          <p class="font-semibold">8,33%</p>
-        </div>
         <div class="">
           <span class="text-gray-500">Kwota do</span>
           <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>

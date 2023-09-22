@@ -142,10 +142,6 @@ const filterOpen = ref(false);
                 <p class="font-semibold">{{ credit.margin }}%</p>
               </div>
               <div class="">
-                <span class="text-gray-500">RRSO</span>
-                <p class="font-semibold">9,33%</p>
-              </div>
-              <div class="">
                 <span class="text-gray-500">Kwota do</span>
                 <p class="font-semibold">{{ formattedToPLN.format(credit.amount_to) }}</p>
               </div>
