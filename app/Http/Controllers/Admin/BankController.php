@@ -11,14 +11,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class BankController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      */
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
         $banks = Bank::paginate(10);
 
@@ -31,10 +31,8 @@ class BankController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Inertia\Response
      */
-    public function create()
+    public function create(): Response
     {
         return Inertia::render('Admin/Banks/Create');
     }
@@ -42,10 +40,9 @@ class BankController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Bank\StoreBankRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param StoreBankRequest $request
      */
-    public function store(StoreBankRequest $request)
+    public function store(StoreBankRequest $request): RedirectResponse
     {
         $logo = $request->file('logo')?->store('logos', 'public');
 
@@ -119,8 +116,17 @@ class BankController extends Controller
         $pathToLogo = str_replace('http://localhost/storage/', '', $bank->logo_path);
 
         //Storage::disk('public')->exists($pathToLogo));
-        Storage::disk('public')->delete($pathToLogo);
-        $bank->delete();
+        try {
+            $bank->deleteOrFail();
+            Storage::disk('public')->delete($pathToLogo);
+        } catch (\Exception) {
+            return redirect()
+                ->route('admin.banks.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie można usunąć banku przypisanego do oferty kredytowej.'
+                ]);
+        }
 
         return redirect()
             ->route('admin.banks.index')

@@ -61,20 +61,34 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => AlertType::WARNING,
-                'alert_message' => 'Użytkownik zaktualizowany!'
+                'alert_type' => AlertType::SUCCESS,
+                'alert_message' => 'Użytkownik zaktualizowany.'
             ]);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function destroy(User $user): RedirectResponse
     {
-        $user->delete();
+        try {
+            if ($user->id !== 1) {
+                $user->deleteOrFail();
+            }
+        } catch (\Exception) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie można usunąć użytkownika który ma zapsiane symulacje.'
+                ]);
+        }
 
         return redirect()
             ->route('admin.users.index')
             ->with([
                 'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Użytkownik usunięty!'
+                'alert_message' => 'Użytkownik usunięty.'
             ]);
     }
 
@@ -91,7 +105,16 @@ class UserController extends Controller
                 ]);
         }
 
-        User::destroy($ids);
+        try {
+            User::destroy($ids);
+        } catch (\Exception) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with([
+                    'alert_type' => AlertType::WARNING,
+                    'alert_message' => 'Nie można usunąć użytkownika który ma zapsiane symulacje.'
+                ]);
+        }
 
         return redirect()
             ->route('admin.users.index')

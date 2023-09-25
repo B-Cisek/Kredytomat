@@ -38,7 +38,9 @@ const props = defineProps({
         <td>{{ formattedToPLN.format(sche[3]) }}</td>
         <td>{{ formattedToPLN.format(sche[5] + sche[8] + sche[9]) }}</td>
         <td>{{ (sche[7] * 100).toFixed(2) }}%</td>
-        <td>{{ formattedToPLN.format(sche[8] + sche[9]) }}</td>
+        <td :class="sche[8] != 0.00 || sche[9] !== 0.00 ? 'text-green-700 font-bold' : ''">
+          {{ formattedToPLN.format(sche[8] + sche[9]) }}
+        </td>
         <td>{{ formattedToPLN.format(sche[6]) }}</td>
       </tr>
       </tbody>
