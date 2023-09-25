@@ -306,7 +306,7 @@ const openCalculator = () => {
                   </div>
                   <div>
                     <p class="mt-1">WIBOR:</p>
-                    <span class="text-xl font-semibold">3M</span>
+                    <span class="text-xl font-semibold">{{props.creditSimulation.wibor.type}}</span>
                   </div>
                   <div>
                     <p class="mt-1">Opłaty stałe łącznie:</p>

@@ -276,7 +276,7 @@ const openCalculator = () => {
               </div>
               <div>
                 <p class="mt-1">WIBOR:</p>
-                <span class="text-xl font-semibold">3M</span>
+                <span class="text-xl font-semibold">{{props.overpaymentSimulation.wibor.type}}</span>
               </div>
               <div>
                 <p class="mt-1">Prowizja:</p>
@@ -352,13 +352,15 @@ const openCalculator = () => {
                 </div>
               </div>
             </div>
-            <div class="html2pdf__page-break">
+            <div class="html2pdf__page-break"></div>
+            <div>
               <div class="flex items-center justify-between cursor-pointer p-5 w-full border-t-2">
                 <h1 class="font-semibold text-xl">Wykres kosztu kredytu</h1>
               </div>
               <LineChart v-if="scheduleFetched" class="h-[400px]" :chartData="chartData" :options="options"/>
             </div>
-            <div class="html2pdf__page-break">
+            <div class="html2pdf__page-break"></div>
+            <div>
               <div class="flex items-center justify-between cursor-pointer p-5 w-full border-t-2">
                 <h1 class="font-semibold text-xl">Harmonogram</h1>
               </div>

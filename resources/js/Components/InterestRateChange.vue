@@ -145,8 +145,10 @@ const chartOptions = {
       </div>
     </div>
   </div>
+  <div class="html2pdf__page-break"></div>
   <div>
     <Bar
+      class="h-[400px]"
       :chartOptions="chartOptions"
       :chartData="chartData"
     />
