@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Pagination\Paginator;
+use App\Services\ImageStore\ImageStoreService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('imageStoreService', fn() => new ImageStoreService());
     }
 
     /**
