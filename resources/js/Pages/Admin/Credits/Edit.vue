@@ -18,8 +18,8 @@ const props = defineProps({
 const confirmationModalOpen = ref(false);
 
 const formatDetails = () => {
-  let details = JSON.parse(props.credit.details);
-  let detailsString = "";
+  let details = JSON.parse(props.credit.details ?? '[]');
+  let detailsString = '';
 
   Object.entries(details).forEach(([key, value]) => {
     detailsString += key + ': ' + value + ';\n';

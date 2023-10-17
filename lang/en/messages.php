@@ -7,6 +7,13 @@ return [
         'delete' => 'Bank has been deleted successfully',
         'deleteFail' => 'Cannot remove bank assigned to credit',
         'massDeleteFail' => 'No banks selected for delete',
-        'massDelete' => 'Selected banks has been deleted'
+        'massDelete' => 'Selected banks have been deleted'
+    ],
+    'credit' => [
+        'store' => 'Credit has been added successfully',
+        'update' => 'Credit has been updated successfully',
+        'delete' => 'Credit has been deleted successfully',
+        'massDeleteFail' => 'No credits selected for delete',
+        'massDelete' => 'Selected credits have been deleted'
     ]
 ];

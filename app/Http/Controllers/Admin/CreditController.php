@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\AlertType;
+use App\Helpers\DetailsFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Credit\StoreCreditRequest;
 use App\Http\Requests\Credit\UpdateCreditRequest;
@@ -38,36 +41,19 @@ class CreditController extends Controller
     {
         $attributes = $request->validated();
         $attributes['slug'] = $attributes['credit_name'];
-        $attributes['details'] = $this->formatDetails($attributes['details']);
+
+        if ($attributes['details'] !== null) {
+            $attributes['details'] = DetailsFormatter::format($attributes['details']);
+        }
 
         Credit::create($attributes);
 
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Kredyt poprawnie dodany.'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.credit.store')
             ]);
-    }
-
-    private function formatDetails(string|null $details): string
-    {
-        $result = [];
-        $lines = explode(';', $details);
-
-
-        foreach ($lines as $line) {
-            if (empty($line)) {
-                continue;
-            }
-            $line = str_replace('\n', '', $line);
-            $detail = explode(':', $line);
-            $key = trim($detail[0]);
-            $value = trim($detail[1]);
-            $result[$key] = $value;
-        }
-
-        return json_encode($result);
     }
 
     public function edit(Credit $credit): Response
@@ -82,15 +68,18 @@ class CreditController extends Controller
     public function update(UpdateCreditRequest $request, Credit $credit): RedirectResponse
     {
         $attributes = $request->validated();
-        $attributes['details'] = $this->formatDetails($attributes['details']);
+
+        if ($attributes['details'] !== null) {
+            $attributes['details'] = DetailsFormatter::format($attributes['details']);
+        }
 
         $credit->update($attributes);
 
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => AlertType::WARNING,
-                'alert_message' => __('dashboard.credit.updated')
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.credit.update')
             ]);
     }
 
@@ -101,31 +90,29 @@ class CreditController extends Controller
         return redirect()
             ->route('admin.credits.index')
             ->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Kredyt usunięty.'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.credit.delete')
             ]);
     }
 
     public function massDestroy(Request $request): RedirectResponse
     {
+        $response = redirect()->route('admin.credits.index');
+
         $ids = $request->get('ids') ?? [];
 
         if (empty($ids)) {
-            return redirect()
-                ->route('admin.credits.index')
-                ->with([
-                    'alert_type' => AlertType::WARNING,
-                    'alert_message' => 'Nie zaznaczony kredytów do usunięcia.'
-                ]);
+            return $response->with([
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.credit.massDeleteFail')
+            ]);
         }
 
         Credit::destroy($ids);
 
-        return redirect()
-            ->route('admin.credits.index')
-            ->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Usunięto zaznaczone kredyty.'
-            ]);
+        return $response->with([
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.credit.massDelete')
+        ]);
     }
 }
