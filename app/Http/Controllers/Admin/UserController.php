@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\AlertType;
+use App\Exceptions\CantDeleteAdminUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -40,8 +44,8 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Użytkownik poprawnie dodany!'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.user.store')
             ]);
     }
 
@@ -61,66 +65,75 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.index')
             ->with([
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Użytkownik zaktualizowany.'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.user.update')
             ]);
     }
 
-    /**
-     * @throws \Throwable
-     */
     public function destroy(User $user): RedirectResponse
     {
+        $response = redirect()->route('admin.users.index');
+
         try {
-            if ($user->id !== 1) {
-                $user->deleteOrFail();
+            if ($user->id === 1) {
+                throw new CantDeleteAdminUser();
             }
-        } catch (\Exception) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with([
-                    'alert_type' => AlertType::WARNING,
-                    'alert_message' => 'Nie można usunąć użytkownika który ma zapsiane symulacje.'
-                ]);
+
+            $user->deleteOrFail();
+        } catch (CantDeleteAdminUser) {
+            return $response->with([
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.user.adminUser')
+            ]);
+        } catch (QueryException) {
+            return $response->with([
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.user.cannotDeleteUser')
+            ]);
         }
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Użytkownik usunięty.'
-            ]);
+        return $response->with([
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.user.delete')
+        ]);
     }
 
     public function massDestroy(Request $request): RedirectResponse
     {
         $ids = $request->get('ids') ?? [];
+        $response = redirect()->route('admin.users.index');
 
         if (empty($ids)) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with([
-                    'alert_type' => AlertType::WARNING,
-                    'alert_message' => 'Nie zaznaczono użytkowników do usunięcia!'
-                ]);
+            return $response->with([
+                'alertType' => AlertType::INFO,
+                'alertMessage' => __('messages.user.massDeleteFail')
+            ]);
         }
 
         try {
-            User::destroy($ids);
-        } catch (\Exception) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with([
-                    'alert_type' => AlertType::WARNING,
-                    'alert_message' => 'Nie można usunąć użytkownika który ma zapsiane symulacje.'
-                ]);
+            foreach ($ids as $id) {
+                if ($id === 1) {
+                    throw new CantDeleteAdminUser();
+                }
+
+                $user = User::findOrFail($id);
+                $user->delete();
+            }
+        } catch (QueryException) {
+            return $response->with([
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.user.cannotDeleteUser')
+            ]);
+        } catch (CantDeleteAdminUser) {
+            return $response->with([
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.user.adminUser')
+            ]);
         }
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Usunięto użytkowników!'
-            ]);
+        return $response->with([
+            'alertType' => AlertType::DANGER,
+            'alertMessage' => __('messages.user.massDeleted')
+        ]);
     }
 }

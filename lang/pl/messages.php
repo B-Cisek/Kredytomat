@@ -15,5 +15,12 @@ return [
         'delete' => 'Kredyt został pomyślnie usunięty',
         'massDeleteFail' => 'Nie wybrano kredytów do usunięcia',
         'massDelete' => 'Wybrane kredyty zostały usunięte'
+    ],
+    'user' => [
+        'store' => 'Użytkownik został pomyślnie dodany',
+        'update' => 'Użytkownik został pomyślnie zaktualizowany',
+        'delete' => 'Użytkownik został pomyślnie usunięty',
+        'adminUser' => 'Konto użytkownika admin nie może zostać usunięte',
+        'cannotDeleteUser' => 'Nie można usunąć użytkownika który ma zapisane symulacje'
     ]
 ];
