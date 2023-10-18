@@ -2,18 +2,13 @@
 
 namespace App\Http\Requests\User;
 
-
+use App\Rules\EmailRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -23,7 +18,7 @@ class StoreUserRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [
@@ -34,7 +29,7 @@ class StoreUserRequest extends FormRequest
             ],
             'email' => [
                 'required',
-                'email',
+                new EmailRule,
                 Rule::unique('users', 'email')
             ],
             'password' => [

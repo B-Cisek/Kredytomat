@@ -1,28 +1,18 @@
 <script setup>
-
-import MainHeader from "@/Components/Header.vue";
-
-defineProps({
-    loggedIn: Boolean
-})
+import Header from "@/Components/Header.vue";
+import AdminHeader from "@/Components/AdminHeader.vue";
+import ToastList from "@/Components/ToastList.vue";
 </script>
 
 <template>
-    <div class="h-full">
-        <MainHeader :loggedIn="loggedIn"/>
+  <Header/>
+  <ToastList/>
+  <AdminHeader>
+    <slot name="header"/>
+  </AdminHeader>
 
-        <header class="bg-white shadow">
-            <div class="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                    <slot name="header"/>
-                </h1>
-            </div>
-        </header>
-
-        <main>
-            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                <slot/>
-            </div>
-        </main>
-    </div>
+  <main class="lg:px-8 max-w-7xl mx-auto px-2 py-3 sm:px-6">
+    <slot/>
+  </main>
 </template>
+

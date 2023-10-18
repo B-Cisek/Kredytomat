@@ -1,11 +1,12 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import { Link } from "@inertiajs/inertia-vue3";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
+import {Head, Link} from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import { useForm } from "@inertiajs/inertia-vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Arrow from "@/Components/Arrow.vue";
 
 const form = useForm({
   name: "",
@@ -20,14 +21,13 @@ const store = () => {
 </script>
 
 <template>
+  <Head title="Nowy użytkownik"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /
-      </Link>
-      <Link :href="route('admin.users.index')" class="hover:text-indigo-700"
-        >Użytkownicy /
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow />
+      <Link :href="route('admin.users.index')" class="hover:text-indigo-700">Użytkownicy</Link>
+      <Arrow />
       <span class="font-light">Nowy użytkownik</span>
     </template>
     <template #default>

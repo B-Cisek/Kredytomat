@@ -14,6 +14,9 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
+            screens: {
+                'header': '860px',
+            },
         },
     },
 
@@ -33,10 +36,9 @@ module.exports = {
             }
         ],
         base: false,
-        // utils: true,
-        // logs: true,
-        // rtl: false,
-        // prefix: "",
-        // darkTheme: "dark",
+        utils: false,
+        logs: true,
+        rtl: false,
+        //darkTheme: "dark",
       },
 };

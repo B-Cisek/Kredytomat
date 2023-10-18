@@ -1,22 +1,23 @@
 <script setup>
-import { ref } from "vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {ref} from "vue";
+import {Link} from "@inertiajs/inertia-vue3";
+import {ChevronUpIcon, ChevronDownIcon} from "@heroicons/vue/24/outline";
+
 const props = defineProps({
   credits: Object,
 });
 
 const showed = ref([]);
 
-const add = (index) => {
+const add = index => {
   if (showed.value.includes(index)) {
     showed.value = showed.value.filter((v) => v !== index);
   } else {
     showed.value.push(index);
   }
-  console.log(showed.value);
 };
 
-const formatToPLN = (amount) => {
+const formatToPLN = amount => {
   return new Intl.NumberFormat("pl-PL", {
     style: "currency",
     currency: "PLN",
@@ -26,6 +27,9 @@ const formatToPLN = (amount) => {
 </script>
 
 <template>
+  <div>
+    <span class="font-semibold text-gray-600 ml-2">Najnowsze 6 ofert:</span>
+  </div>
   <section
     v-for="(credit, index) in credits"
     :key="credit.id"
@@ -35,77 +39,58 @@ const formatToPLN = (amount) => {
       <span>{{ index + 1 }}.</span>
       <span class="ml-5">{{ credit.credit_name }}</span>
     </div>
-    <div class="w-full flex justify-around items-center py-3 text-center">
+    <div class="w-full flex justify-between px-8 items-center py-3 text-center flex-col lg:flex-row">
       <div>
         <div class="w-[150px] h-[60px]">
           <img
             :src="credit.bank.logo_path"
             :alt="credit.bank.bank_name"
-            class="w-full h-full object-contain"
+            class="w-full h-full object-fit"
           />
         </div>
       </div>
-      <div class="">
-        <span class="text-gray-500">Okres</span>
-        <p class="font-semibold text-lg">
-          {{ credit.period_from / 12 }}-{{ credit.period_to / 12 }} lat
-        </p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Prowizja</span>
-        <p class="font-semibold">{{ credit.commission }}%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Marża</span>
-        <p class="font-semibold">{{ credit.margin }}%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">RRSO</span>
-        <p class="font-semibold">9,33%</p>
-      </div>
-      <div class="">
-        <span class="text-gray-500">Kwota</span>
-        <p class="font-semibold">{{ formatToPLN(credit.amount_from) }} -</p>
-        <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
+      <div class="flex flex-col md:flex-row w-full justify-around px-10 my-5 lg:my-0">
+        <div>
+          <span class="text-gray-500">Okres</span>
+          <p class="font-semibold text-lg">
+            {{ credit.period_from / 12 }}-{{ credit.period_to / 12 }} lat
+          </p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Prowizja</span>
+          <p class="font-semibold">{{ credit.commission }}%</p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Marża</span>
+          <p class="font-semibold">{{ credit.margin }}%</p>
+        </div>
+        <div class="">
+          <span class="text-gray-500">Kwota do</span>
+          <p class="font-semibold">{{ formatToPLN(credit.amount_to) }}</p>
+        </div>
       </div>
       <div>
-        <PrimaryButton>Sprawdź</PrimaryButton>
+        <Link
+          :href="route('offer.show.credit', [credit.bank.slug, credit.slug])"
+          class="px-4 py-2 bg-indigo-700 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150">
+          Sprawdź
+        </Link>
       </div>
     </div>
     <div class="w-full border-t py-1 flex justify-center">
       <button class="flex justify-center items-center gap-1" @click="add(index)">
-        <span>Szczegóły</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        <span class="text-gray-500">Szczegóły</span>
+        <ChevronUpIcon v-show="showed.includes(index)" class="h-5 w-5 text-gray-500"/>
+        <ChevronDownIcon v-show="!showed.includes(index)" class="h-5 w-5 text-gray-500"/>
       </button>
     </div>
-    <div class="bg-white mt-7" v-show="showed.includes(index)">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta magni voluptatibus
-        voluptates officiis doloremque. Id harum commodi dicta laboriosam voluptates rem
-        illum ratione, qui sequi eos adipisci temporibus iste. Ex!
-      </p>
+    <div class="bg-white mt-1" v-show="showed.includes(index)">
+      <div class="w-full">
+        <p v-for="(detail, index) in JSON.parse(credit.details)" class="border-b border-gray py-2 px-2 last:border-b-0">
+          <span>{{ index }}: </span>
+          <span class="font-semibold">{{ detail }}</span>
+        </p>
+      </div>
     </div>
-    <!-- TODO: rozwijane szczegóły -->
   </section>
 </template>

@@ -25,7 +25,7 @@ const submit = () => {
   <GuestLayout>
     <Head title="Rejestracja" />
 
-    <h1 class="text-3xl font-bold text-center mb-10 mt-3 tracking-wide">REJESTRACJA</h1>
+    <h1 class="text-3xl font-bold text-center mb-10 mt-3 tracking-wide">Rejestracja</h1>
 
     <form @submit.prevent="submit">
       <div>

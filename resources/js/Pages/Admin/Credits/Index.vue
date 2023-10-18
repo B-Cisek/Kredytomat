@@ -1,44 +1,59 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import Alert from "@/Components/Alert.vue";
-import NavLink from "@/Components/NavLink.vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
 import CreditsTable from "@/Components/Tables/CreditsTable.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Pagination from "@/Components/Pagination.vue";
-import { Head, Link } from "@inertiajs/inertia-vue3";
-import { defineProps } from "vue";
+import {Head, Link} from "@inertiajs/inertia-vue3";
+import {defineProps, ref} from "vue";
+import Arrow from "@/Components/Arrow.vue";
+import {Inertia} from "@inertiajs/inertia";
 
 defineProps({
   credits: Object,
 });
+
+const showButton = ref(false);
+const massDelete = ref([]);
+
+const handle = (value) => {
+  showButton.value = !!value.value.length;
+
+  massDelete.value = value.value;
+}
+
+const handleMassDelete = () => {
+  Inertia.post(route('admin.credits.massDelete'), {ids: massDelete.value});
+  showButton.value = false;
+}
 </script>
 
 <template>
-  <Head title="Kredyty" />
+  <Head title="Kredyty"/>
 
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /</Link
-      >
-      Kredyty
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow/>
+      <span>Kredyty</span>
     </template>
     <template #default>
-      <section class="flex justify-end items-center mb-3">
-        <Alert
-          :type="$page.props.flash.alert_type"
-          v-if="$page.props.flash.alert_message"
-        >
-          {{ $page.props.flash.alert_message }}
-        </Alert>
-        <!--     FILTERS      -->
-        <NavLink :href="route('admin.credits.create')" class="bg-green-600 text-white">
-          Dodaj kredyt
-        </NavLink>
+      <section class="mb-3">
+        <div class="flex justify-end">
+          <button
+            v-show="showButton"
+            @click="handleMassDelete"
+            class="text-white px-3 py-2 rounded-md font-medium bg-red-600 hover:bg-gray-700 mr-2"
+          >
+            Usuń zaznaczone
+          </button>
+          <Link :href="route('admin.credits.create')"
+                class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700 text-right">
+            Dodaj kredyt
+          </Link>
+        </div>
       </section>
       <section>
-        <CreditsTable :credits="credits" />
-        <Pagination :items="credits" class="mt-3 rounded-lg" />
+        <CreditsTable :credits="credits" @mass-delete="handle"/>
+        <Pagination :items="credits" class="mt-3 rounded-lg"/>
       </section>
     </template>
   </AdminDashboardLayout>

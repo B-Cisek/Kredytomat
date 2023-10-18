@@ -36,6 +36,13 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    protected $messages = [
+        500 => 'Something went wrong',
+        503 => 'Service unavailable',
+        404 => 'Not found',
+        403 => 'Not authorized',
+    ];
+
     /**
      * Register the exception handling callbacks for the application.
      *
@@ -46,5 +53,25 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        $response = parent::render($request, $e);
+
+        $status = $response->getStatusCode();
+
+        if (app()->environment(['local', 'testing'])) {
+            return $response;
+        }
+
+        if (! array_key_exists($status, $this->messages)) {
+            return $response;
+        }
+
+        return inertia('Error', [
+            'status' => $status,
+            'message' => $this->messages[$status],
+        ])->toResponse($request)->setStatusCode($status);
     }
 }

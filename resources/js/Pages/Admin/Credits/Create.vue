@@ -1,10 +1,11 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import { Link, useForm } from "@inertiajs/inertia-vue3";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
+import {Head, Link, useForm} from "@inertiajs/inertia-vue3";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Arrow from "@/Components/Arrow.vue";
 
 const form = useForm({
   credit_name: "",
@@ -16,6 +17,7 @@ const form = useForm({
   commission: "",
   wibor_id: "",
   bank_id: "",
+  details: ""
 });
 
 defineProps({
@@ -29,14 +31,13 @@ const store = () => {
 </script>
 
 <template>
+  <Head title="Nowy kredyt"/>
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /
-      </Link>
-      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700"
-        >Kredyty /
-      </Link>
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow/>
+      <Link :href="route('admin.credits.index')" class="hover:text-indigo-700">Kredyty</Link>
+      <Arrow />
       <span class="font-light"> Nowy kredyt</span>
     </template>
     <template #default>
@@ -125,11 +126,11 @@ const store = () => {
                 />
                 <InputError class="mt-2" :message="form.errors.commission" />
               </div>
-              <div class="mt-3">
+              <div class="mt-2">
                 <InputLabel for="wibor" value="WIBOR" />
                 <select
                   v-model="form.wibor_id"
-                  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
                 >
                   <option selected disabled value="">Wybierz WIBOR</option>
                   <option v-for="wibor in wibors" :value="wibor.id">
@@ -138,11 +139,11 @@ const store = () => {
                 </select>
                 <InputError class="mt-2" :message="form.errors.wibor_id" />
               </div>
-              <div class="mt-3">
+              <div class="mt-2">
                 <InputLabel for="bank" value="Bank" />
                 <select
                   v-model="form.bank_id"
-                  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full"
                 >
                   <option selected disabled value="">Wybierz bank</option>
                   <option v-for="bank in banks" :value="bank.id">
@@ -152,6 +153,14 @@ const store = () => {
                 <InputError class="mt-2" :message="form.errors.bank_id" />
               </div>
             </div>
+          </div>
+          <div class="mt-3">
+            <InputLabel for="details" value="Szczegóły oferty np. (Ubezpieczenie niskiego wkładu: 0,00 zł;)" />
+            <textarea
+              v-model="form.details"
+              class="mt-1 w-full h-[150px] resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </textarea>
+            <InputError class="mt-2" :message="form.errors.details" />
           </div>
           <PrimaryButton class="mt-3 w-full" type="submit ">Dodaj</PrimaryButton>
         </form>

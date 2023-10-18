@@ -1,21 +1,21 @@
 <script setup>
 import { Link } from "@inertiajs/inertia-vue3";
-import { ref, watch } from "vue";
+import {computed, ref, watch} from "vue";
+import {EllipsisHorizontalIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   credits: Object,
 });
 
-// const emit = defineEmits(["checkedCredits", "showButton"]);
+const emit = defineEmits(['massDelete']);
 
 const checked = ref([]);
 const checkedAll = ref(false);
 
-const selectAll = () => {
-  checkedAll.value = !checkedAll.value;
-  //   emit("checkedCredits", checked);
-  //   emit("showButton", true);
-};
+
+watch(checked, () => {
+  emit('massDelete', checked);
+}, {deep: true})
 
 watch(checkedAll, (value) => {
   if (value) {
@@ -30,6 +30,8 @@ watch(checkedAll, (value) => {
     });
   }
 });
+
+
 </script>
 
 <template>
@@ -51,13 +53,11 @@ watch(checkedAll, (value) => {
           </th>
           <th scope="col" class="py-3">Nazwa kredytu</th>
           <th scope="col" class="py-3">Bank</th>
-          <th scope="col" class="py-3">Kwota</th>
-          <th scope="col" class="py-3">Okres</th>
           <th scope="col" class="py-3">Marża</th>
           <th scope="col" class="py-3">Prowizja</th>
           <th scope="col" class="py-3">WIBOR</th>
           <th scope="col" class="py-3">Ostatnia zmiana</th>
-          <th scope="col" class="py-3 px-6">Akcje</th>
+          <th scope="col" class="py-3 text-center pr-2">Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -84,8 +84,6 @@ watch(checkedAll, (value) => {
           <td>
             {{ credit.bank.bank_name }}
           </td>
-          <td>{{ credit.amount_from }} - {{ credit.amount_to }}</td>
-          <td>{{ credit.period_from }} - {{ credit.period_to }}</td>
           <td>
             {{ credit.margin }}
           </td>
@@ -93,22 +91,14 @@ watch(checkedAll, (value) => {
             {{ credit.commission }}
           </td>
           <td>
-            {{ credit.wibor }}
+            {{ credit.wibor.value }}
           </td>
           <td>
             {{ credit.updated_at }}
           </td>
-          <td class="flex items-center py-4 px-6 space-x-3">
+          <td class="text-center">
             <Link :href="route('admin.credits.edit', credit.id)">
-              <svg
-                class="block w-6 h-6 fill-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <polygon
-                  points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"
-                />
-              </svg>
+              <EllipsisHorizontalIcon class="h-10 w-10 text-gray-700" />
             </Link>
           </td>
         </tr>

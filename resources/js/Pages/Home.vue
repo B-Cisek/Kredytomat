@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from "@inertiajs/inertia-vue3";
+import {Head} from "@inertiajs/inertia-vue3";
 import Cta from "@/Components/Cta.vue";
 import Layout from "@/Layouts/Layout.vue";
 import CreditCard from "@/Components/CreditCard.vue";
@@ -7,16 +7,17 @@ import CreditCard from "@/Components/CreditCard.vue";
 defineProps({
   credits: Object,
 });
+
 </script>
 
 <template>
-  <Head title="Home" />
+  <Head title="Home"/>
   <Layout>
     <template #header>
-      <Cta />
+      <Cta/>
     </template>
     <template #default>
-      <CreditCard :credits="credits" />
+      <CreditCard :credits="credits"/>
     </template>
   </Layout>
 </template>

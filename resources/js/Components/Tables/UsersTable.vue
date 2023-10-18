@@ -1,9 +1,33 @@
 <script setup>
-import { defineProps } from "vue";
+import {defineProps, ref, watch} from "vue";
 import RowLink from "@/Components/RowLink.vue";
+import {EllipsisHorizontalIcon} from "@heroicons/vue/24/outline";
 
-defineProps({
+const props = defineProps({
   users: Object,
+});
+
+const emit = defineEmits(['massDelete']);
+
+const checked = ref([]);
+const checkedAll = ref(false);
+
+watch(checked, () => {
+  emit('massDelete', checked);
+}, {deep: true})
+
+watch(checkedAll, (value) => {
+  if (value) {
+    props.users.data.forEach((credit) => {
+      checked.value.push(credit.id);
+    });
+  }
+
+  if (!value) {
+    props.users.data.forEach(() => {
+      checked.value = [];
+    });
+  }
 });
 </script>
 
@@ -15,6 +39,8 @@ defineProps({
           <th scope="col" class="p-4">
             <div class="flex items-center">
               <input
+                @click="checkedAll = !checkedAll"
+                v-model="checkedAll"
                 id="checkbox-all-search"
                 type="checkbox"
                 class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500"
@@ -26,7 +52,7 @@ defineProps({
           <th scope="col" class="py-3">Email</th>
           <th scope="col" class="py-3">Konto utworzone</th>
           <th scope="col" class="py-3">Ostatnia zmiana</th>
-          <th scope="col" class="py-3 px-6">Akcje</th>
+          <th scope="col" class="py-3 text-center">Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -38,7 +64,8 @@ defineProps({
           <td class="p-4 w-4">
             <div class="flex items-center">
               <input
-                id="checkbox-table-search-1"
+                :value="user.id"
+                v-model="checked"
                 type="checkbox"
                 class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500"
               />
@@ -57,17 +84,9 @@ defineProps({
           <td>
             {{ user.updated_at }}
           </td>
-          <td class="flex items-center space-x-3">
+          <td class="text-center">
             <RowLink :href="route('admin.users.edit', user.id)">
-              <svg
-                class="block w-6 h-6 fill-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <polygon
-                  points="12.95 10.707 13.657 10 8 4.343 6.586 5.757 10.828 10 6.586 14.243 8 15.657 12.95 10.707"
-                />
-              </svg>
+              <EllipsisHorizontalIcon class="h-10 w-10 text-gray-700" />
             </RowLink>
           </td>
         </tr>

@@ -18,36 +18,31 @@ class HandleInertiaRequests extends Middleware
 
     /**
      * Determine the current asset version.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string|null
      */
-    public function version(Request $request)
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
     /**
      * Define the props that are shared by default.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    public function share(Request $request)
+    public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
-                'loggedIn' => \Illuminate\Support\Facades\Auth::check(),
+                'loggedIn' => Auth::check(),
                 'isAdmin' => (Auth::check() && Auth::user()->name === 'admin')
             ],
             'flash' => [
-                'alert_type' => fn () => $request->session()->get('alert_type'),
-                'alert_message' => fn () => $request->session()->get('alert_message'),
+                'alertType' => fn () => $request->session()->get('alertType'),
+                'alertMessage' => fn () => $request->session()->get('alertMessage'),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),
+                    'query' => $request->query()
                 ]);
             },
         ]);

@@ -24,4 +24,19 @@ class Wibor extends Model
     {
         return $this->hasMany(Credit::class);
     }
+
+    public function creditSimulations(): HasMany
+    {
+        return $this->hasMany(CreditSimulation::class);
+    }
+
+    public function overpaymentSimulations(): HasMany
+    {
+        return $this->hasMany(OverpaymentSimulation::class);
+    }
+
+    public static function updateWibor($key, $value): void
+    {
+        self::where('type', $key)->update(['value' => floatval($value)]);
+    }
 }

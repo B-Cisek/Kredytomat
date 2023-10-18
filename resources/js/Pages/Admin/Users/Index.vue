@@ -1,44 +1,59 @@
 <script setup>
-import AdminDashboardLayout from "@/Layouts/AdminDashboardLayout.vue";
-import { defineProps } from "vue";
+import AdminDashboardLayout from "@/Layouts/AdminLayout.vue";
+import {defineProps, ref} from "vue";
 import Pagination from "@/Components/Pagination.vue";
 import UsersTable from "@/Components/Tables/UsersTable.vue";
-import NavLink from "@/Components/NavLink.vue";
-import Alert from "@/Components/Alert.vue";
-import { Head, Link } from "@inertiajs/inertia-vue3";
+import {Head, Link} from "@inertiajs/inertia-vue3";
+import Arrow from "@/Components/Arrow.vue";
+import {Inertia} from "@inertiajs/inertia";
 
 defineProps({
   users: Object,
 });
+
+const showButton = ref(false);
+const massDelete = ref([]);
+
+const getIds = (value) => {
+  showButton.value = !!value.value.length;
+  massDelete.value = value.value;
+}
+
+const handleMassDelete = () => {
+  Inertia.post(route('admin.users.massDelete'), {ids: massDelete.value});
+  showButton.value = false;
+}
 </script>
 
 <template>
-  <Head title="Użytkownicy" />
+  <Head title="Użytkownicy"/>
 
   <AdminDashboardLayout>
     <template #header>
-      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700"
-        >Dashboard /</Link
-      >
-      Użytkownicy
+      <Link :href="route('admin.dashboard')" class="hover:text-indigo-700">Dashboard</Link>
+      <Arrow/>
+      <span>Użytkownicy</span>
     </template>
 
     <template #default>
       <section class="flex justify-end flex-wrap items-center mb-3">
-        <Alert
-          :type="$page.props.flash.alert_type"
-          v-if="$page.props.flash.alert_message"
-        >
-          {{ $page.props.flash.alert_message }}
-        </Alert>
-        <!--     FILTERS      -->
-        <NavLink :href="route('admin.users.create')" class="bg-green-600 text-white">
-          Dodaj użytkownika
-        </NavLink>
+        <div class="flex justify-end">
+          <button
+            v-show="showButton"
+            @click="handleMassDelete"
+            class="text-white px-3 py-2 rounded-md font-medium bg-red-600 hover:bg-gray-700 mr-2"
+          >
+            Usuń zaznaczone
+          </button>
+          <Link :href="route('admin.users.create')"
+                class="text-white px-3 py-2 rounded-md font-medium bg-green-600 hover:bg-gray-700">
+            Dodaj użytkownika
+          </Link>
+        </div>
       </section>
       <section>
-        <UsersTable :users="users" />
-        <Pagination :items="users" class="mt-3 rounded-lg" />
+        <UsersTable :users="users" @mass-delete="getIds"/>
+        <Pagination :items="users" class="mt-3 rounded-lg"/>
       </section>
     </template>
   </AdminDashboardLayout>
