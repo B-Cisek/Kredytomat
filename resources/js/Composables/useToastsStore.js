@@ -18,8 +18,8 @@ export function useToastsStore() {
     }
 
     watch(props, (newValue) => {
-        if (newValue.value.flash.alert_message) {
-            add(newValue.value.flash.alert_message, newValue.value.flash.alert_type);
+        if (newValue.value.flash.alertMessage) {
+            add(newValue.value.flash.alertMessage, newValue.value.flash.alertType);
         }
     }, {immediate: true, deep: true});
 

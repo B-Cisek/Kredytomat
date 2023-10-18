@@ -12,14 +12,14 @@ use App\Services\CreditCalculations\Enum\PeriodType;
 use App\Services\CreditCalculations\Enum\TypeOfInstallment;
 use App\Services\CreditCalculations\ScheduleFormatter;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ScheduleCalculator extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         // TODO: validate data form request
-
         $credit = new Credit(
             $request->get('credit')['amountOfCredit'],
             $request->get('credit')['period'],

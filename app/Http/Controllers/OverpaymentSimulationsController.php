@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\AlertType;
+use App\Http\Requests\OverpaymentSimulationRequest;
 use App\Models\OverpaymentSimulation;
 use App\Models\Wibor;
+use App\Services\CommissionCalculatorService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,24 +36,15 @@ class OverpaymentSimulationsController extends Controller
         return Inertia::render('OverpaymentSimulation', compact('overpaymentSimulation'));
     }
 
-    public function save(Request $request): RedirectResponse
+    public function save(OverpaymentSimulationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'amount_of_credit' => 'required|numeric',
-            'period' => 'required|numeric',
-            'start_date' => 'required|json',
-            'margin' => 'required|numeric',
-            'commission' => 'required|numeric',
-            'commission_type' => 'string',
-            'type_of_installment' => 'required|string',
-            'overpayment_type' => 'string|required',
-            'wibor_id' => 'required|numeric',
-            'overpayments' => 'json'
-        ]);
+        $validated = $request->validated();
 
         if ($validated['commission_type'] === 'number') {
-            $validated['commission'] =
-                round(($validated['commission'] / $validated['amount_of_credit']) * 100, 2);
+            $validated['commission'] = CommissionCalculatorService::calculate(
+                $validated['commission'],
+                $validated['amount_of_credit']
+            );
         }
 
         unset($validated['commission_type']);
@@ -74,16 +68,16 @@ class OverpaymentSimulationsController extends Controller
 
         if (!is_null($overpaymentsSimulation)) {
             return back()->with([
-                'alert_type' => AlertType::WARNING,
-                'alert_message' => 'Symulacja nadpłaty już istnieje!'
+                'alertType' => AlertType::INFO,
+                'alertMessage' => __('messages.overpaymentSimulation.alreadyExist')
             ]);
         }
 
         OverpaymentSimulation::create($validated);
 
         return back()->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Zapisano symulacje nadpłaty!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.overpaymentSimulation.saved')
         ]);
     }
 
@@ -94,8 +88,8 @@ class OverpaymentSimulationsController extends Controller
         return redirect()
             ->route('profil.overpayment.index')
             ->with([
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Symulacja usunięta!'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.overpaymentSimulation.deleted')
             ]);
     }
 }

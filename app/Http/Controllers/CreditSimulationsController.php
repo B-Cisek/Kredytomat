@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\AlertType;
+use App\Http\Requests\CreditSimulationRequest;
 use App\Models\CreditSimulation;
 use App\Models\Wibor;
+use App\Services\CommissionCalculatorService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,32 +36,21 @@ class CreditSimulationsController extends Controller
         ]);
     }
 
-    public function save(Request $request): RedirectResponse
+    public function save(CreditSimulationRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'amount_of_credit' => 'required|numeric',
-            'period' => 'required|numeric',
-            'start_date' => 'required|json',
-            'margin' => 'required|numeric',
-            'commission' => 'required|numeric',
-            'commission_type' => 'string',
-            'type_of_installment' => 'required|string',
-            'wibor_id' => 'required|numeric',
-            'fixed_fees' => 'json',
-            'changing_fees' => 'json',
-            'interest_changes' => 'json'
-        ]);
+        $validated = $request->validated();
 
         if ($validated['commission_type'] === 'number') {
-            $validated['commission'] =
-                round(($validated['commission'] / $validated['amount_of_credit']) * 100, 2);
+            $validated['commission'] = CommissionCalculatorService::calculate(
+                $validated['commission'],
+                $validated['amount_of_credit']
+            );
         }
 
         unset($validated['commission_type']);
 
         $wibor = Wibor::where('value', $validated['wibor_id'])->first();
         $validated['wibor_id'] = $wibor->id;
-
         $validated['user_id'] = Auth::id();
 
         $creditSimulation = CreditSimulation::where('amount_of_credit', $validated['amount_of_credit'])
@@ -75,28 +67,28 @@ class CreditSimulationsController extends Controller
 
         if (!is_null($creditSimulation)) {
             return back()->with([
-                'alert_type' => AlertType::WARNING,
-                'alert_message' => 'Symulacja kredytu już istnieje!'
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.creditSimulation.alreadyExist')
             ]);
         }
 
         CreditSimulation::create($validated);
 
         return back()->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Zapisano symulacje kredytu!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.creditSimulation.saved')
         ]);
     }
 
-    public function destroy(CreditSimulation $creditSimulation)
+    public function destroy(CreditSimulation $creditSimulation): RedirectResponse
     {
         CreditSimulation::destroy($creditSimulation->id);
 
         return redirect()
             ->route('profil.credit.index')
             ->with([
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Symulacja usunięta!'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.creditSimulation.deleted')
             ]);
     }
 }

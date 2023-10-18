@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\User;
 
 use App\Enums\AlertType;
@@ -30,8 +32,8 @@ class ProfileController extends Controller
         $user->update($attributes);
 
         return back()->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Profil zaktualizowany!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.profile.update')
         ]);
     }
 
@@ -42,8 +44,8 @@ class ProfileController extends Controller
 
         if (!Hash::check($attributes['current_password'], $user->password)) {
             return back()->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Aktualne hasło nie jest poprawne!'
+                'alertType' => AlertType::DANGER,
+                'alertMessage' => __('messages.profile.wrongCurrentPassword')
             ]);
         }
 
@@ -51,8 +53,8 @@ class ProfileController extends Controller
         $user->update($attributes);
 
         return back()->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Hasło zaktualizowane!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.profile.passwordUpdated')
         ]);
     }
 
@@ -69,8 +71,8 @@ class ProfileController extends Controller
         $user->delete();
 
         return redirect(RouteServiceProvider::HOME)->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Konto usunięte!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.profile.accountRemoved')
         ]);
     }
 }

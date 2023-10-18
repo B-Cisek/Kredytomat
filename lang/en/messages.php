@@ -24,5 +24,31 @@ return [
         'cannotDeleteUser' => 'You cannot delete a user who has simulations saved',
         'massDeleteFail' => 'No users selected for delete',
         'massDelete' => 'Selected users have been deleted'
+    ],
+    'sendResetPasswordLink' => [
+        'noEmail' => 'No email address',
+        'emailSent' => 'Sent link to change password'
+    ],
+    'authentication' => [
+        'loggedOn' => 'Logged On',
+        'loggedOut' => 'Logged Out',
+        'registered' => 'Registered'
+    ],
+    'newPassword' => 'The password has been changed',
+    'profile' => [
+        'update' => 'Profile has been updated',
+        'wrongCurrentPassword' => 'The current password is not correct',
+        'passwordUpdated' => 'Password updated',
+        'accountRemoved' => 'Account deleted'
+    ],
+    'creditSimulation' => [
+        'alreadyExist' => 'Credit simulation already exists',
+        'saved' => 'Credit simulation has been saved',
+        'deleted' => 'Credit simulation has been deleted successfully',
+    ],
+    'overpaymentSimulation' => [
+        'alreadyExist' => 'Overpayment simulation already exists',
+        'saved' => 'Overpayment simulation has been saved',
+        'deleted' => 'Overpayment simulation has been deleted successfully',
     ]
 ];

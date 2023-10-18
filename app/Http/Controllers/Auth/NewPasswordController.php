@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\AlertType;
@@ -17,10 +19,6 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
-    /**
-     * Display the password reset view.
-     *
-     */
     public function create(Request $request): Response
     {
         return Inertia::render('Auth/ResetPassword', [
@@ -29,9 +27,6 @@ class NewPasswordController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming new password request.
-     */
     public function store(Request $request): RedirectResponse|ValidationException
     {
         $request->validate([
@@ -57,8 +52,8 @@ class NewPasswordController extends Controller
                 ->route('login')
                 ->with([
                     'status' => __($status),
-                    'alert_type' => AlertType::SUCCESS,
-                    'alert_message' => 'Hasło zostało zmienione!'
+                    'alertType' => AlertType::SUCCESS,
+                    'alertMessage' => __('messages.newPassword')
                 ]);
         }
 

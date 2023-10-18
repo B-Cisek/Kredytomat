@@ -1,20 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\AlertType;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
 class SendResetPasswordLink
 {
-    public function __invoke(Request $request)
+    # TODO: CREATE SERVICE TO SEND RESET LINK
+    public function __invoke(Request $request): RedirectResponse
     {
         if (is_null($request->get('email'))) {
             return back()->with([
-                'alert_type' => AlertType::DANGER,
-                'alert_message' => 'Brak adresu email!'
+                'alertType' => AlertType::WARNING,
+                'alertMessage' => __('messages.sendResetPasswordLink.noEmail')
             ]);
         }
 
@@ -29,8 +33,8 @@ class SendResetPasswordLink
         if ($status == Password::RESET_LINK_SENT) {
             return back()->with([
                 'status' => __($status),
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Wysłano link do zmiany hasła.'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.sendResetPasswordLink.emailSent')
             ]);
         }
 

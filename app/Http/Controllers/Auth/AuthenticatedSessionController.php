@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\AlertType;
@@ -15,9 +17,6 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -26,9 +25,6 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
@@ -36,14 +32,11 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME)->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Poprawnie zalogowano!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.authentication.loggedOn')
         ]);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
@@ -53,8 +46,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect(RouteServiceProvider::LOGIN)->with([
-            'alert_type' => AlertType::SUCCESS,
-            'alert_message' => 'Poprawnie wylogowano!'
+            'alertType' => AlertType::SUCCESS,
+            'alertMessage' => __('messages.authentication.loggedOut')
         ]);
     }
 }

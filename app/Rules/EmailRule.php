@@ -21,10 +21,6 @@ class EmailRule implements Rule
         return false;
     }
 
-    /**
-     * Get the validation error message.
-     *
-     */
     public function message(): string
     {
         return __('validation.email');

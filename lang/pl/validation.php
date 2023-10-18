@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'details' => 'Nieprawidłowy format',
     'accepted' => 'Pole musi być zaakceptowane.',
     'accepted_if' => 'Pole musi być zaakceptowane, gdy :other ma wartość :value.',
     'active_url' => 'Pole nie jest prawidłowym adresem URL.',

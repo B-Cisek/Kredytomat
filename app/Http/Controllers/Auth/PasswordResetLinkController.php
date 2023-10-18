@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\AlertType;
@@ -13,10 +15,6 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
-    /**
-     * Display the password reset link request view.
-     *
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/ForgotPassword', [
@@ -24,11 +22,7 @@ class PasswordResetLinkController extends Controller
         ]);
     }
 
-    /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws ValidationException
-     */
+    # TODO: CREATE SERVICE TO SEND RESET LINK
     public function store(Request $request): RedirectResponse|ValidationException
     {
         $request->validate([
@@ -42,8 +36,8 @@ class PasswordResetLinkController extends Controller
         if ($status == Password::RESET_LINK_SENT) {
             return back()->with([
                 'status' => __($status),
-                'alert_type' => AlertType::SUCCESS,
-                'alert_message' => 'Wysłano link do zmiany hasła!'
+                'alertType' => AlertType::SUCCESS,
+                'alertMessage' => __('messages.sendResetPasswordLink.emailSent')
             ]);
         }
 

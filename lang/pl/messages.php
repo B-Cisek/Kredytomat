@@ -21,6 +21,34 @@ return [
         'update' => 'Użytkownik został pomyślnie zaktualizowany',
         'delete' => 'Użytkownik został pomyślnie usunięty',
         'adminUser' => 'Konto użytkownika admin nie może zostać usunięte',
-        'cannotDeleteUser' => 'Nie można usunąć użytkownika który ma zapisane symulacje'
+        'cannotDeleteUser' => 'Nie można usunąć użytkownika który ma zapisane symulacje',
+        'massDeleteFail' => 'Nie wybrano użytkowników do usunięcia',
+        'massDelete' => 'Usunięto zaznaczonch użytkowników'
+    ],
+    'sendResetPasswordLink' => [
+        'noEmail' => 'Brak adresu email',
+        'emailSent' => 'Wysłano link do zmiany hasła'
+    ],
+    'authentication' => [
+        'loggedOn' => 'Zalogowano',
+        'loggedOut' => 'Wylogowano',
+        'registered' => 'Zarejestrowano'
+    ],
+    'newPassword' => 'Hasło zostało zmienione',
+    'profile' => [
+        'update' => 'Profil został zaktualizowany',
+        'wrongCurrentPassword' => 'Aktulane hasło jest niepoprawne',
+        'passwordUpdated' => 'Hasło zmienione',
+        'accountRemoved' => 'Konto usunięte'
+    ],
+    'creditSimulation' => [
+        'alreadyExist' => 'Symulacja kredytu już istnieje',
+        'saved' => 'Zapisano symulacje kredytu',
+        'deleted' => 'Symulacja kredytu został pomyślnie usunięta',
+    ],
+    'overpaymentSimulation' => [
+        'alreadyExist' => 'Symulacja nadpłaty już istnieje',
+        'saved' => 'Symulacja nadpłaty została zapisana',
+        'deleted' => 'Symulacja nadpłaty została usunięta',
     ]
 ];

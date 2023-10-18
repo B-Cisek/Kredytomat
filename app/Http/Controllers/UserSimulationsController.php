@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\CreditSimulation;
@@ -16,14 +18,12 @@ class UserSimulationsController extends Controller
         $creditSimulationCount = CreditSimulation::where('user_id', $userId)
             ->get()
             ->count();
+
         $overpaymentSimulationCount = OverpaymentSimulation::where('user_id', $userId)
             ->get()
             ->count();
 
         return Inertia::render('UserSimulations',
-            compact(
-                'creditSimulationCount',
-                'overpaymentSimulationCount'
-            ));
+            compact('creditSimulationCount', 'overpaymentSimulationCount'));
     }
 }

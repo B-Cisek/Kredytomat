@@ -17,6 +17,6 @@ class DetailsValidationRule implements Rule
 
     public function message(): string
     {
-        return 'Nieprawidłowy format';
+        return __('validation.details');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
@@ -25,19 +27,16 @@ class OfferController extends Controller
     public function show(Request $request, $bank): Response
     {
         $credits = Credit::with('bank')
-            ->whereRelation('bank', 'slug', $bank);
-
-        if ($request->has('sort')) {
-            $credits->orderBy('created_at', $request->get('sort'));
-        }
-
-        if ($request->has('marza')) {
-            $credits->orderBy('margin', $request->get('marza'));
-        }
-
-        if ($request->has('prowizja')) {
-            $credits->orderBy('commission', $request->get('prowizja'));
-        }
+            ->whereRelation('bank', 'slug', $bank)
+            ->when($request->has('sort'), function ($query) use ($request) {
+               $query->orderBy('created_at', $request->get('sort'));
+            })
+            ->when($request->has('marza'), function ($query) use ($request) {
+                $query->orderBy('margin', $request->get('marza'));
+            })
+            ->when($request->has('prowizja'), function ($query) use ($request) {
+                $query->orderBy('commission', $request->get('prowizja'));
+            });
 
         return Inertia::render('OfferBank', [
             'credits' => $credits->get()
@@ -46,19 +45,16 @@ class OfferController extends Controller
 
     public function showAll(Request $request): Response
     {
-        $credits = Credit::with('wibor', 'bank');
-
-        if ($request->has('sort')) {
-            $credits->orderBy('created_at', $request->get('sort'));
-        }
-
-        if ($request->has('marza')) {
-            $credits->orderBy('margin', $request->get('marza'));
-        }
-
-        if ($request->has('prowizja')) {
-            $credits->orderBy('commission', $request->get('prowizja'));
-        }
+        $credits = Credit::with('wibor', 'bank')
+            ->when($request->has('sort'), function ($query) use ($request) {
+                $query->orderBy('created_at', $request->get('sort'));
+            })
+            ->when($request->has('marza'), function ($query) use ($request) {
+                $query->orderBy('margin', $request->get('marza'));
+            })
+            ->when($request->has('prowizja'), function ($query) use ($request) {
+                $query->orderBy('commission', $request->get('prowizja'));
+            });
 
         return Inertia::render('AllOffers', [
             'credits' => $credits->get(),
