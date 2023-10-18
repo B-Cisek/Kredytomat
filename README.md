@@ -1,66 +1,62 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Porównywarka kredytów hipotecznych
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikacja pozwala przeglądać oferty kredytów hipotecznych oraz wykonywać kalkulacje spłaty, nadpłaty kredytu.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Client:** Vue.js, TailwindCSS
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Server:** PHP 8.1, Laravel, Inertia.js
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Screenshots
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/2a1b4621-812f-4a99-b4e3-680189e0856f)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/5ebfe44c-22e3-42ae-a130-5b647967c298)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/152835e5-9622-402e-9031-0f4fce99fd76)
 
-## Laravel Sponsors
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/5769e9bf-f1b4-4aa8-bc51-496a18ef294f)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/a4eae718-1ee8-4e89-a8ba-619a71ab1067)
 
-### Premium Partners
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/127a710c-5117-4117-9476-ae79f0040acc)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/469f8a14-1ea9-49d4-9116-066ec3203cec)
 
-## Contributing
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/a4a609a2-9ca0-49a4-99a5-7bf0038a8ef5)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/58ec79f0-6d5c-460b-9c87-ec3f02c68767)
 
-## Code of Conduct
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/4de2fe8b-a88f-46ed-a457-f2aec1638c8a)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/a059e38f-d207-41e6-a1b5-b68b85706feb)
 
-## Security Vulnerabilities
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/94be8a0a-7c62-47d5-a14d-1d413ad10c6c)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/661c6c5a-1fa4-4514-a126-4747ee73ee51)
 
-## License
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/f0a3d68c-64a0-4b6a-91e8-150f0cb46b69)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/d13249d8-3f2b-4453-b8a1-4fa6755ca9bc)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/4158ca3d-4fb1-4974-a0c8-38e28aaf2902)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/f6bb484f-2f91-40ab-800c-975d25595764)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/fa6074de-92e2-4d88-9cd5-50556d5d83e1)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/a2484ca2-3bd8-48f7-8727-188b9729fbb7)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/5d6e7702-65b6-453e-a41e-66cc1d51f07e)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/0da60316-7928-4efc-b33b-1e33043a2a12)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/86055543-7826-4a1e-a790-f209d324d7fb)
+
+![image](https://github.com/B-Cisek/Kredytomat/assets/63461864/8003047d-509f-4563-b85c-3a0768459aae)
+
+
+
+
